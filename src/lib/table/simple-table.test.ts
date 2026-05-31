@@ -5,6 +5,7 @@ import {
   addTableRow,
   createDefaultTableData,
   editTableCell,
+  getTableStats,
   normalizeTableData,
   removeTableColumn,
   removeTableRow,
@@ -51,5 +52,31 @@ describe("simple table block model", () => {
     const parsed = normalizeTableData(JSON.parse(serializeTableData(table)));
 
     expect(parsed.rows[0]?.cells["col-1"]).toBe("Persisted");
+  });
+
+  it("preserves an explicit empty row state and computes table stats", () => {
+    const table = normalizeTableData({
+      columns: [{ id: "name", name: "Name" }],
+      rows: [],
+    });
+
+    expect(table.rows).toEqual([]);
+    expect(getTableStats(table)).toEqual({
+      rowCount: 0,
+      columnCount: 1,
+      hasRows: false,
+      hasColumns: true,
+    });
+  });
+
+  it("allows deleting the final simple-table row", () => {
+    const table = normalizeTableData({
+      columns: [{ id: "name", name: "Name" }],
+      rows: [{ id: "row-1", cells: { name: "Only row" } }],
+    });
+    const withoutRows = removeTableRow(table, "row-1");
+
+    expect(withoutRows.rows).toEqual([]);
+    expect(getTableStats(withoutRows).rowCount).toBe(0);
   });
 });

@@ -4,6 +4,7 @@ import {
   addTableColumn,
   addTableRow,
   editTableCell,
+  getTableStats,
   normalizeTableData,
   removeTableColumn,
   removeTableRow,
@@ -20,6 +21,7 @@ export function SimpleTableBlock({
   onChange: (content: string) => void;
 }) {
   const table = normalizeTableData(block.content);
+  const stats = getTableStats(table);
 
   function save(next: typeof table) {
     onChange(serializeTableData(next));
@@ -91,6 +93,11 @@ export function SimpleTableBlock({
           ))}
         </tbody>
       </table>
+      {!table.rows.length && (
+        <div className="border-t hairline px-4 py-6 text-center text-[13px] text-faint">
+          No rows yet. Add a row to keep working in this simple table block.
+        </div>
+      )}
       <div className="flex items-center justify-between border-t hairline px-2 py-1.5">
         <button
           onClick={() => save(addTableRow(table))}
@@ -99,7 +106,10 @@ export function SimpleTableBlock({
           <Plus className="h-3.5 w-3.5" />
           New row
         </button>
-        <span className="text-[11px] text-faint">Simple table block</span>
+        <span className="text-[11px] text-faint">
+          {stats.rowCount} {stats.rowCount === 1 ? "row" : "rows"} / {stats.columnCount}{" "}
+          {stats.columnCount === 1 ? "column" : "columns"}
+        </span>
       </div>
     </div>
   );

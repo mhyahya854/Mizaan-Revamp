@@ -7,11 +7,13 @@ import {
   changeDatabaseColumnType,
   editDatabaseCell,
   ensureDatabaseRowPage,
+  getDatabaseStats,
   normalizeDatabaseModel,
   removeDatabaseColumn,
   removeDatabaseRow,
   renameDatabaseColumn,
   toDatabaseMetadata,
+  updateDatabaseDetails,
   type DatabaseCellValue,
   type DatabaseColumnType,
 } from "@/lib/database/database-table";
@@ -22,6 +24,7 @@ const COLUMN_TYPES: DatabaseColumnType[] = ["text", "number", "select", "checkbo
 export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: VaultProvider }) {
   const navigate = useNavigate();
   const model = normalizeDatabaseModel(item.metadata.database, item.id, item.title);
+  const stats = getDatabaseStats(model);
 
   function save(next: typeof model) {
     provider.updateItem(item.id, { metadata: { database: toDatabaseMetadata(next) } });
@@ -41,6 +44,14 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
             Basic local database foundation. Formulas, rollups, charts, filters, and advanced views
             are not implemented yet.
           </p>
+          <div className="mt-2 flex flex-wrap gap-1.5 text-[11px] text-faint">
+            <span className="rounded-sm border hairline px-1.5 py-0.5">
+              {stats.rowCount} {stats.rowCount === 1 ? "row" : "rows"}
+            </span>
+            <span className="rounded-sm border hairline px-1.5 py-0.5">
+              {stats.columnCount} {stats.columnCount === 1 ? "property" : "properties"}
+            </span>
+          </div>
         </div>
         <div className="flex gap-1">
           <button
@@ -59,6 +70,18 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
           </button>
         </div>
       </div>
+
+      <label className="mb-3 block text-[11px] uppercase tracking-wider text-faint">
+        Description
+        <input
+          value={model.description}
+          onChange={(event) =>
+            save(updateDatabaseDetails(model, { description: event.target.value }))
+          }
+          className="mt-1 block w-full rounded-sm border hairline bg-background px-2 py-1.5 text-[13px] normal-case tracking-normal text-soft outline-none placeholder:text-faint"
+          placeholder="Describe what this local database tracks."
+        />
+      </label>
 
       <div className="overflow-x-auto rounded-md border hairline bg-surface">
         <table className="min-w-[760px] w-full border-collapse text-[13px]">

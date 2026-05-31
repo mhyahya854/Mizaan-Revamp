@@ -20563,3 +20563,178 @@ Remaining limitations:
 - Search is improved but remains partial relative to saved searches, advanced filters, document OCR/extracted text, graph search, and indexed performance requirements.
 
 Next recommended step: harden database/table or document foundation next, while separately addressing Fast Refresh warnings and preserving the new local-first head-link regression test.
+
+---
+
+## Append-Only Repair Check and Bounded Implementation Update - 2026-06-01
+
+Date/time: 2026-06-01 05:40 +08:00
+
+Repo repair status:
+- Canonical repo root is `E:\Github\Mizaan-Revamp`.
+- Current branch before work was `main`.
+- Remote was `https://github.com/mhyahya854/Mizaan-Revamp.git`.
+- Latest commit before work was `abc0277`.
+- `git fetch origin --prune` completed.
+- `git rev-list --left-right --count main...origin/main` returned `0 0` before implementation.
+- Worktree was clean before screenshots and implementation files were created.
+
+Validation status:
+- Before implementation, `npm run typecheck` passed.
+- Before implementation, `npm run lint` passed with 0 errors and 10 existing Fast Refresh warnings.
+- Before implementation, `npm test` passed with 8 files and 42 tests.
+- Before implementation, `npm run build` passed with existing Vite chunk-size and TanStack unused-external warnings.
+- After implementation, targeted database/table tests passed with 2 files and 16 tests.
+- After implementation, `npm run typecheck` passed.
+- After implementation, `npm run lint` passed with the same 10 existing Fast Refresh warnings.
+- After implementation, `npm test` passed with 8 files and 48 tests.
+- After implementation, `npm run build` passed with existing Vite chunk-size and TanStack unused-external warnings.
+
+Red-flag scan status:
+- `rg -n "localStorage" src` found expected prototype storage, theme, right-panel, vault-session, vault-provider, test, and honest UI label references.
+- `rg -n "Google|Drive|OAuth|Firebase|Supabase|Clerk|auth|cloud" src` found icon names, `class-variance-authority`, documentation-safe local-first wording, and the head-link regression test. No runtime cloud/auth provider was found.
+- `rg -n "portable vault ready|SQLite ready|Tauri ready|folder picker ready|USB vault ready" src docs` found no active fake readiness claim beyond historical phase-report notes saying no matches.
+- `rg -n "TODO|FIXME|mock|fake|placeholder|any" src` found generated router `as any` casts and ordinary placeholder text, not new fake UI.
+- `rg -n "console.log|debugger" src` found no matches.
+- `rg -n "https://|http://|fonts.googleapis|fonts.gstatic" src` found no runtime source matches.
+
+Browser QA status:
+- In-app Browser backend was attempted first and failed because `iab` was unavailable.
+- Chrome DevTools fallback initially failed because Chrome was not running on `127.0.0.1:9222`.
+- An isolated Chrome profile was started with remote debugging, without touching the user's normal browser storage.
+- Preview server was restarted after rebuild to avoid stale asset-map 404s.
+- Routes checked before implementation: `/`, `/search`, `/settings`, `/vault`, `/templates`, `/calendar`, `/databases`, `/graph`, `/documents`, `/trash`, `/page/note-principles`.
+- Changed database flow checked after implementation: create Basic Database, add row, edit cell, add property, rename property, delete row, delete property, reload, verify persisted row/cell/property counts and values.
+- Console checks during the successful final browser flow found no warnings or errors.
+
+Selected implementation batch:
+- Database/Table Hardening.
+
+Why selected:
+- Calendar had already received a focused hardening batch.
+- Search had already received a focused hardening batch.
+- The database/table foundation existed but still needed stronger helper coverage, explicit empty table states, stats, metadata, validation, and browser proof before deeper graph, document, native storage, or backup work.
+
+What was implemented:
+- Added database stats helper for row/property counts and empty-state booleans.
+- Added simple-table stats helper for row/column counts and empty-state booleans.
+- Preserved explicit empty row states instead of silently refilling rows during normalization.
+- Allowed deleting the final database row so the UI can honestly show an empty database table.
+- Allowed deleting the final simple-table row so block tables can honestly show an empty table.
+- Added database title/description metadata helper while preserving existing table data.
+- Added database model validation reporting for duplicate columns, duplicate rows, and stale row-order entries.
+- Added DatabaseTable UI row/property count chips.
+- Added DatabaseTable description metadata input that persists through the provider-backed database metadata.
+- Added SimpleTableBlock empty-row state and row/column count footer.
+- Kept database/table writes provider-backed through existing item metadata/block content paths.
+
+Files changed:
+- `src/lib/database/database-table.ts`
+- `src/lib/database/database-table.test.ts`
+- `src/lib/table/simple-table.ts`
+- `src/lib/table/simple-table.test.ts`
+- `src/components/database/DatabaseTable.tsx`
+- `src/components/table/SimpleTableBlock.tsx`
+- `docs/Plan/Mizaan_A_to_Z_Plan.md`
+- `docs/Phases/phase-repair-check-and-bounded-implementation.md`
+- `docs/Plan/Mizaan Work Log.docx`
+- screenshot files under `docs/screenshots`
+
+Tests added/updated:
+- Added database tests for explicit empty row normalization, stats, final-row deletion, title/description metadata preservation, and validation repair reporting.
+- Added simple-table tests for explicit empty row normalization, stats, and final-row deletion.
+- Existing database tests still cover add row, delete row, add column, rename column, delete column, edit cell, provider persistence, and row-as-page creation.
+- Existing simple-table tests still cover add/delete rows, add/rename/delete columns, edit cell, serialization, and preserving data after structure changes.
+
+Screenshots captured:
+- `docs/screenshots/20260601-0529-repair-check-home.png`
+- `docs/screenshots/20260601-0529-repair-check-sidebar.png`
+- `docs/screenshots/20260601-0529-repair-check-search.png`
+- `docs/screenshots/20260601-0529-repair-check-calendar.png`
+- `docs/screenshots/20260601-0529-repair-check-databases.png`
+- `docs/screenshots/20260601-0529-bounded-batch-databases.png`
+- `docs/screenshots/20260601-0529-bounded-batch-table-edit.png`
+- `docs/screenshots/20260601-0529-bounded-batch-proof.png`
+
+Spaghetti cleanup notes:
+- Moved database count/empty-state logic into shared helpers instead of making the route and table UI infer counts independently. (spaghetti code cleared)
+- Preserved explicit empty row arrays in database and simple-table normalizers instead of silently creating fake rows after the user deletes the last row. (spaghetti code cleared)
+- Added validation helper reporting for duplicate/stale database structures instead of leaving malformed metadata repairs invisible. (spaghetti code cleared)
+
+Remaining limitations:
+- Database/Table hardening remains partial relative to a full Notion-like database engine.
+- Formulas, rollups, relations as properties, grouping, board/gallery/timeline views, CSV import/export, filters, sorting UI, and full schema designer are not implemented.
+- The app remains a browser localStorage prototype, not Tauri, SQLite, portable vault folders, native filesystem storage, or a backup/restore engine.
+- The in-app Browser backend was unavailable; browser QA used isolated local Chrome/DevTools fallback.
+- DOCX visual render QA remains dependent on a local renderer if LibreOffice/soffice is unavailable.
+
+Next recommended step:
+- Document System Foundation, because database/table now has stronger helper coverage and browser proof, while documents still need a real record/detail foundation without pretending filesystem import or preview is implemented.
+
+### Feature: Database/Table hardening [• PARTIAL]
+
+Goal:
+Make basic database and table behavior more real, editable, persistent, helper-backed, and honest inside the current browser prototype.
+
+[What Codex understood:
+The database/table system should become stronger without pretending to be full Notion parity or future SQLite/native storage.]
+
+[How it is implemented:
+Database metadata remains provider-backed on Mizaan items, simple table data remains block-backed, and shared helpers now cover stats, metadata details, explicit empty row states, final-row deletion, and validation reporting. UI count chips, description metadata, and empty states use those helpers.]
+
+[Evidence:
+`npx vitest run src/lib/database/database-table.test.ts src/lib/table/simple-table.test.ts` passed with 16 tests. `npm test` passed with 48 tests. Chrome fallback QA created a Basic Database, added/edited/deleted rows/properties, refreshed the page, and verified persisted values and counts.]
+
+[Next required work:
+Add sorting/filtering UI, richer property schemas, row detail editing, relation properties, import/export, and final SQLite-backed persistence in later bounded batches.]
+
+### Feature: Database/table stats and metadata [✅ IMPLEMENTED]
+
+Goal:
+Expose row/property counts and basic database description metadata without duplicating logic in UI components.
+
+[What Codex understood:
+Counts and metadata should be helper-backed so routes and components do not invent separate table interpretations.]
+
+[How it is implemented:
+`getDatabaseStats`, `getTableStats`, and `updateDatabaseDetails` were added. `DatabaseTable` displays row/property count chips and a provider-backed description input. `SimpleTableBlock` displays a row/column footer.]
+
+[Evidence:
+Targeted helper tests cover stats and metadata preservation. Browser QA showed row/property count changes from 1/3 to 2/4, then persisted at 1/3 after row/property deletion and refresh.]
+
+[Next required work:
+Use the same stats surface for future sort/filter/view metadata once those features exist.]
+
+### Feature: Explicit empty table states [✅ IMPLEMENTED]
+
+Goal:
+Allow users to delete all rows and see an honest empty state instead of regenerated fake rows.
+
+[What Codex understood:
+Empty tables are valid. Normalization should repair malformed data, but it should not erase an intentional empty row array.]
+
+[How it is implemented:
+Database and simple-table normalizers now preserve explicit `rows: []`. `removeDatabaseRow` and `removeTableRow` allow final-row deletion. `DatabaseTable` and `SimpleTableBlock` show empty-row guidance when no rows exist.]
+
+[Evidence:
+New tests prove explicit empty rows remain empty and final-row deletion produces zero rows. Targeted tests and full test suite passed.]
+
+[Next required work:
+Add browser QA for simple table block final-row deletion in a future editor-specific batch.]
+
+### Feature: Database validation helper [✅ IMPLEMENTED]
+
+Goal:
+Report repairs for invalid database metadata rather than silently normalizing everything.
+
+[What Codex understood:
+Invalid table data should be repaired safely, but the system should be able to say what was repaired.]
+
+[How it is implemented:
+`validateDatabaseModel` returns the normalized model plus issues for duplicate database columns, duplicate database rows, stale row-order entries, and fully invalid models.]
+
+[Evidence:
+New tests prove duplicate columns, duplicate rows, and stale row order entries are repaired and reported.]
+
+[Next required work:
+Surface validation warnings in the database UI only when doing so will not create noisy or misleading prototype states.]

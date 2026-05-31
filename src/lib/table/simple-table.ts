@@ -42,8 +42,10 @@ export function normalizeTableData(input: unknown): SimpleTableData {
       })
     : [];
   const safeColumns = columns.length ? uniqueColumns(columns) : createDefaultTableData().columns;
-  const rows = Array.isArray(parsed.rows)
-    ? parsed.rows.flatMap((entry, index): SimpleTableRow[] => {
+  const parsedRows = parsed.rows;
+  const hasRowsArray = Array.isArray(parsedRows);
+  const rows = hasRowsArray
+    ? parsedRows.flatMap((entry, index): SimpleTableRow[] => {
         if (!isRecord(entry)) return [];
         return [
           {
@@ -56,9 +58,11 @@ export function normalizeTableData(input: unknown): SimpleTableData {
 
   return {
     columns: safeColumns,
-    rows: rows.length
+    rows: hasRowsArray
       ? uniqueRows(rows, safeColumns)
-      : createDefaultTableData().rows.map((row) => normalizeRow(row, safeColumns)),
+      : rows.length
+        ? uniqueRows(rows, safeColumns)
+        : createDefaultTableData().rows.map((row) => normalizeRow(row, safeColumns)),
   };
 }
 
@@ -123,9 +127,19 @@ export function addTableRow(table: SimpleTableData, id = createTableId("row")) {
 
 export function removeTableRow(table: SimpleTableData, rowId: string) {
   const normalized = normalizeTableData(table);
-  if (normalized.rows.length <= 1) return normalized;
   const rows = normalized.rows.filter((row) => row.id !== rowId);
-  return { ...normalized, rows: rows.length ? rows : normalized.rows };
+  if (rows.length === normalized.rows.length) return normalized;
+  return { ...normalized, rows };
+}
+
+export function getTableStats(table: SimpleTableData) {
+  const normalized = normalizeTableData(table);
+  return {
+    rowCount: normalized.rows.length,
+    columnCount: normalized.columns.length,
+    hasRows: normalized.rows.length > 0,
+    hasColumns: normalized.columns.length > 0,
+  };
 }
 
 export function editTableCell(

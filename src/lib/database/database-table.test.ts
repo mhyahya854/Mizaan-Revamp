@@ -7,11 +7,14 @@ import {
   createDefaultDatabaseModel,
   editDatabaseCell,
   ensureDatabaseRowPage,
+  getDatabaseStats,
   normalizeDatabaseModel,
   removeDatabaseColumn,
   removeDatabaseRow,
   renameDatabaseColumn,
   toDatabaseMetadata,
+  updateDatabaseDetails,
+  validateDatabaseModel,
 } from "./database-table";
 import {
   LocalStorageVaultProvider,
@@ -47,6 +50,26 @@ describe("database table model", () => {
     expect(model.rows.length).toBeGreaterThan(0);
   });
 
+  it("preserves an explicit empty database row state and computes table stats", () => {
+    const model = normalizeDatabaseModel(
+      {
+        columns: [{ id: "name", name: "Name", type: "text" }],
+        rows: [],
+        rowOrder: [],
+      },
+      "db-empty",
+      "Empty Database",
+    );
+
+    expect(model.rows).toEqual([]);
+    expect(getDatabaseStats(model)).toEqual({
+      rowCount: 0,
+      columnCount: 1,
+      hasRows: false,
+      hasColumns: true,
+    });
+  });
+
   it("adds, removes, renames, and changes basic columns", () => {
     const model = createDefaultDatabaseModel("db", "Database");
     const withColumn = addDatabaseColumn(model, {
@@ -73,6 +96,57 @@ describe("database table model", () => {
       edited.rows.find((row) => row.id === "row-extra")?.cells[model.columns[0]?.id ?? ""],
     ).toBe("Alpha");
     expect(removed.rows.some((row) => row.id === "row-extra")).toBe(false);
+  });
+
+  it("allows deleting the final row so the database can show an empty table state", () => {
+    const model = createDefaultDatabaseModel("db", "Database");
+    const withoutRows = removeDatabaseRow(model, model.rows[0]?.id ?? "");
+
+    expect(withoutRows.rows).toEqual([]);
+    expect(withoutRows.rowOrder).toEqual([]);
+    expect(getDatabaseStats(withoutRows).rowCount).toBe(0);
+  });
+
+  it("updates database title and description metadata without losing table data", () => {
+    const model = editDatabaseCell(
+      createDefaultDatabaseModel("db", "Database"),
+      "row-1",
+      "notes",
+      "Keep this note",
+    );
+    const updated = updateDatabaseDetails(model, {
+      title: "Research Database",
+      description: "Provider-backed research table",
+    });
+
+    expect(updated.title).toBe("Research Database");
+    expect(updated.description).toBe("Provider-backed research table");
+    expect(updated.rows[0]?.cells.notes).toBe("Keep this note");
+  });
+
+  it("reports validation repairs for duplicate columns and stale row order entries", () => {
+    const validation = validateDatabaseModel({
+      columns: [
+        { id: "name", name: "Name", type: "text" },
+        { id: "name", name: "Duplicate", type: "text" },
+      ],
+      rows: [
+        { id: "row-1", title: "One", cells: { name: "One" } },
+        { id: "row-1", title: "Duplicate", cells: { name: "Duplicate" } },
+      ],
+      rowOrder: ["missing-row", "row-1"],
+    });
+
+    expect(validation.model.columns).toHaveLength(1);
+    expect(validation.model.rows).toHaveLength(1);
+    expect(validation.model.rowOrder).toEqual(["row-1"]);
+    expect(validation.issues).toEqual(
+      expect.arrayContaining([
+        "Removed duplicate database columns.",
+        "Removed duplicate database rows.",
+        "Removed stale row order entries.",
+      ]),
+    );
   });
 
   it("persists database metadata through the provider", () => {

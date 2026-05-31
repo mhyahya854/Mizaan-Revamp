@@ -23,6 +23,7 @@ export interface DatabaseRow {
 export interface DatabaseModel {
   id: string;
   title: string;
+  description: string;
   viewType: "table";
   columns: DatabaseColumn[];
   rows: DatabaseRow[];
@@ -56,6 +57,7 @@ export function createDefaultDatabaseModel(
   return {
     id,
     title,
+    description: "",
     viewType: "table",
     columns: DEFAULT_COLUMNS.map((column) => ({
       ...column,
@@ -94,8 +96,10 @@ export function normalizeDatabaseModel(
       })
     : [];
   const safeColumns = uniqueColumns(columns.length ? columns : fallback.columns);
-  const rows = Array.isArray(input.rows)
-    ? input.rows.flatMap((entry, index): DatabaseRow[] => {
+  const inputRows = input.rows;
+  const hasRowsArray = Array.isArray(inputRows);
+  const rows = hasRowsArray
+    ? inputRows.flatMap((entry, index): DatabaseRow[] => {
         if (!isRecord(entry)) return [];
         return [
           normalizeRow(
@@ -112,7 +116,7 @@ export function normalizeDatabaseModel(
         ];
       })
     : [];
-  const safeRows = uniqueRows(rows.length ? rows : fallback.rows, safeColumns);
+  const safeRows = uniqueRows(hasRowsArray ? rows : fallback.rows, safeColumns);
   const rowOrder = Array.isArray(input.rowOrder)
     ? input.rowOrder.filter((entry): entry is string => typeof entry === "string")
     : safeRows.map((row) => row.id);
@@ -120,6 +124,7 @@ export function normalizeDatabaseModel(
   return {
     id: toNonEmptyString(input.id, id),
     title: toNonEmptyString(input.title, title),
+    description: typeof input.description === "string" ? input.description : "",
     viewType: "table",
     columns: safeColumns,
     rows: sortRows(safeRows, rowOrder),
@@ -220,13 +225,63 @@ export function addDatabaseRow(model: DatabaseModel, id = createDatabaseId("row"
 
 export function removeDatabaseRow(model: DatabaseModel, rowId: string) {
   const normalized = normalizeDatabaseModel(model, model.id, model.title);
-  if (normalized.rows.length <= 1) return normalized;
   const rows = normalized.rows.filter((row) => row.id !== rowId);
+  if (rows.length === normalized.rows.length) return normalized;
   return touchModel({
     ...normalized,
     rows,
     rowOrder: normalized.rowOrder.filter((id) => id !== rowId),
   });
+}
+
+export function updateDatabaseDetails(
+  model: DatabaseModel,
+  input: { title?: string; description?: string },
+) {
+  const normalized = normalizeDatabaseModel(model, model.id, model.title);
+  return touchModel({
+    ...normalized,
+    title: input.title?.trim() || normalized.title,
+    description:
+      input.description === undefined ? normalized.description : input.description.trim(),
+  });
+}
+
+export function getDatabaseStats(model: DatabaseModel) {
+  const normalized = normalizeDatabaseModel(model, model.id, model.title);
+  return {
+    rowCount: normalized.rows.length,
+    columnCount: normalized.columns.length,
+    hasRows: normalized.rows.length > 0,
+    hasColumns: normalized.columns.length > 0,
+  };
+}
+
+export function validateDatabaseModel(
+  input: unknown,
+  id = "database",
+  title = "Basic Database",
+): { model: DatabaseModel; issues: string[] } {
+  const issues: string[] = [];
+  const model = normalizeDatabaseModel(input, id, title);
+
+  if (!isRecord(input)) {
+    return { model, issues: ["Rebuilt invalid database model."] };
+  }
+
+  if (hasDuplicateRecordIds(input.columns)) {
+    issues.push("Removed duplicate database columns.");
+  }
+
+  if (hasDuplicateRecordIds(input.rows)) {
+    issues.push("Removed duplicate database rows.");
+  }
+
+  if (hasStaleRowOrderEntries(input.rowOrder, model.rows)) {
+    issues.push("Removed stale row order entries.");
+  }
+
+  return { model, issues };
 }
 
 export function editDatabaseCell(
@@ -347,6 +402,30 @@ function uniqueRows(rows: DatabaseRow[], columns: DatabaseColumn[]) {
       return true;
     })
     .map((row) => normalizeRow(row, columns));
+}
+
+function hasDuplicateRecordIds(value: unknown) {
+  if (!Array.isArray(value)) return false;
+  const seen = new Set<string>();
+  for (const entry of value) {
+    if (!isRecord(entry) || typeof entry.id !== "string" || !entry.id.trim()) continue;
+    if (seen.has(entry.id)) return true;
+    seen.add(entry.id);
+  }
+  return false;
+}
+
+function hasStaleRowOrderEntries(value: unknown, rows: DatabaseRow[]) {
+  if (!Array.isArray(value)) return false;
+  const rowIds = new Set(rows.map((row) => row.id));
+  const seen = new Set<string>();
+  return value.some((entry) => {
+    if (typeof entry !== "string") return true;
+    if (!rowIds.has(entry)) return true;
+    if (seen.has(entry)) return true;
+    seen.add(entry);
+    return false;
+  });
 }
 
 function touchModel(model: DatabaseModel): DatabaseModel {
