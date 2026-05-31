@@ -1,0 +1,37 @@
+{
+  "steps": [
+    "Opened Home.",
+    "Confirmed sidebar zones are visible on Home.",
+    "Created a note through the template picker and opened the page workspace.",
+    "Edited title and first block.",
+    "Opened slash command menu and inserted a simple table block.",
+    "Edited simple table cells and added/removed table rows and columns.",
+    "Refreshed and confirmed page title, block, and simple table persistence.",
+    "Opened the right panel properties tab.",
+    "Created a database page from the Basic Database template.",
+    "Added database property/row, edited a cell, and opened a row as a page.",
+    "Refreshed and confirmed database table persistence.",
+    "Opened Search route.",
+    "Created/opened a document record through the template picker.",
+    "Created/opened a project page through the template picker.",
+    "Created/opened a person profile through the template picker.",
+    "Opened Vault.",
+    "Opened Settings.",
+    "Opened Graph.",
+    "Archived and restored an item through Trash."
+  ],
+  "screenshots": [
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-home.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-sidebar-after.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-template-picker.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-page-workspace.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-slash-menu.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-simple-table-editor.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-page-right-panel.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-databases-route.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-database-editor.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-vault-still-working.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-1712-phase-4-5-settings-vault-link.png"
+  ],
+  "consoleErrors": []
+}

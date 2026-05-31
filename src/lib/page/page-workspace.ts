@@ -1,0 +1,708 @@
+import type {
+  BlockType,
+  CreateBlockInput,
+  ItemCategory,
+  ItemType,
+  MizaanBlock,
+  MizaanItem,
+  MizaanRelation,
+  PropertyValue,
+  VaultProvider,
+  VaultSnapshot,
+} from "../vault/types";
+import {
+  createDefaultDatabaseModel,
+  normalizeDatabaseModel,
+  toDatabaseMetadata,
+} from "../database/database-table";
+import { createDefaultTableData, serializeTableData } from "../table/simple-table";
+
+interface Breadcrumb {
+  label: string;
+  href?: string;
+}
+
+interface ResolvedRelation {
+  relation: MizaanRelation;
+  source: MizaanItem;
+  target: MizaanItem;
+}
+
+interface PagePropertiesModel {
+  type: string;
+  category: string;
+  status: string;
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+  blocksCount: number;
+  outgoingCount: number;
+  backlinksCount: number;
+  childPagesCount: number;
+  attachedFilesCount: number;
+  databaseColumnsCount: number;
+  databaseRowsCount: number;
+  archived: boolean;
+  deleted: boolean;
+  providerMode: string;
+}
+
+export interface PageWorkspaceModel {
+  state: "ready" | "missing";
+  item: MizaanItem;
+  breadcrumbs: Breadcrumb[];
+  blocks: MizaanBlock[];
+  properties: PagePropertiesModel;
+  relations: ResolvedRelation[];
+  backlinks: ResolvedRelation[];
+  outgoingLinks: ResolvedRelation[];
+  childPages: MizaanItem[];
+  attachedFiles: MizaanItem["attachedFiles"];
+  providerWarning: string;
+}
+
+export interface SlashCommand {
+  id: BlockType;
+  label: string;
+  hint: string;
+}
+
+interface TemplateDefinition {
+  id: string;
+  name: string;
+  icon: string;
+  category: ItemCategory;
+  type: ItemType;
+  title: string;
+  summary: string;
+  tags: string[];
+  properties: Record<string, PropertyValue>;
+  metadata?: Record<string, PropertyValue>;
+  blocks: CreateBlockInput[];
+  universal?: boolean;
+}
+
+const SPACE_LABELS: Record<ItemCategory, string> = {
+  notes: "Notes",
+  documents: "Documents",
+  projects: "Projects",
+  people: "People",
+  finance: "Finance",
+  calendar: "Calendar",
+  trackers: "Trackers",
+  databases: "Databases",
+  templates: "Templates",
+};
+
+const SPACE_HREFS: Record<ItemCategory, string> = {
+  notes: "/notes",
+  documents: "/documents",
+  projects: "/projects",
+  people: "/people",
+  finance: "/finance",
+  calendar: "/calendar",
+  trackers: "/trackers",
+  databases: "/databases",
+  templates: "/templates",
+};
+
+const SPACE_ICONS: Record<ItemCategory, string> = {
+  notes: "N",
+  documents: "D",
+  projects: "P",
+  people: "U",
+  finance: "$",
+  calendar: "C",
+  trackers: "T",
+  databases: "#",
+  templates: "*",
+};
+
+const TEMPLATES: TemplateDefinition[] = [
+  {
+    id: "notes-space",
+    name: "Notes Space",
+    icon: "N",
+    category: "notes",
+    type: "note",
+    title: "Notes",
+    summary: "Quick captures, meeting notes, lecture notes, journals, and long-form pages.",
+    tags: [],
+    properties: { status: "Active" },
+    metadata: {
+      promotedAsSpace: true,
+      itemRole: "space",
+      spaceTemplateId: "notes-space",
+      sidebarPinned: true,
+    },
+    blocks: [
+      { type: "heading1", content: "Notes Space" },
+      {
+        type: "paragraph",
+        content:
+          "Welcome to your Notes Space. Here you can capture ideas, draft articles, and organize meeting details.",
+      },
+    ],
+  },
+  {
+    id: "documents-space",
+    name: "Documents Space",
+    icon: "D",
+    category: "documents",
+    type: "document",
+    title: "Documents",
+    summary: "Document records for files worth keeping.",
+    tags: [],
+    properties: { status: "Active" },
+    metadata: {
+      promotedAsSpace: true,
+      itemRole: "space",
+      spaceTemplateId: "documents-space",
+      sidebarPinned: true,
+    },
+    blocks: [
+      { type: "heading1", content: "Documents Space" },
+      { type: "paragraph", content: "Track local records and imported document assets." },
+    ],
+  },
+  {
+    id: "projects-space",
+    name: "Projects Space",
+    icon: "P",
+    category: "projects",
+    type: "project",
+    title: "Projects",
+    summary: "Long-running threads of work.",
+    tags: [],
+    properties: { status: "Active" },
+    metadata: {
+      promotedAsSpace: true,
+      itemRole: "space",
+      spaceTemplateId: "projects-space",
+      sidebarPinned: true,
+    },
+    blocks: [
+      { type: "heading1", content: "Projects Space" },
+      { type: "paragraph", content: "Manage project paths, milestones, and deliverables." },
+    ],
+  },
+  {
+    id: "people-space",
+    name: "People Space",
+    icon: "U",
+    category: "people",
+    type: "person",
+    title: "People",
+    summary: "Personal profiles and relationship context.",
+    tags: [],
+    properties: { status: "Active" },
+    metadata: {
+      promotedAsSpace: true,
+      itemRole: "space",
+      spaceTemplateId: "people-space",
+      sidebarPinned: true,
+    },
+    blocks: [
+      { type: "heading1", content: "People Space" },
+      {
+        type: "paragraph",
+        content: "Keep profiles of contacts, collaborators, and relationships.",
+      },
+    ],
+  },
+  {
+    id: "finance-space",
+    name: "Finance Space",
+    icon: "$",
+    category: "finance",
+    type: "finance",
+    title: "Finance",
+    summary: "Local finance records and planning.",
+    tags: [],
+    properties: { status: "Active" },
+    metadata: {
+      promotedAsSpace: true,
+      itemRole: "space",
+      spaceTemplateId: "finance-space",
+      sidebarPinned: true,
+    },
+    blocks: [
+      { type: "heading1", content: "Finance Space" },
+      { type: "paragraph", content: "Organize ledger entries and track budgets locally." },
+    ],
+  },
+  {
+    id: "trackers-space",
+    name: "Trackers Space",
+    icon: "T",
+    category: "trackers",
+    type: "tracker",
+    title: "Trackers",
+    summary: "Habit and progress tracker pages.",
+    tags: [],
+    properties: { status: "Active" },
+    metadata: {
+      promotedAsSpace: true,
+      itemRole: "space",
+      spaceTemplateId: "trackers-space",
+      sidebarPinned: true,
+    },
+    blocks: [
+      { type: "heading1", content: "Trackers Space" },
+      { type: "paragraph", content: "Track habits, study time, exercises, and custom milestones." },
+    ],
+  },
+  {
+    id: "blank-page",
+    name: "Blank Page",
+    icon: "N",
+    category: "notes",
+    type: "note",
+    title: "Untitled Page",
+    summary: "A blank page that adapts to the current space.",
+    tags: [],
+    properties: { status: "Draft" },
+    universal: true,
+    blocks: [{ type: "paragraph", content: "" }],
+  },
+  {
+    id: "blank-note",
+    name: "Blank Note",
+    icon: "N",
+    category: "notes",
+    type: "note",
+    title: "Untitled Note",
+    summary: "A quiet blank note.",
+    tags: [],
+    properties: { status: "Draft" },
+    blocks: [{ type: "paragraph", content: "" }],
+  },
+  {
+    id: "meeting-note",
+    name: "Meeting Notes",
+    icon: "N",
+    category: "notes",
+    type: "note",
+    title: "Meeting Notes - New Meeting",
+    summary: "Attendees, agenda, decisions, and follow-up.",
+    tags: ["meeting"],
+    properties: { status: "Draft" },
+    blocks: [
+      { type: "heading1", content: "Purpose" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Attendees" },
+      { type: "bullet", content: "" },
+      { type: "heading2", content: "Decisions" },
+      { type: "todo", content: "Add follow-up action", checked: false },
+    ],
+  },
+  {
+    id: "lecture-note",
+    name: "Lecture Notes",
+    icon: "N",
+    category: "notes",
+    type: "note",
+    title: "Lecture Notes - Untitled Topic",
+    summary: "Structured lecture capture page.",
+    tags: ["lecture"],
+    properties: { status: "Draft", course: "" },
+    blocks: [
+      { type: "heading1", content: "Summary" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Key definitions" },
+      { type: "bullet", content: "" },
+      { type: "heading2", content: "Review checklist" },
+      { type: "todo", content: "Review this lecture", checked: false },
+    ],
+  },
+  {
+    id: "project-plan",
+    name: "Project Plan",
+    icon: "P",
+    category: "projects",
+    type: "project",
+    title: "Project Plan - Untitled",
+    summary: "Goal, scope, milestones, risks, and linked notes.",
+    tags: ["project"],
+    properties: { status: "Planning", progress: 0 },
+    blocks: [
+      { type: "heading1", content: "Goal" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Milestones" },
+      { type: "todo", content: "Define first milestone", checked: false },
+      { type: "heading2", content: "Risks" },
+      { type: "bullet", content: "" },
+    ],
+  },
+  {
+    id: "document-record",
+    name: "Document Record",
+    icon: "D",
+    category: "documents",
+    type: "document",
+    title: "Untitled Document",
+    summary: "Document metadata and notes.",
+    tags: ["document"],
+    properties: { status: "Needs file", fileState: "No file attached" },
+    blocks: [
+      { type: "heading1", content: "Summary" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Attached file" },
+      { type: "callout", content: "File import is planned for a later phase." },
+    ],
+  },
+  {
+    id: "person-profile",
+    name: "Person Profile",
+    icon: "U",
+    category: "people",
+    type: "person",
+    title: "Person Profile - New Person",
+    summary: "Context, relationship notes, and linked items.",
+    tags: ["person"],
+    properties: { status: "Active", relation: "" },
+    blocks: [
+      { type: "heading1", content: "Context" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Interaction notes" },
+      { type: "bullet", content: "" },
+    ],
+  },
+  {
+    id: "finance-record",
+    name: "Finance Record",
+    icon: "$",
+    category: "finance",
+    type: "finance",
+    title: "Finance Record - New Entry",
+    summary: "Local finance record.",
+    tags: ["finance"],
+    properties: { status: "Draft", amount: 0 },
+    blocks: [
+      { type: "heading1", content: "Summary" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Receipt or related document" },
+      { type: "paragraph", content: "Use relations to link a document record." },
+    ],
+  },
+  {
+    id: "calendar-event",
+    name: "Calendar Event",
+    icon: "C",
+    category: "calendar",
+    type: "calendar",
+    title: "Event - Untitled",
+    summary: "Local calendar event record.",
+    tags: ["event"],
+    properties: { status: "Scheduled", date: "" },
+    blocks: [
+      { type: "heading1", content: "Event notes" },
+      { type: "paragraph", content: "" },
+    ],
+  },
+  {
+    id: "tracker",
+    name: "Tracker",
+    icon: "T",
+    category: "trackers",
+    type: "tracker",
+    title: "Tracker - Untitled",
+    summary: "Local tracker page.",
+    tags: ["tracker"],
+    properties: { status: "Active", streak: 0 },
+    blocks: [
+      { type: "heading1", content: "What this tracks" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Check-ins" },
+      { type: "todo", content: "Add first check-in", checked: false },
+    ],
+  },
+  {
+    id: "simple-table-page",
+    name: "Simple Table Page",
+    icon: "N",
+    category: "notes",
+    type: "note",
+    title: "Simple Table - Untitled",
+    summary: "A note page with an editable simple table block.",
+    tags: ["table"],
+    properties: { status: "Draft" },
+    blocks: [
+      { type: "heading1", content: "Simple table" },
+      { type: "paragraph", content: "Use this table for quick notes, comparisons, or planning." },
+      { type: "table", content: serializeTableData(createDefaultTableData()) },
+    ],
+  },
+  {
+    id: "basic-database",
+    name: "Basic Database",
+    icon: "#",
+    category: "databases",
+    type: "database",
+    title: "Basic Database",
+    summary: "A local editable table database foundation.",
+    tags: ["database"],
+    properties: { status: "Active" },
+    metadata: {
+      database: toDatabaseMetadata(
+        createDefaultDatabaseModel("template-database", "Basic Database"),
+      ),
+    },
+    blocks: [],
+  },
+];
+
+const SLASH_COMMANDS: SlashCommand[] = [
+  { id: "paragraph", label: "Text", hint: "Plain paragraph block" },
+  { id: "heading1", label: "Heading 1", hint: "Large section heading" },
+  { id: "heading2", label: "Heading 2", hint: "Medium section heading" },
+  { id: "heading3", label: "Heading 3", hint: "Small section heading" },
+  { id: "bullet", label: "Bullet list", hint: "Simple bullet item" },
+  { id: "numbered", label: "Numbered list", hint: "Ordered list item" },
+  { id: "todo", label: "To-do", hint: "Checkbox block" },
+  { id: "quote", label: "Quote", hint: "Indented quote block" },
+  { id: "callout", label: "Callout", hint: "Highlighted note" },
+  { id: "divider", label: "Divider", hint: "Horizontal separator" },
+  { id: "code", label: "Code", hint: "Monospace code block" },
+  { id: "table", label: "Simple Table", hint: "Editable rows and columns inside this page" },
+];
+
+export function getImplementedTemplates() {
+  return TEMPLATES;
+}
+
+export function getTemplatesForCategory(category?: ItemCategory) {
+  return TEMPLATES.filter(
+    (template) => template.universal || !category || template.category === category,
+  );
+}
+
+export function getImplementedSlashCommands() {
+  return SLASH_COMMANDS;
+}
+
+export function getSpaceLabel(category: ItemCategory) {
+  return SPACE_LABELS[category];
+}
+
+export function getSpaceHref(category: ItemCategory) {
+  return SPACE_HREFS[category];
+}
+
+export function buildPageWorkspaceModel(
+  provider: VaultProvider,
+  itemId: string,
+  snapshot: VaultSnapshot = provider.getSnapshot(),
+): PageWorkspaceModel {
+  const matchedItem = snapshot.items.find((candidate) => candidate.id === itemId);
+  const item = normalizeItem(matchedItem, itemId);
+  const blocks = snapshot.blocks
+    .filter((block) => block.itemId === item.id)
+    .sort((a, b) => a.order - b.order);
+  const childPages = snapshot.items
+    .filter((candidate) => candidate.parentId === item.id && !candidate.deletedAt)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  const outgoingLinks = resolveRelations(
+    snapshot.relations.filter((relation) => relation.sourceId === item.id),
+    snapshot.items,
+  );
+  const backlinks = resolveRelations(
+    snapshot.relations.filter((relation) => relation.targetId === item.id),
+    snapshot.items,
+  );
+  const database =
+    item.type === "database"
+      ? normalizeDatabaseModel(item.metadata.database, item.id, item.title)
+      : undefined;
+  const state = matchedItem ? "ready" : "missing";
+
+  return {
+    state,
+    item,
+    breadcrumbs: buildBreadcrumbs(item, snapshot.items),
+    blocks,
+    childPages,
+    relations: outgoingLinks,
+    outgoingLinks,
+    backlinks,
+    attachedFiles: item.attachedFiles,
+    providerWarning: snapshot.providerInfo.warning,
+    properties: {
+      type: item.type,
+      category: SPACE_LABELS[item.category],
+      status: item.status ?? "No status",
+      tags: item.tags,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      blocksCount: blocks.length,
+      outgoingCount: outgoingLinks.length,
+      backlinksCount: backlinks.length,
+      childPagesCount: childPages.length,
+      attachedFilesCount: item.attachedFiles.length,
+      databaseColumnsCount: database?.columns.length ?? 0,
+      databaseRowsCount: database?.rows.length ?? 0,
+      archived: Boolean(item.archivedAt),
+      deleted: Boolean(item.deletedAt),
+      providerMode: snapshot.providerInfo.mode,
+    },
+  };
+}
+
+export function createChildPage(
+  provider: VaultProvider,
+  parentId: string,
+  title = "Untitled Subpage",
+) {
+  const parent = provider.getItem(parentId);
+  const category = parent?.category ?? "notes";
+  const child = createPageFromTemplate(provider, "blank-page", {
+    category,
+    parentId,
+    title,
+  });
+  provider.createRelation({
+    sourceId: parentId,
+    targetId: child.id,
+    relationType: "parent_child",
+    label: "Child page",
+  });
+  return child;
+}
+
+export function createPageFromTemplate(
+  provider: VaultProvider,
+  templateId: string,
+  options: {
+    category?: ItemCategory;
+    parentId?: string;
+    title?: string;
+    initialContent?: string;
+  } = {},
+) {
+  const template = TEMPLATES.find((entry) => entry.id === templateId) ?? TEMPLATES[0];
+  const category = template.universal ? (options.category ?? template.category) : template.category;
+  const type = template.universal ? typeForCategory(category) : template.type;
+  const page = provider.createItem({
+    title: options.title ?? template.title,
+    category,
+    type,
+    icon: template.universal ? SPACE_ICONS[category] : template.icon,
+    summary: template.summary,
+    status: String(template.properties.status ?? "Draft"),
+    tags: template.tags,
+    properties: template.properties,
+    parentId: options.parentId,
+    metadata: { ...(template.metadata ?? {}), templateId: template.id },
+  });
+
+  const blocks = options.initialContent
+    ? template.blocks.map((block, index) =>
+        index === 0 && block.type !== "table"
+          ? { ...block, content: options.initialContent ?? "" }
+          : block,
+      )
+    : template.blocks;
+  provider.replaceBlocks(page.id, blocks);
+
+  if (template.id === "basic-database") {
+    const database = createDefaultDatabaseModel(page.id, page.title);
+    return (
+      provider.updateItem(page.id, {
+        metadata: {
+          ...page.metadata,
+          templateId: template.id,
+          database: toDatabaseMetadata(database),
+        },
+      }) ?? page
+    );
+  }
+
+  return page;
+}
+
+function normalizeItem(item: MizaanItem | undefined, requestedId: string): MizaanItem {
+  if (!item) {
+    return {
+      id: requestedId,
+      type: "note",
+      category: "notes",
+      title: "Missing page",
+      icon: "N",
+      summary: "This page could not be found in the current prototype vault.",
+      status: "Missing",
+      tags: [],
+      createdAt: "unknown",
+      updatedAt: "unknown",
+      properties: {},
+      attachedFiles: [],
+      metadata: {},
+    };
+  }
+
+  return {
+    ...item,
+    icon: item.icon ?? SPACE_ICONS[item.category],
+    summary: item.summary ?? "",
+    tags: item.tags ?? [],
+    properties: item.properties ?? {},
+    attachedFiles: item.attachedFiles ?? [],
+    metadata: item.metadata ?? {},
+  };
+}
+
+function buildBreadcrumbs(item: MizaanItem, allItems: MizaanItem[]): Breadcrumb[] {
+  const crumbs: Breadcrumb[] = [{ label: "Home", href: "/" }];
+
+  if (item.metadata?.promotedAsSpace === true || item.id.startsWith("space-")) {
+    crumbs.push({ label: item.title });
+    return crumbs;
+  }
+
+  crumbs.push({ label: SPACE_LABELS[item.category], href: SPACE_HREFS[item.category] });
+
+  const chain: MizaanItem[] = [];
+  const visited = new Set<string>();
+  let parentId = item.parentId;
+
+  while (parentId && !visited.has(parentId)) {
+    visited.add(parentId);
+    const parent = allItems.find((entry) => entry.id === parentId);
+    if (!parent) break;
+    chain.unshift(parent);
+    parentId = parent.parentId;
+  }
+
+  chain.forEach((parent) => {
+    if (parent.metadata?.promotedAsSpace === true || parent.id.startsWith("space-")) {
+      return;
+    }
+    crumbs.push({ label: parent.title, href: `/page/${parent.id}` });
+  });
+
+  crumbs.push({ label: item.title });
+  return crumbs;
+}
+
+function typeForCategory(category: ItemCategory): ItemType {
+  const types: Record<ItemCategory, ItemType> = {
+    notes: "note",
+    documents: "document",
+    projects: "project",
+    people: "person",
+    finance: "finance",
+    calendar: "calendar",
+    trackers: "tracker",
+    databases: "database",
+    templates: "template",
+  };
+  return types[category];
+}
+
+function resolveRelations(relations: MizaanRelation[], items: MizaanItem[]): ResolvedRelation[] {
+  return relations.flatMap((relation) => {
+    const source = items.find((item) => item.id === relation.sourceId);
+    const target = items.find((item) => item.id === relation.targetId);
+    if (!source || !target) return [];
+    return [{ relation, source, target }];
+  });
+}

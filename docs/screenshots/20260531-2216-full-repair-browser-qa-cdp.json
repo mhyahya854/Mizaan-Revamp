@@ -1,0 +1,176 @@
+{
+  "routeResults": [
+    {
+      "route": "/",
+      "path": "/",
+      "title": "Home - Mizaan",
+      "hasSidebar": true,
+      "hasSystemTools": true,
+      "hasPrototypeTruth": true,
+      "hasCalendarCore": false,
+      "hasSearch": true,
+      "hasDatabase": false,
+      "hasPageWorkspace": false,
+      "externalLinks": [
+        "http://127.0.0.1:5173/src/styles.css",
+        "http://127.0.0.1:5173/@id/virtual:tanstack-start-dev-client-entry"
+      ],
+      "sample": "M\nMizaan\nPrototype local vault\nSearch pages\nK\nCORE\nHome\nSearch\nGraph\nCalendar\nPINNED\nN\nNotes\nN\nGetting Started\nD\nDocuments\nP\nProjects\nP\nMizaan Revamp\nU\nPeople\n$\nFinance\nT\nTrackers\nPAGES\nUnpinned or recent pages appear here.\nSYSTEM TOOLS\nTemplates\nVault\nTrash\nSettings\nBrowser prototype\nv0.1\nMizaan\nHo"
+    },
+    {
+      "route": "/settings",
+      "path": "/settings",
+      "title": "Settings - Mizaan",
+      "hasSidebar": true,
+      "hasSystemTools": true,
+      "hasPrototypeTruth": true,
+      "hasCalendarCore": false,
+      "hasSearch": true,
+      "hasDatabase": false,
+      "hasPageWorkspace": false,
+      "externalLinks": [
+        "http://127.0.0.1:5173/src/styles.css",
+        "http://127.0.0.1:5173/@id/virtual:tanstack-start-dev-client-entry"
+      ],
+      "sample": "M\nMizaan\nPrototype local vault\nSearch pages\nK\nCORE\nHome\nSearch\nGraph\nCalendar\nPINNED\nN\nNotes\nN\nGetting Started\nD\nDocuments\nP\nProjects\nP\nMizaan Revamp\nU\nPeople\n$\nFinance\nT\nTrackers\nPAGES\nUnpinned or recent pages appear here.\nSYSTEM TOOLS\nTemplates\nVault\nTrash\nSettings\nBrowser prototype\nv0.1\nMizaan\nSe"
+    },
+    {
+      "route": "/vault",
+      "path": "/vault",
+      "title": "Vault - Mizaan",
+      "hasSidebar": true,
+      "hasSystemTools": true,
+      "hasPrototypeTruth": true,
+      "hasCalendarCore": false,
+      "hasSearch": true,
+      "hasDatabase": false,
+      "hasPageWorkspace": false,
+      "externalLinks": [
+        "http://127.0.0.1:5173/src/styles.css",
+        "http://127.0.0.1:5173/@id/virtual:tanstack-start-dev-client-entry"
+      ],
+      "sample": "M\nMizaan\nPrototype local vault\nSearch pages\nK\nCORE\nHome\nSearch\nGraph\nCalendar\nPINNED\nN\nNotes\nN\nGetting Started\nD\nDocuments\nP\nProjects\nP\nMizaan Revamp\nU\nPeople\n$\nFinance\nT\nTrackers\nPAGES\nUnpinned or recent pages appear here.\nSYSTEM TOOLS\nTemplates\nVault\nTrash\nSettings\nBrowser prototype\nv0.1\nMizaan\nVa"
+    },
+    {
+      "route": "/trash",
+      "path": "/trash",
+      "title": "Trash - Mizaan",
+      "hasSidebar": true,
+      "hasSystemTools": true,
+      "hasPrototypeTruth": true,
+      "hasCalendarCore": false,
+      "hasSearch": true,
+      "hasDatabase": false,
+      "hasPageWorkspace": false,
+      "externalLinks": [
+        "http://127.0.0.1:5173/src/styles.css",
+        "http://127.0.0.1:5173/@id/virtual:tanstack-start-dev-client-entry"
+      ],
+      "sample": "M\nMizaan\nPrototype local vault\nSearch pages\nK\nCORE\nHome\nSearch\nGraph\nCalendar\nPINNED\nN\nNotes\nN\nGetting Started\nD\nDocuments\nP\nProjects\nP\nMizaan Revamp\nU\nPeople\n$\nFinance\nT\nTrackers\nPAGES\nUnpinned or recent pages appear here.\nSYSTEM TOOLS\nTemplates\nVault\nTrash\nSettings\nBrowser prototype\nv0.1\nMizaan\nTr"
+    },
+    {
+      "route": "/templates",
+      "path": "/templates",
+      "title": "Templates - Mizaan",
+      "hasSidebar": true,
+      "hasSystemTools": true,
+      "hasPrototypeTruth": true,
+      "hasCalendarCore": false,
+      "hasSearch": true,
+      "hasDatabase": false,
+      "hasPageWorkspace": false,
+      "externalLinks": [
+        "http://127.0.0.1:5173/src/styles.css",
+        "http://127.0.0.1:5173/@id/virtual:tanstack-start-dev-client-entry"
+      ],
+      "sample": "M\nMizaan\nPrototype local vault\nSearch pages\nK\nCORE\nHome\nSearch\nGraph\nCalendar\nPINNED\nN\nNotes\nN\nGetting Started\nD\nDocuments\nP\nProjects\nP\nMizaan Revamp\nU\nPeople\n$\nFinance\nT\nTrackers\nPAGES\nUnpinned or recent pages appear here.\nSYSTEM TOOLS\nTemplates\nVault\nTrash\nSettings\nBrowser prototype\nv0.1\nMizaan\nTe"
+    },
+    {
+      "route": "/calendar",
+      "path": "/calendar",
+      "title": "Calendar - Mizaan",
+      "hasSidebar": true,
+      "hasSystemTools": true,
+      "hasPrototypeTruth": true,
+      "hasCalendarCore": true,
+      "hasSearch": true,
+      "hasDatabase": false,
+      "hasPageWorkspace": false,
+      "externalLinks": [
+        "http://127.0.0.1:5173/src/styles.css",
+        "http://127.0.0.1:5173/@id/virtual:tanstack-start-dev-client-entry"
+      ],
+      "sample": "M\nMizaan\nPrototype local vault\nSearch pages\nK\nCORE\nHome\nSearch\nGraph\nCalendar\nPINNED\nN\nNotes\nN\nGetting Started\nD\nDocuments\nP\nProjects\nP\nMizaan Revamp\nU\nPeople\n$\nFinance\nT\nTrackers\nPAGES\nUnpinned or recent pages appear here.\nSYSTEM TOOLS\nTemplates\nVault\nTrash\nSettings\nBrowser prototype\nv0.1\nMizaan\nCa"
+    },
+    {
+      "route": "/search",
+      "path": "/search",
+      "title": "Search - Mizaan",
+      "hasSidebar": true,
+      "hasSystemTools": true,
+      "hasPrototypeTruth": true,
+      "hasCalendarCore": true,
+      "hasSearch": true,
+      "hasDatabase": false,
+      "hasPageWorkspace": true,
+      "externalLinks": [
+        "http://127.0.0.1:5173/src/styles.css",
+        "http://127.0.0.1:5173/@id/virtual:tanstack-start-dev-client-entry"
+      ],
+      "sample": "M\nMizaan\nPrototype local vault\nSearch pages\nK\nCORE\nHome\nSearch\nGraph\nCalendar\nPINNED\nN\nNotes\nN\nGetting Started\nD\nDocuments\nP\nProjects\nP\nMizaan Revamp\nU\nPeople\n$\nFinance\nT\nTrackers\nPAGES\nUnpinned or recent pages appear here.\nSYSTEM TOOLS\nTemplates\nVault\nTrash\nSettings\nBrowser prototype\nv0.1\nMizaan\nSe"
+    },
+    {
+      "route": "/databases",
+      "path": "/databases",
+      "title": "Databases - Mizaan",
+      "hasSidebar": true,
+      "hasSystemTools": true,
+      "hasPrototypeTruth": true,
+      "hasCalendarCore": false,
+      "hasSearch": true,
+      "hasDatabase": true,
+      "hasPageWorkspace": false,
+      "externalLinks": [
+        "http://127.0.0.1:5173/src/styles.css",
+        "http://127.0.0.1:5173/@id/virtual:tanstack-start-dev-client-entry"
+      ],
+      "sample": "M\nMizaan\nPrototype local vault\nSearch pages\nK\nCORE\nHome\nSearch\nGraph\nCalendar\nPINNED\nN\nNotes\nN\nGetting Started\nD\nDocuments\nP\nProjects\nP\nMizaan Revamp\nU\nPeople\n$\nFinance\nT\nTrackers\nPAGES\nUnpinned or recent pages appear here.\nSYSTEM TOOLS\nTemplates\nVault\nTrash\nSettings\nBrowser prototype\nv0.1\nMizaan\nDa"
+    },
+    {
+      "route": "/graph",
+      "path": "/graph",
+      "title": "Graph - Mizaan",
+      "hasSidebar": true,
+      "hasSystemTools": true,
+      "hasPrototypeTruth": true,
+      "hasCalendarCore": true,
+      "hasSearch": true,
+      "hasDatabase": false,
+      "hasPageWorkspace": true,
+      "externalLinks": [
+        "http://127.0.0.1:5173/src/styles.css",
+        "http://127.0.0.1:5173/@id/virtual:tanstack-start-dev-client-entry"
+      ],
+      "sample": "M\nMizaan\nPrototype local vault\nSearch pages\nK\nCORE\nHome\nSearch\nGraph\nCalendar\nPINNED\nN\nNotes\nN\nGetting Started\nD\nDocuments\nP\nProjects\nP\nMizaan Revamp\nU\nPeople\n$\nFinance\nT\nTrackers\nPAGES\nUnpinned or recent pages appear here.\nSYSTEM TOOLS\nTemplates\nVault\nTrash\nSettings\nBrowser prototype\nv0.1\nMizaan\nGr"
+    },
+    {
+      "route": "/page/note-principles",
+      "path": "/page/note-principles",
+      "title": "Page - Mizaan",
+      "hasSidebar": true,
+      "hasSystemTools": true,
+      "hasPrototypeTruth": true,
+      "hasCalendarCore": false,
+      "hasSearch": true,
+      "hasDatabase": false,
+      "hasPageWorkspace": true,
+      "externalLinks": [
+        "http://127.0.0.1:5173/src/styles.css",
+        "http://127.0.0.1:5173/@id/virtual:tanstack-start-dev-client-entry"
+      ],
+      "sample": "M\nMizaan\nPrototype local vault\nSearch pages\nK\nCORE\nHome\nSearch\nGraph\nCalendar\nPINNED\nN\nNotes\nN\nGetting Started\nD\nDocuments\nP\nProjects\nP\nMizaan Revamp\nU\nPeople\n$\nFinance\nT\nTrackers\nPAGES\nUnpinned or recent pages appear here.\nSYSTEM TOOLS\nTemplates\nVault\nTrash\nSettings\nBrowser prototype\nv0.1\nMizaan\nPa"
+    }
+  ],
+  "consoleErrorCount": 0,
+  "consoleErrors": []
+}

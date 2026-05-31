@@ -1,0 +1,7099 @@
+MIZAAN — ONE PLAN AND GOAL FILE
+Portable Local-First Life Operating System
+Version: 1.0
+Date: 2026-05-28
+Status: Master direction file
+
+====================================================================
+0. PURPOSE OF THIS FILE
+====================================================================
+
+This file is the single master plan for Mizaan.
+
+It defines:
+- what Mizaan is
+- what Mizaan is not
+- how the app should work from first launch to lifetime use
+- how data should be stored
+- how the portable USB/local vault model works
+- how notes, documents, projects, people, finance, calendar, trackers, tasks, themes, graph, templates, backup, restore, and search should work
+- how the current web prototype should evolve into a Windows desktop app
+- how Android/iOS should be approached later
+- what feature sets should be merged, improved, or removed
+- what Codex must understand before writing code in future tasks
+
+This is not a casual idea list.
+This is the product direction.
+
+Mizaan must be built as a lifetime app: boring where it must be boring, powerful where it matters, and always designed so the user’s data survives the app.
+
+====================================================================
+1. THE CORE PRODUCT LAW
+====================================================================
+
+Mizaan is a 100% local-first personal life operating system.
+
+The user owns the data.
+The vault owns the data.
+The app edits the data.
+
+The app must never become the only place where data exists.
+
+Golden rule:
+
+    If Mizaan dies, the data must survive.
+
+That means:
+- no forced cloud
+- no forced login
+- no forced account
+- no Google dependency
+- no Microsoft dependency
+- no Notion dependency
+- no server dependency
+- no subscription dependency
+- no hidden proprietary-only data trap
+
+The app can become powerful, but the user must always be able to inspect, back up, copy, move, restore, and export the vault.
+
+====================================================================
+2. FINAL PRODUCT IDENTITY
+====================================================================
+
+Mizaan is:
+
+    A portable local-first life operating system built around a user-selected vault folder.
+
+It combines the best useful parts of:
+- Notion-style pages, templates, and databases
+- Obsidian-style local ownership, backlinks, graph, and markdown survival
+- Logseq-style blocks, references, journals, and connected thinking
+- Anytype-style objects and relations
+- TickTick-style tasks, calendar, habits, reminders, focus, and review
+- QOwnNotes-style durable local note ownership
+- Tarteeb-style disciplined local file and document management
+
+But Mizaan is not a clone.
+
+Mizaan’s own identity:
+
+    Notes + Documents + Projects + People + Finance + Calendar + Trackers + Tasks + Goals + Graph + Local Vault
+
+Everything is local.
+Everything is linkable.
+Everything is recoverable.
+Everything is organized inside a portable vault folder.
+
+====================================================================
+3. WHAT MIZAAN IS NOT
+====================================================================
+
+Mizaan is not:
+- a cloud workspace
+- a SaaS dashboard
+- a Google Calendar clone with APIs
+- a Notion clone with billing/accounts
+- a Trello clone
+- a Jira clone
+- an AI chatbot dashboard
+- a team collaboration app
+- a CRM sales tool
+- an accounting system
+- a bank-sync finance app
+- a social app
+- a public publishing platform
+- a multi-user organization management system
+
+Mizaan can learn from those products, but it should remove features that do not fit the local lifetime direction.
+
+====================================================================
+4. THE PORTABLE VAULT MODEL
+====================================================================
+
+The easiest way to solve the local/sync conflict:
+
+    Mizaan stores and creates everything inside a portable vault folder.
+
+The vault folder can live on:
+- USB drive
+- external SSD
+- internal laptop folder
+- portable hard drive
+- SD card
+- later, user-controlled NAS/local network folder
+- later, user-chosen folder sync tool, but not app-managed cloud
+
+The app itself is just the editor/manager.
+The vault is the source of truth.
+
+Typical flow:
+
+1. User installs Mizaan on Windows.
+2. User plugs in USB drive.
+3. User opens Mizaan.
+4. Mizaan asks: Create new vault or open existing vault.
+5. User chooses USB folder, e.g. F:\Mizaan Vault.
+6. Mizaan creates the full vault structure there.
+7. User creates notes, imports documents, creates projects, links people, tracks finance, schedules calendar events, and builds graph links.
+8. Mizaan writes everything into that vault.
+9. User closes Mizaan.
+10. User safely ejects USB.
+11. User plugs USB into another laptop.
+12. User opens Mizaan.
+13. User opens the same vault.
+14. All data is available.
+
+This is not cloud sync.
+This is portable vault continuity.
+
+====================================================================
+5. APP START TO END — FULL USER JOURNEY
+====================================================================
+
+--------------------------------------------------------------------
+5.1 First launch
+--------------------------------------------------------------------
+
+User opens Mizaan for the first time.
+
+Screen:
+    Welcome to Mizaan
+    Your private local life operating system.
+    No account. No cloud. Your data lives in your vault.
+
+Buttons:
+- Create New Vault
+- Open Existing Vault
+- Restore from Backup
+- Demo Mode
+
+--------------------------------------------------------------------
+5.2 Create new vault
+--------------------------------------------------------------------
+
+User clicks Create New Vault.
+
+Mizaan asks:
+- Vault name
+- Vault location
+- Storage mode
+
+Default:
+    Mizaan Vault
+
+User chooses location:
+- This computer
+- USB/external drive
+- Choose folder manually
+
+Example:
+    F:\Mizaan Vault
+
+Mizaan runs safety checks:
+- folder exists or can be created
+- folder is writable
+- temporary file can be written
+- temporary file can be deleted
+- enough storage is available
+- vault identity file does not conflict with another vault
+- if USB/external drive is detected, show portable vault notice
+- database can be created
+- backup folder can be created
+
+Then Mizaan creates the vault.
+
+--------------------------------------------------------------------
+5.3 Open existing vault
+--------------------------------------------------------------------
+
+User clicks Open Existing Vault.
+
+Mizaan asks for a folder.
+
+Mizaan checks:
+- does mizaan.vault.json exist?
+- does mizaan.sqlite exist?
+- is schema version supported?
+- is vault locked?
+- are attachments present?
+- is database healthy?
+- is backup status acceptable?
+
+If valid:
+    Open vault.
+
+If missing files:
+    Offer repair.
+
+If locked:
+    Offer read-only / force unlock / cancel.
+
+If not a vault:
+    Ask whether to create a new vault there.
+
+--------------------------------------------------------------------
+5.4 Restore from backup
+--------------------------------------------------------------------
+
+User chooses a backup ZIP.
+
+Mizaan:
+- validates backup manifest
+- validates schema version
+- validates database snapshot
+- validates attachment list if available
+- shows restore preview
+- asks where to restore
+- creates restored vault
+- rebuilds indexes
+- opens vault
+
+Never restore blindly.
+
+--------------------------------------------------------------------
+5.5 Normal app opening
+--------------------------------------------------------------------
+
+On launch, Mizaan tries to open the last used vault.
+
+If found:
+- validate vault
+- check lock
+- open database
+- run migration if needed
+- check backup age
+- rebuild damaged indexes if needed
+- open Home
+
+If missing:
+    Last vault not found. Connect USB or choose another vault.
+
+Options:
+- Retry
+- Open another vault
+- Restore backup
+- Demo Mode
+
+--------------------------------------------------------------------
+5.6 Normal app closing
+--------------------------------------------------------------------
+
+On close, Mizaan:
+- flushes pending writes
+- updates updatedAt and vault metadata
+- optionally writes markdown mirrors
+- writes close log
+- removes vault lock
+- warns if backup is overdue
+
+If vault is on USB:
+    Suggest safe eject after app closes.
+
+====================================================================
+6. VAULT FOLDER STRUCTURE
+====================================================================
+
+The final vault should look like this:
+
+Mizaan Vault/
+  mizaan.vault.json
+  mizaan.sqlite
+
+  content/
+    notes/
+    documents/
+    projects/
+    people/
+    finance/
+    calendar/
+    trackers/
+    tasks/
+    goals/
+    databases/
+    canvases/
+
+  attachments/
+    documents/
+    images/
+    audio/
+    video/
+    files/
+    thumbnails/
+
+  indexes/
+    search/
+    graph/
+    backlinks/
+    ocr/
+    metadata/
+
+  templates/
+    notes/
+    documents/
+    projects/
+    people/
+    finance/
+    calendar/
+    trackers/
+    tasks/
+    goals/
+
+  exports/
+    markdown/
+    json/
+    csv/
+    pdf/
+    docx/
+    ics/
+
+  backups/
+    snapshots/
+    automatic/
+    manual/
+    before-migration/
+    before-restore/
+    before-import/
+
+  logs/
+    app.log
+    migration.log
+    backup.log
+    repair.log
+    import.log
+    export.log
+
+  themes/
+    mizaan-light.json
+    mizaan-dark.json
+    warm-paper.json
+    graphite-dark.json
+    sepia-reading.json
+    oled-black.json
+    academic.json
+    high-contrast.json
+
+  trash/
+    items/
+    attachments/
+
+  config/
+    user-settings.json
+    vault-settings.json
+    device-registry.json
+    schema-version.json
+
+Important rules:
+- SQLite is used for speed and structure.
+- Human-readable mirrors protect data from lock-in.
+- Attachments live as normal files.
+- Indexes are rebuildable.
+- Backups are versioned.
+- Logs explain what happened.
+- Themes are editable JSON tokens.
+- The vault is inspectable.
+
+====================================================================
+7. VAULT IDENTITY FILE
+====================================================================
+
+mizaan.vault.json stores vault identity.
+
+Example:
+
+{
+  "vaultId": "uuid",
+  "vaultName": "Mizaan Vault",
+  "createdAt": "2026-05-28T00:00:00Z",
+  "lastOpenedAt": "2026-05-28T00:00:00Z",
+  "schemaVersion": 1,
+  "appMinimumVersion": "0.1.0",
+  "storageMode": "portable-vault",
+  "dataFormat": "sqlite-plus-files"
+}
+
+Purpose:
+- identify folder as Mizaan vault
+- prevent opening wrong folder
+- support migrations
+- support backup/restore
+- support future app compatibility checks
+
+====================================================================
+8. LOCK FILE SYSTEM
+====================================================================
+
+When Mizaan opens a vault, it creates:
+
+    .mizaan-lock
+
+Example:
+
+{
+  "deviceId": "device_uuid",
+  "deviceName": "Mohammad-PC",
+  "openedAt": "2026-05-28T00:00:00Z",
+  "appVersion": "0.1.0",
+  "processId": "optional"
+}
+
+Purpose:
+- prevent the same vault from being edited on two devices at once
+- protect USB/external drive use
+- help recover from bad shutdown
+
+If lock exists:
+- show warning
+- allow read-only open
+- allow force unlock only after confirmation
+- show device name and last open time
+
+Rules:
+- app removes lock on clean close
+- stale lock requires recovery prompt
+- never silently overwrite lock
+
+====================================================================
+9. STORAGE ARCHITECTURE
+====================================================================
+
+Current app state:
+- web app
+- localStorage model
+- local items
+- template registry
+- editor
+- relations
+- backup UI
+
+Lifetime direction:
+- Windows desktop app
+- Tauri shell
+- SQLite database
+- filesystem vault
+- portable USB/external drive support
+- backup/restore engine
+- markdown/JSON mirrors
+- search/graph indexes
+
+Storage layers:
+
+1. App layer
+    React/TypeScript UI
+
+2. Vault abstraction
+    Shared interface used by the UI
+
+3. Provider layer
+    Current: LocalStorageVaultProvider
+    Future: TauriSQLiteVaultProvider
+
+4. Database layer
+    SQLite tables
+
+5. File layer
+    attachments, mirrors, backups, logs, indexes
+
+Do not tie UI directly to localStorage forever.
+Create a VaultProvider interface.
+
+Example interface:
+
+VaultProvider:
+  createVault()
+  openVault()
+  closeVault()
+  getVaultInfo()
+  listItems()
+  getItem(id)
+  createItem(input)
+  updateItem(id, patch)
+  deleteItem(id)
+  archiveItem(id)
+  restoreItem(id)
+  listBlocks(itemId)
+  updateBlocks(itemId, blocks)
+  listRelations(itemId)
+  addRelation()
+  removeRelation()
+  importFile()
+  exportBackup()
+  restoreBackup()
+  rebuildIndexes()
+  checkHealth()
+
+====================================================================
+10. DATABASE MODEL
+====================================================================
+
+Core tables:
+
+items
+blocks
+relations
+properties
+tags
+item_tags
+attachments
+templates
+calendar_events
+tasks
+tracker_entries
+finance_records
+revisions
+snapshots
+graph_edges
+search_index
+settings
+themes
+backup_history
+migration_history
+device_registry
+trash
+
+--------------------------------------------------------------------
+10.1 items
+--------------------------------------------------------------------
+
+Fields:
+- id
+- type
+- category
+- title
+- icon
+- cover
+- summary
+- created_at
+- updated_at
+- archived_at
+- deleted_at
+- version
+- device_id
+- path_hint
+- pinned
+- favorite
+- private
+- metadata_json
+
+Types:
+- note
+- document
+- project
+- person
+- finance
+- calendar
+- tracker
+- task
+- goal
+- database
+- template
+- canvas
+- attachment
+- daily-note
+- journal
+- bookmark
+- reference
+
+--------------------------------------------------------------------
+10.2 blocks
+--------------------------------------------------------------------
+
+Fields:
+- id
+- item_id
+- parent_block_id
+- type
+- content
+- order_index
+- checked
+- collapsed
+- metadata_json
+- created_at
+- updated_at
+
+Block types:
+- paragraph
+- heading1
+- heading2
+- heading3
+- bullet
+- numbered
+- todo
+- quote
+- callout
+- divider
+- toggle
+- code
+- table
+- image
+- file
+- embed
+- equation
+- breadcrumb
+- table_of_contents
+- relation
+- database_view
+- chart_later
+
+--------------------------------------------------------------------
+10.3 relations
+--------------------------------------------------------------------
+
+Fields:
+- id
+- source_id
+- target_id
+- relation_type
+- label
+- created_at
+- metadata_json
+
+Relation examples:
+- note_to_note
+- note_to_document
+- project_to_note
+- project_to_document
+- person_to_project
+- finance_to_receipt
+- event_to_project
+- tracker_to_goal
+- task_to_project
+
+--------------------------------------------------------------------
+10.4 attachments
+--------------------------------------------------------------------
+
+Fields:
+- id
+- item_id
+- original_name
+- stored_name
+- vault_path
+- original_path
+- mime_type
+- extension
+- size_bytes
+- checksum_sha256
+- imported_at
+- last_seen_at
+- missing
+- metadata_json
+
+--------------------------------------------------------------------
+10.5 revisions
+--------------------------------------------------------------------
+
+Fields:
+- id
+- item_id
+- revision_type
+- created_at
+- snapshot_json
+- reason
+- device_id
+
+Used for:
+- version history
+- restore
+- compare
+- rollback
+
+====================================================================
+11. HUMAN-READABLE MIRRORS
+====================================================================
+
+Mizaan should store fast structured data in SQLite, but also write portable mirrors.
+
+Example note file:
+
+content/notes/2026/05/mizaan-vault-plan.md
+
+With frontmatter:
+
+---
+id: item_uuid
+type: note
+category: notes
+created: 2026-05-28T00:00:00Z
+updated: 2026-05-28T00:00:00Z
+tags: [mizaan, vault, planning]
+relations: []
+---
+
+Readable markdown content here.
+
+Purpose:
+- data survives app death
+- external inspection possible
+- easy export/import
+- future migration easier
+
+Rules:
+- database is authoritative during app runtime
+- mirror files are updated after debounce
+- mirror regeneration must be possible
+- deleted mirror should be repairable from database
+- damaged database should be partially recoverable from mirrors
+
+====================================================================
+12. FEATURE DECISION RULES
+====================================================================
+
+When copying feature ideas from Notion, Obsidian, Logseq, TickTick, Anytype, AppFlowy, QOwnNotes, or others:
+
+Keep if it supports:
+- local ownership
+- lifetime data survival
+- personal organization
+- linking/graph knowledge
+- document management
+- fast capture
+- planning
+- backup/recovery
+- exportability
+- portable vault workflow
+
+Remove or defer if it requires:
+- cloud accounts
+- team permissions
+- public publishing
+- billing
+- shared workspaces
+- online collaboration
+- admin dashboards
+- external APIs
+- enterprise management
+- real-time multiplayer
+- webhooks
+- SaaS automation
+- online invites
+- hosted forms
+- payment systems
+
+Mizaan should merge useful feature categories, not blindly copy entire products.
+
+====================================================================
+13. CORE SPACES
+====================================================================
+
+Main sidebar spaces:
+
+- Home
+- Databases
+- Graph
+- Search
+
+
+Current active spaces:
+- Notes
+- Documents
+- Projects
+- People
+- Finance
+- Calendar
+- Trackers
+(Actice spaces can be pinned and then they show up on the main sidebar)
+Bottom
+- Templates
+- Trash
+- Settings
+
+Next additions:
+- Tasks
+- Goals
+- Databases
+- Graph improvements
+- Vault/Backups section
+
+====================================================================
+14. HOME
+====================================================================
+
+Home should be calm and useful, not a dashboard full of fake cards.
+
+Home shows:
+- quick capture
+- recent notes
+- recent documents
+- today’s tasks
+- today’s calendar
+- pinned projects
+- overdue items
+- backup warning if needed
+- vault health status
+- continue where you left off
+
+No giant analytics dashboard.
+No fake statistics.
+No cloud prompts.
+
+====================================================================
+15. NOTES SYSTEM
+====================================================================
+
+Notes are the heart of Mizaan.
+
+Features:
+- plain text notes
+- rich text notes
+- block editor notes
+- markdown shortcuts
+- slash commands
+- nested pages
+- subpages
+- backlinks
+- outgoing links
+- unlinked mentions
+- page mentions
+- date mentions
+- tag mentions
+- aliases
+- daily notes
+- journal pages
+- meeting notes
+- lecture notes
+- research notes
+- quick capture
+- scratchpad
+- brainstorm
+- long-form writing
+- checklist notes
+- note templates
+- note history
+- restore previous version
+- export markdown
+- export PDF
+- export DOCX later
+- duplicate note
+- move note
+- archive note
+- trash restore
+- private note lock later
+
+Writing features:
+- focus mode
+- typewriter mode
+- distraction-free writing
+- side-by-side compare
+- version compare
+- word count
+- reading time
+- writing goals
+
+Linking features:
+- broken link detection
+- orphan note detection
+- unused note cleanup
+- backlink ranking
+- contextual references
+- block references later
+
+Note safety:
+- snapshots
+- schema migrations
+- corruption recovery
+- markdown mirror
+- restore individual note versions
+
+====================================================================
+16. EDITOR SYSTEM
+====================================================================
+
+Current editor exists, but lifetime editor should become stronger.
+
+Required behavior:
+- inline title editing
+- inline block editing
+- Enter creates new block
+- Backspace merges/removes empty block safely
+- slash command menu
+- keyboard navigation
+- block movement
+- drag/drop if stable
+- safe up/down controls
+- auto-save
+- version history
+- markdown shortcuts
+- block conversion
+- block duplication
+- block deletion
+- block copy
+- move block to another page later
+- copy block link later
+- multi-select blocks later
+
+Long-term editor foundation options:
+- keep custom editor only if it remains stable
+- otherwise migrate to a mature editor framework such as Tiptap/ProseMirror or Lexical
+
+Important rule:
+The editor UI must never become the only data model.
+Data must remain portable.
+
+====================================================================
+17. DOCUMENT SYSTEM
+====================================================================
+
+Documents are first-class objects.
+
+Supported imports:
+- PDF
+- images
+- Office docs
+- text files
+- markdown
+- CSV
+- folders
+- scanned documents
+- receipts
+- certificates
+- identity documents
+- contracts
+
+Document import flow:
+1. user imports file/folder
+2. Mizaan asks copy into vault or link original
+3. default is copy into vault
+4. calculate checksum
+5. detect file type
+6. check duplicate
+7. copy into attachments/documents or relevant folder
+8. create document item
+9. extract metadata
+10. generate thumbnail
+11. OCR later
+12. index text
+13. suggest links
+14. open document page
+
+Document page shows:
+- preview
+- title
+- metadata
+- original filename
+- stored vault path
+- checksum
+- file size
+- import date
+- OCR status
+- tags
+- linked notes
+- linked projects
+- linked people
+- linked finance
+- related documents
+- open file
+- reveal in folder
+- repair missing file
+- export
+
+Document intelligence:
+- OCR with local engine later
+- searchable PDFs
+- scanned document text extraction
+- duplicate detection
+- near duplicate detection
+- version variant detection
+- renamed duplicate detection
+- related document suggestions
+
+Repair tools:
+- missing file relinker
+- moved file repair
+- broken preview rebuild
+- thumbnail rebuild
+- metadata reindex
+
+====================================================================
+18. PROJECT SYSTEM
+====================================================================
+
+A project is a container for work.
+
+Project page includes:
+- overview
+- status
+- notes
+- documents
+- tasks
+- milestones
+- people
+- finance records
+- calendar events
+- decisions
+- activity log
+- timeline
+- graph
+- archive state
+
+Project features:
+- project templates
+- duplicate project
+- archive project
+- close project
+- project snapshot
+- project export
+- project review
+- linked project notes
+- linked project documents
+- project task board
+- project calendar
+
+Project types:
+- personal project
+- academic project
+- software project
+- research project
+- document project
+- finance project
+- health project
+
+====================================================================
+19. TASK SYSTEM
+====================================================================
+
+Tasks should be app-wide, not trapped inside one module.
+
+Features:
+- inbox
+- today
+- upcoming
+- overdue
+- someday
+- waiting
+- project tasks
+- recurring tasks
+- subtasks
+- priorities
+- due dates
+- reminders
+- status
+- tags
+- task notes
+- attachments
+- effort estimate
+- energy context
+- dependency chains later
+- snooze
+- defer
+- review mode
+- calendar scheduling
+- task templates
+
+Views:
+- list
+- board
+- calendar
+- timeline later
+- Eisenhower matrix later
+
+Fields:
+- title
+- description
+- due date
+- due time
+- priority
+- status
+- project
+- tags
+- recurrence
+- reminder
+- completed_at
+- notes
+
+====================================================================
+20. CALENDAR SYSTEM
+====================================================================
+
+Mizaan calendar is a local planner/calendar engine.
+
+No Google API.
+No Microsoft API.
+No server invitations.
+
+Required:
+- day view
+- week view
+- month view
+- year view later
+- agenda view
+- today view
+- upcoming view
+- mini calendar
+- event creation
+- event editing
+- event deletion
+- all-day events
+- multi-day events
+- recurring events
+- recurring exceptions
+- reminders
+- local notifications in desktop app
+- tasks on calendar
+- deadlines
+- study blocks
+- exam countdowns
+- focus blocks
+- linked projects
+- linked notes
+- linked people
+- ICS import
+- ICS export
+- timezone handling
+- DST correctness
+- print calendar
+- export PDF
+
+Calendar event types:
+- normal event
+- all-day event
+- task
+- deadline
+- reminder
+- exam
+- class
+- study block
+- focus block
+- birthday
+- bill/payment
+- appointment
+- travel
+- habit/check-in
+
+Recurring event rules:
+- daily
+- weekly
+- monthly
+- yearly
+- every weekday
+- custom repeat
+- end never
+- end on date
+- end after occurrences
+- edit this event only
+- edit this and future
+- edit entire series
+- delete this event only
+- delete future
+- delete entire series
+
+====================================================================
+21. TRACKERS SYSTEM
+====================================================================
+
+Trackers should combine habit tracking, progress tracking, review, and personal metrics.
+
+Tracker types:
+- habit tracker
+- study tracker
+- mood tracker
+- health tracker
+- reading tracker
+- goal tracker
+- finance tracker
+- progress tracker
+- custom tracker
+
+Features:
+- check-ins
+- streaks
+- skipped vs failed distinction
+- freeze streak logic
+- notes per check-in
+- calendar heatmap
+- weekly review
+- monthly review
+- charts
+- trend views
+- tracker templates
+- reminders
+- linked goals
+- linked tasks
+- linked notes
+
+====================================================================
+22. GOALS SYSTEM
+====================================================================
+
+Goals connect projects, tasks, habits, notes, and calendar.
+
+Features:
+- long-term goals
+- short-term goals
+- milestones
+- linked tasks
+- linked habits
+- linked projects
+- linked notes
+- progress visualization
+- reviews
+- deadline
+- status
+- priority
+- reason/why field
+- goal archive
+
+Goal views:
+- active goals
+- completed goals
+- abandoned goals
+- yearly goals
+- monthly goals
+- linked graph
+
+====================================================================
+23. PEOPLE SYSTEM
+====================================================================
+
+People is a personal knowledge system, not sales CRM.
+
+Features:
+- person profiles
+- relationship notes
+- context memory
+- interaction timeline
+- meeting notes
+- associated docs
+- associated projects
+- birthdays
+- important dates
+- communication preferences
+- trust labels
+- tags
+- custom fields
+- reminders
+- private lock later
+- relationship graph
+- people templates
+
+Person page:
+- name
+- nickname/context
+- relation type
+- where known from
+- tags
+- important dates
+- notes
+- interaction history
+- linked notes
+- linked documents
+- linked projects
+- linked calendar events
+
+====================================================================
+24. FINANCE SYSTEM
+====================================================================
+
+Finance should exist, but not become full accounting software.
+
+Features:
+- expenses
+- income
+- receipts
+- subscriptions
+- bills
+- budgets
+- loans
+- accounts
+- payment records
+- finance notes
+- receipt/document linking
+- monthly review
+- category reports
+- CSV export
+- finance templates
+
+Do not add:
+- bank sync
+- payment APIs
+- tax engine
+- multi-user accounting
+- online finance connections
+
+Finance pages:
+- expense record
+- income record
+- subscription tracker
+- bill tracker
+- receipt log
+- budget page
+- loan record
+- account summary
+
+====================================================================
+25. DATABASE SYSTEM
+====================================================================
+
+Mizaan needs Notion-like databases, but in phases.
+
+Phase 1:
+- table view
+- list view
+- custom fields
+- filters
+- sorting
+- grouping
+- tags
+- status
+- date
+- checkbox
+- text
+- number
+- select
+- multi-select
+
+Phase 2:
+- board view
+- calendar view
+- gallery view
+- timeline view
+- saved views
+- database templates
+
+Phase 3:
+- relations
+- rollups
+- formulas
+- charts
+- dashboards
+- forms maybe local-only
+
+Properties:
+- title/name
+- text
+- number
+- select
+- multi-select
+- status
+- date
+- checkbox
+- URL
+- email
+- phone
+- file
+- relation
+- rollup later
+- formula later
+- created time
+- updated time
+- ID
+
+Rules:
+- no team permission complexity
+- no public forms
+- no cloud automations
+- no external synced databases
+- no billing/admin features
+
+--------------------------------------------------------------------
+26. Graph System
+--------------------------------------------------------------------
+====================================================================
+26. GRAPH SYSTEM
+================
+
+Mizaan needs a complete graph system inspired by Obsidian, Logseq, Anytype, mind-mapping tools, and manual diagram tools.
+
+The graph system must support three different graph layers:
+
+1. Global Graph
+
+   * automatic graph of the whole vault
+   * generated from real Mizaan data
+   * used for vault-wide discovery
+
+2. Automatic Local Graph
+
+   * automatic graph around the current page/item
+   * generated from backlinks, outgoing links, relations, attachments, tags, and nearby items
+   * used to understand the current page context
+
+3. Manual Local Graph / Page Canvas Graph
+
+   * user-created editable graph
+   * saved inside one page, document, project, person profile, or vault canvas
+   * does not require graph nodes to be real Mizaan pages
+   * supports editable nodes, arrows, edge labels, custom relationship types, family trees, mind maps, concept maps, and custom diagrams
+
+Important rule:
+
+```
+Global Graph and Automatic Local Graph are generated by Mizaan.
+Manual Local Graph is drawn by the user.
+```
+
+
+====================================================================
+IMPLEMENTATION STATUS TRACKER
+====================================================================
+
+Status audit date: 2026-05-29
+
+Phase 1 — Master Plan, Folder Selection, and Audit - partially implemented — docs and audits exist; this folder has no Git metadata.
+Phase 2 — VaultProvider Abstraction ✅
+Phase 3 — Vault Lifecycle Boundary - partially implemented — prototype local vault lifecycle exists; demo mode has no isolated storage sandbox.
+Phase 4 — Notion-like Page Workspace and Editor Foundation - partially implemented — sidebar zones, template-first creation, page workspace, editor foundation, properties, relations, relation-based backlinks/outgoing context, subpages foundation, browser QA, and screenshots exist; full rich editor, wiki-link indexing, and automatic graph remain later.
+Phase 5 — Editable Simple Table and Basic Database Foundation - partially implemented — simple table blocks and basic database table pages are editable and provider-backed; formulas, rollups, advanced views, and the final database engine remain later.
+Phase 6 — Native Windows/Tauri Readiness Boundary ❌ — blueprint exists, implementation not started.
+Portable folder vault ❌ — real folder picker, lock file, and USB vault workflow are not implemented.
+SQLite provider ❌ — not implemented.
+Markdown mirrors ❌ — not implemented.
+Document import and preview pipeline ❌ — not implemented.
+Search/backlinks/graph indexes - partially implemented — basic page search and relation context exist; full block index, wiki-link backlinks, and graph indexes remain later.
+Manual Local Graph / Page Canvas Graph ❌ — not implemented.
+Final database engine - partially implemented — basic editable local tables exist; advanced properties, views, formulas, rollups, and import/export remain later.
+Calendar/task/tracker/goal engines - partially implemented — provider-backed calendar and tracker page records exist; full engines remain later.
+Backup/restore/repair/migration ❌ — not implemented.
+Settings/themes/privacy - partially implemented — Settings shows provider and vault truth; privacy controls and app lock remain later.
+The graph system must not be fake UI.
+Every graph node and edge must either come from real data or from a real saved manual graph.
+
+====================================================================
+26.1 CORE GRAPH CONCEPT
+=======================
+
+The graph is not a separate app.
+
+The graph is a visual map of Mizaan’s data.
+
+It does not replace pages.
+It does not replace files.
+It does not replace folders.
+It does not replace databases.
+It shows how everything is connected.
+
+Mizaan graph data comes from:
+
+* pages
+* notes
+* documents
+* imported files
+* projects
+* people
+* finance records
+* calendar events
+* tasks
+* trackers
+* goals
+* tags
+* dates
+* attachments
+* relations
+* backlinks
+* wiki links
+* parent/subpage structures
+* database relations
+* manual graph blocks
+
+Core rule:
+
+```
+The page is the real thing.
+The graph shows how pages/things connect.
+```
+
+Example:
+
+Page: Anatomy Cranial Nerves
+
+* links to Page: Anatomy Exam
+* links to File: Cranial Nerve Diagram.png
+* tagged #anatomy
+* mentions Date: 2026-06-23
+
+Graph:
+
+* Anatomy Cranial Nerves ── linked_to ── Anatomy Exam
+* Anatomy Cranial Nerves ── attached_file ── Cranial Nerve Diagram.png
+* Anatomy Cranial Nerves ── tagged ── anatomy
+* Anatomy Cranial Nerves ── mentions_date ── 2026-06-23
+
+====================================================================
+26.2 MIZAAN HIERARCHY USED BY THE GRAPH
+=======================================
+
+Mizaan uses this hierarchy:
+
+Vault
+Space
+Page / Item
+Blocks
+Relations
+Attachments
+Properties
+
+The graph reads from this structure.
+
+Example:
+
+Mohammad's Mizaan Vault
+Notes
+Anatomy Cranial Nerves
+Documents
+Cranial Nerve Diagram
+Calendar
+Anatomy Practical Exam
+Projects
+Anatomy Exam Prep
+
+Graph:
+
+Anatomy Exam Prep
+├── Anatomy Cranial Nerves
+├── Cranial Nerve Diagram
+└── Anatomy Practical Exam
+
+Definitions:
+
+Vault:
+
+* the full local folder/database system
+* contains all Mizaan data
+
+Space:
+
+* top-level area such as Notes, Documents, Projects, People, Finance, Calendar, Tasks, Trackers, Goals
+
+Page / Item:
+
+* the main object the user opens and edits
+* examples: note, document record, project page, person profile, task, event, goal
+
+Block:
+
+* content inside a page
+* examples: paragraph, heading, checklist, table, image, file, graph block
+
+Relation:
+
+* connection between pages/items
+
+Attachment:
+
+* imported or linked file
+
+Property:
+
+* structured metadata such as status, date, tags, priority, amount, person, project
+
+====================================================================
+26.3 GRAPH NODES
+================
+
+A graph node is a thing that appears in the graph as a dot, card, or visual object.
+
+Default graph nodes:
+
+* note
+* document
+* project
+* person
+* finance record
+* calendar event
+* tracker
+* task
+* goal
+* database
+* canvas
+* tag
+* date
+* attachment/file
+
+Optional advanced graph nodes:
+
+* individual blocks
+* headings
+* folders
+* aliases
+* unresolved links
+* backups/snapshots
+* imported sources
+* OCR text source
+* database views
+
+Default rule:
+
+```
+The default graph should show pages/items, not every paragraph.
+```
+
+Reason:
+If every block appears by default, the graph becomes too noisy and unusable.
+
+Advanced users can enable block-level graph later.
+
+---
+
+## 26.3.1 Node display
+
+Each node should show:
+
+* icon
+* title
+* type color
+* small status dot if needed
+* optional tag indicator
+* optional private/locked indicator
+* optional broken/missing warning
+
+Node examples:
+
+Note node:
+
+* document/page icon
+
+Document node:
+
+* file/PDF icon
+
+Project node:
+
+* folder/briefcase icon
+
+Person node:
+
+* user icon
+
+Finance node:
+
+* receipt/money icon
+
+Calendar node:
+
+* calendar icon
+
+Task node:
+
+* checkbox icon
+
+Goal node:
+
+* target icon
+
+Tag node:
+
+* hashtag icon
+
+Date node:
+
+* calendar/date icon
+
+Attachment node:
+
+* paperclip/file icon
+
+---
+
+## 26.3.2 Node hover behavior
+
+On hover, a node should show:
+
+* title
+* type
+* space/category
+* number of links
+* tags
+* last edited date
+* quick open button
+
+---
+
+## 26.3.3 Node click behavior
+
+Single click:
+
+* selects the node
+* shows details in right panel
+
+Double click:
+
+* opens the related page/item
+
+Right click:
+
+* shows context menu
+
+Context menu options:
+
+* open page
+* open in side panel
+* show local graph
+* hide node
+* pin node
+* copy link
+* add relation
+* remove from saved graph view if applicable
+
+====================================================================
+26.4 GRAPH EDGES
+================
+
+A graph edge is the connection line between two nodes.
+
+Edges can be automatic or manual.
+
+Automatic edges come from real Mizaan data.
+Manual edges are drawn by the user in Manual Local Graph / Page Canvas Graph.
+
+Edge types:
+
+* explicit_relation
+* wikilink
+* backlink
+* attachment
+* tag
+* parent_child
+* database_relation
+* project_task
+* calendar_task
+* person_project
+* document_note
+* block_reference
+* date_mention
+* unresolved_link
+* manual_edge
+* family_relation
+* dependency
+* custom
+
+Example:
+
+Project: Mizaan App
+── has_note ── Note: Vault Architecture
+── has_document ── Document: App Mockup.png
+── has_task ── Task: Add Tauri Shell
+── has_event ── Calendar Event: Mizaan Review
+
+---
+
+## 26.4.1 Edge direction and arrows
+
+Edges must support arrows.
+
+Every edge can be:
+
+1. Undirected
+   Example:
+   Person A ── married to ── Person B
+
+2. Source to target
+   Example:
+   Parent ─────────▶ Child
+
+3. Target to source
+   Example:
+   Child ◀──────── Parent
+
+4. Bidirectional
+   Example:
+   Person A ◀──────▶ Person B
+
+Edge direction options:
+
+* undirected
+* source_to_target
+* target_to_source
+* bidirectional
+
+This is required for family trees, task dependencies, cause/effect diagrams, project maps, study diagrams, and manual concept maps.
+
+---
+
+## 26.4.2 Edge labels
+
+Edges must support labels.
+
+Examples:
+
+* parent of
+* child of
+* spouse of
+* sibling of
+* cousin of
+* depends on
+* causes
+* supports
+* contradicts
+* belongs to
+* attached file
+* linked note
+* tagged
+* due for
+* related to
+* custom label
+
+The label should appear on hover by default.
+For manual graphs, user can choose to always show labels.
+
+---
+
+## 26.4.3 Edge visual styles
+
+Edge styles:
+
+* solid
+* dashed
+* dotted
+* thick
+* weak/faded
+* warning
+* custom
+
+Suggested visual meanings:
+
+Solid line:
+
+* explicit/manual relation
+
+Dashed line:
+
+* automatic wiki link
+
+Thin line:
+
+* tag/date reference
+
+Paperclip-style line:
+
+* attachment
+
+Bold line:
+
+* important/manual relation
+
+Faded line:
+
+* hidden/weak/low-confidence relation
+
+Warning/red line:
+
+* broken or unresolved link
+
+Arrow line:
+
+* directed relation
+
+Double-arrow line:
+
+* bidirectional relation
+
+---
+
+## 26.4.4 Edge click behavior
+
+Clicking an edge should show:
+
+* source node
+* target node
+* edge type
+* label
+* direction
+* created date
+* source of edge
+* remove action if manual
+* open source
+* open target
+
+For automatic edges, removal should not delete the source content.
+Example:
+Removing an automatic wikilink edge should tell user:
+This edge comes from a page link. Remove or edit the link inside the page instead.
+
+====================================================================
+26.5 HOW PAGES CREATE GRAPH LINKS
+=================================
+
+A page can create graph links in several ways.
+
+---
+
+## 26.5.1 Explicit relation picker
+
+User manually links one item/page to another.
+
+Example:
+
+Project: Mizaan App
+Relation: linked document → Tauri Setup Notes
+
+Graph edge:
+
+Mizaan App ── linked_document ── Tauri Setup Notes
+
+This relation is stored as a real relation record.
+
+---
+
+## 26.5.2 Wiki-style page links
+
+User types:
+
+[[Tauri Windows Plan]]
+
+Mizaan detects this and creates an automatic graph edge.
+
+Graph edge:
+
+Current Page ── wikilink ── Tauri Windows Plan
+
+If the target page exists:
+
+* edge resolves to that page
+
+If target page does not exist:
+
+* create unresolved link node
+
+Example:
+
+Current Page ── unresolved_link ── Future Android Sync Plan
+
+Clicking unresolved link node should offer:
+
+* create page
+* ignore
+* rename link
+* search similar pages
+
+---
+
+## 26.5.3 Tags
+
+User types:
+
+#anatomy
+#exam
+#urgent
+
+Graph edges:
+
+Page ── tagged ── anatomy
+Page ── tagged ── exam
+Page ── tagged ── urgent
+
+Tag nodes can show:
+
+* all pages using the tag
+* most connected tags
+* orphan tags
+* tag clusters
+
+---
+
+## 26.5.4 Attachments/files
+
+User attaches/imports a file.
+
+Example:
+
+cranial-nerve-diagram.png
+
+Graph edge:
+
+Anatomy Cranial Nerves ── attached_file ── cranial-nerve-diagram.png
+
+If the file has a Document Page, edge should connect to the Document Page first.
+
+Example:
+
+Anatomy Cranial Nerves ── references ── Document Page: Cranial Nerve Diagram
+Document Page: Cranial Nerve Diagram ── stored_file ── cranial-nerve-diagram.png
+
+---
+
+## 26.5.5 Dates
+
+User adds a date mention or calendar relation.
+
+Example:
+
+[[2026-06-23]]
+@date:2026-06-23
+Due date: 2026-06-23
+
+Graph edge:
+
+Page ── mentions_date ── 2026-06-23
+
+Date nodes can help show exam dates, deadlines, birthdays, and calendar planning.
+
+---
+
+## 26.5.6 People mentions
+
+User mentions a person.
+
+Example:
+
+@Ahmed
+
+Graph edge:
+
+Current Page ── mentions_person ── Ahmed
+
+If Ahmed has a Person Page, the mention links there.
+If not, Mizaan may suggest creating a Person Page.
+
+---
+
+## 26.5.7 Parent/subpage relationship
+
+If a page is nested under another page:
+
+Parent Page
+Subpage
+
+Graph edge:
+
+Parent Page ── parent_of ── Subpage
+
+Direction:
+
+Parent Page ─────────▶ Subpage
+
+---
+
+## 26.5.8 Database relations
+
+If a database row has a relation property:
+
+Task: Add SQLite Provider
+Project: Mizaan Windows App
+
+Graph edge:
+
+Task: Add SQLite Provider ── belongs_to_project ── Mizaan Windows App
+
+====================================================================
+26.6 HOW FILES WORK IN THE GRAPH
+================================
+
+A file should not be hidden as a random attachment only.
+
+Every important imported file should get a Document Page.
+
+Example:
+
+User imports:
+
+passport_scan.pdf
+
+Mizaan creates:
+
+Document Page:
+Passport Scan
+
+Attachment File:
+passport_scan.pdf
+
+Graph:
+
+Person: Mohammad ── owns_document ── Document: Passport Scan
+Document: Passport Scan ── stored_file ── passport_scan.pdf
+
+Inside vault:
+
+Mizaan Vault/
+content/
+documents/
+passport-scan.md or passport-scan.json
+
+attachments/
+documents/
+passport-scan.pdf
+
+Inside the app:
+
+Documents → Passport Scan
+
+The user sees the Document Page, not the raw file path first.
+
+---
+
+## 26.6.1 Document node
+
+Document node represents the Mizaan Document Page.
+
+It stores:
+
+* title
+* type
+* tags
+* metadata
+* relations
+* OCR status
+* linked notes
+* linked people
+* linked projects
+* linked finance
+* linked calendar events
+
+---
+
+## 26.6.2 Attachment node
+
+Attachment node represents the physical file.
+
+It stores:
+
+* file name
+* vault path
+* file type
+* checksum
+* file size
+* original path
+* missing status
+* thumbnail path
+
+By default, the graph may show Document Pages but hide raw Attachment nodes unless the user enables file-level detail.
+
+====================================================================
+26.7 PHYSICAL FILE LAYOUT FOR GRAPH-RELATED DATA
+================================================
+
+A page and a file are related but not the same.
+
+Note page:
+
+content/
+notes/
+anatomy-cranial-nerves.md
+
+Document page:
+
+content/
+documents/
+passport-scan.md
+
+Actual PDF file:
+
+attachments/
+documents/
+passport-scan.pdf
+
+Graph cache:
+
+indexes/
+graph/
+graph-cache.json
+unresolved-links.json
+backlinks-cache.json
+layout-global.json
+saved-views.json
+
+Manual graph JSON mirrors:
+
+content/
+canvases/
+family-tree-example.graph.json
+
+Important rule:
+
+```
+indexes/graph is rebuildable.
+mizaan.sqlite + content + attachments are source of truth.
+```
+
+====================================================================
+26.8 GRAPH DATABASE TABLES
+==========================
+
+Mizaan should have proper graph-related tables.
+
+---
+
+## 26.8.1 graph_edges
+
+Used for automatic graph edges.
+
+Fields:
+
+* id
+* source_id
+* target_id
+* edge_type
+* label
+* source_type
+* target_type
+* direction
+* style
+* created_at
+* updated_at
+* confidence
+* metadata_json
+
+Example:
+
+id:
+edge_001
+
+source:
+note_anatomy_cranial_nerves
+
+target:
+document_cranial_nerve_diagram
+
+edge_type:
+attached_file
+
+label:
+attached file
+
+direction:
+source_to_target
+
+---
+
+## 26.8.2 page_links
+
+Used for wiki links.
+
+Fields:
+
+* id
+* source_page_id
+* target_page_id
+* raw_text
+* resolved
+* created_at
+* updated_at
+
+Example raw text:
+
+[[Anatomy Exam]]
+
+---
+
+## 26.8.3 unresolved_links
+
+Used for links to pages that do not exist yet.
+
+Fields:
+
+* id
+* source_page_id
+* target_title
+* raw_text
+* created_at
+* ignored
+* metadata_json
+
+---
+
+## 26.8.4 backlinks_cache
+
+Used for fast backlink lookup.
+
+Fields:
+
+* target_id
+* source_id
+* edge_type
+* source_excerpt
+* created_at
+
+---
+
+## 26.8.5 graph_layouts
+
+Used for saved graph positions.
+
+Fields:
+
+* id
+* name
+* scope
+* layout_json
+* created_at
+* updated_at
+
+This lets the user save graph layouts later.
+
+====================================================================
+26.9 HOW THE GRAPH INDEX IS BUILT
+=================================
+
+The graph indexer runs when:
+
+* page saved
+* relation added
+* relation removed
+* file imported
+* file removed
+* tag added
+* tag removed
+* page renamed
+* page deleted
+* page restored
+* attachment added
+* attachment removed
+* database relation changed
+* full reindex requested
+* migration completed
+* backup restored
+
+Graph indexing process:
+
+1. Read item/page metadata.
+2. Read blocks.
+3. Parse links:
+
+   * [[Page]]
+   * #tag
+   * @person
+   * dates
+   * file mentions
+   * block references later
+4. Read explicit relations.
+5. Read attachments.
+6. Read parent/subpage relationships.
+7. Read database relation properties.
+8. Generate graph_edges.
+9. Update backlinks cache.
+10. Update unresolved links.
+11. Update tag graph.
+12. Update graph cache.
+13. Save graph health status.
+
+Important rule:
+
+```
+The graph is not manually drawn every time.
+It is generated from the user’s real Mizaan work.
+```
+
+====================================================================
+26.10 GRAPH VIEWS
+=================
+
+Mizaan should have multiple graph views.
+
+---
+
+## 26.10.1 Global Graph
+
+Global Graph shows the whole vault.
+
+Route:
+
+/graph
+
+Default:
+
+* show all major pages/items
+* hide individual blocks
+* hide archived items
+* hide trash
+* hide raw attachments unless enabled
+
+Filters:
+
+* Notes
+* Documents
+* Projects
+* People
+* Finance
+* Calendar
+* Trackers
+* Tasks
+* Goals
+* Tags
+* Dates
+* Attachments
+* Private items if unlocked
+* Archived items if enabled
+
+Used for:
+
+* seeing entire vault structure
+* finding clusters
+* finding orphan notes
+* finding broken/unresolved links
+* seeing knowledge density
+* seeing project/document/task relationships
+
+---
+
+## 26.10.2 Automatic Local Graph
+
+Automatic Local Graph is shown inside a page’s right panel.
+
+Example:
+
+Page: Mizaan App Plan
+Right Panel → Local Graph
+
+Shows:
+
+* current page
+* direct links
+* backlinks
+* attached files
+* linked projects
+* linked people
+* linked tasks
+* linked calendar events
+* linked tags
+* linked dates
+
+Default depth:
+
+```
+Depth 1
+```
+
+Depth options:
+
+* Depth 1 = direct connections only
+* Depth 2 = connections of direct connections
+* Depth 3 = wider neighborhood, use carefully
+
+Used for:
+
+* understanding the current page
+* studying one topic
+* finding supporting documents
+* finding related notes
+* seeing backlinks
+* seeing linked tasks/events
+
+---
+
+## 26.10.3 Project Graph
+
+Shown inside project pages.
+
+Shows:
+
+* project
+* notes
+* tasks
+* documents
+* people
+* calendar events
+* finance records
+* milestones
+* goals
+
+---
+
+## 26.10.4 Document Graph
+
+Shown inside document pages.
+
+Shows:
+
+* document
+* attached file
+* OCR text source
+* linked notes
+* linked projects
+* linked people
+* related documents
+* receipt/finance record
+
+---
+
+## 26.10.5 People Graph
+
+Shown inside People space or person profile.
+
+Shows:
+
+* person
+* projects
+* meetings
+* documents
+* notes
+* important dates
+* relationships
+* interaction logs
+
+---
+
+## 26.10.6 Tag Graph
+
+Shows:
+
+* tag nodes
+* pages using tags
+* related tags
+* tag clusters
+* orphan tags
+
+---
+
+## 26.10.7 Calendar/Task Graph
+
+Shows:
+
+* event/task
+* linked project
+* linked note
+* linked document
+* linked person
+* deadline chain
+
+Useful for exams, deadlines, study planning, and project planning.
+
+====================================================================
+26.11 MAIN GRAPH PAGE LAYOUT
+============================
+
+The graph page should not be a random full-screen blob.
+
+Use this layout:
+
+┌─────────────────────────────────────────────────────────────┐
+│ Top Bar                                                     │
+│ Search graph | Scope | Depth | Layout | Rebuild Index       │
+├───────────────┬───────────────────────────────┬─────────────┤
+│ Left Panel    │ Graph Canvas                   │ Right Panel │
+│               │                               │             │
+│ Scope         │ nodes + edges                  │ Selected    │
+│ - Whole vault │ pan / zoom / drag              │ node info   │
+│ - Current     │                               │ backlinks   │
+│ - Space       │                               │ actions     │
+│               │                               │             │
+│ Filters       │                               │             │
+│ - Types       │                               │             │
+│ - Tags        │                               │             │
+│ - Dates       │                               │             │
+│ - Edges       │                               │             │
+└───────────────┴───────────────────────────────┴─────────────┘
+
+---
+
+## 26.11.1 Left panel
+
+Contains:
+
+* scope selector
+* filters
+* graph legend
+* saved graph views
+* graph health
+* node type toggles
+* edge type toggles
+* privacy toggles if unlocked
+
+---
+
+## 26.11.2 Center graph canvas
+
+Supports:
+
+* pan
+* zoom
+* drag nodes
+* select node
+* select edge
+* fit view
+* minimap
+* search highlight
+* layout switch
+* pin node
+* hide node
+* reset layout
+
+---
+
+## 26.11.3 Right panel
+
+When a node is selected:
+
+* title
+* type
+* space
+* tags
+* created date
+* updated date
+* linked items
+* backlinks
+* outgoing links
+* attachments
+* open page
+* hide node
+* pin node
+* show local graph
+* copy link
+
+When an edge is selected:
+
+* source
+* target
+* relation type
+* label
+* direction
+* edge source
+* remove relation if manual
+* open source
+* open target
+
+====================================================================
+26.12 PAGE LAYOUT WITH GRAPH
+============================
+
+Each page should support graph context.
+
+Page layout:
+
+┌─────────────────────────────────────────────────────────────┐
+│ Breadcrumbs                                                  │
+├─────────────────────────────────────────────────────────────┤
+│ Page title                                                   │
+│ Properties: tags, status, dates, relations                   │
+├──────────────────────────────────────────────┬──────────────┤
+│ Main editor                                  │ Right panel   │
+│                                              │              │
+│ Blocks                                       │ Properties   │
+│ Paragraphs                                   │ Backlinks    │
+│ Checklists                                   │ Outgoing     │
+│ Tables                                       │ Local graph  │
+│ Attachments                                  │ Attachments  │
+│                                              │ History      │
+└──────────────────────────────────────────────┴──────────────┘
+
+Right panel tabs:
+
+* Properties
+* Backlinks
+* Outgoing
+* Relations
+* Files
+* Local Graph
+* History
+
+This is where the graph becomes useful without forcing the user to open the full graph page.
+
+====================================================================
+26.13 DOCUMENT PAGE LAYOUT WITH GRAPH
+=====================================
+
+Document pages should have a document-focused layout.
+
+┌─────────────────────────────────────────────────────────────┐
+│ Breadcrumbs: Documents / Passport Scan                       │
+├─────────────────────────────────────────────────────────────┤
+│ Title + file status + tags                                   │
+├───────────────────────────────┬─────────────────────────────┤
+│ Preview                       │ Metadata / Relations         │
+│                               │                             │
+│ PDF/image/office preview      │ Original filename            │
+│                               │ Vault path                   │
+│                               │ Checksum                     │
+│                               │ Imported date                │
+│                               │ OCR status                   │
+│                               │ Linked notes                 │
+│                               │ Linked people                │
+│                               │ Linked projects              │
+│                               │ Local graph                  │
+└───────────────────────────────┴─────────────────────────────┘
+
+This is how files become part of the knowledge system.
+
+====================================================================
+26.14 GRAPH LAYOUT MODES
+========================
+
+Mizaan should support multiple layout modes.
+
+---
+
+## 26.14.1 Force layout
+
+Obsidian-style organic graph.
+
+Good for:
+
+* discovering clusters
+* seeing dense topics
+* visual exploration
+
+---
+
+## 26.14.2 Hierarchy layout
+
+Tree-like graph.
+
+Good for:
+
+* pages and subpages
+* projects and tasks
+* parent-child structures
+* family tree starter layout
+* folders
+
+---
+
+## 26.14.3 Radial layout
+
+Current page in center.
+
+Good for:
+
+* local graph
+* study topics
+* person/project relationship maps
+
+---
+
+## 26.14.4 Manual canvas layout
+
+User manually arranges nodes.
+
+Good for:
+
+* mind maps
+* project planning
+* concept maps
+* family trees
+* revision diagrams
+
+Manual canvas layout belongs mainly to Manual Local Graph / Page Canvas Graph.
+
+====================================================================
+26.15 GRAPH LIBRARIES
+=====================
+
+Use two different graph tools for two different jobs.
+
+---
+
+## 26.15.1 Cytoscape.js
+
+Use Cytoscape.js for automatic graph views.
+
+Use for:
+
+* global graph
+* automatic local graph
+* tag graph
+* document graph
+* project graph
+* people graph
+* filters
+* network analysis
+* node degree
+* clustering
+* large knowledge networks
+
+---
+
+## 26.15.2 React Flow
+
+Use React Flow for manual graph/canvas views.
+
+Use for:
+
+* manual local graph
+* page canvas graph
+* mind maps
+* family trees
+* genograms
+* project diagrams
+* flowcharts
+* freeform visual planning
+* editable nodes
+* draggable nodes
+* custom node components
+* edge creation
+* zoom/pan
+* selection
+
+Final library rule:
+
+```
+Cytoscape.js = automatic generated graph.
+React Flow = manual editable graph/canvas.
+```
+
+Do not use one library for everything.
+
+====================================================================
+26B. MANUAL LOCAL GRAPH / PAGE CANVAS GRAPH
+===========================================
+
+Mizaan needs a third graph type called Manual Local Graph, also called Page Canvas Graph.
+
+This is different from the automatic Global Graph and automatic Local Graph.
+
+Definitions:
+
+Global Graph:
+
+* automatic graph of the whole vault
+* generated from pages, files, links, tags, relations, tasks, dates, and attachments
+* used for discovery across the whole vault
+
+Automatic Local Graph:
+
+* automatic graph around the current page/item
+* generated from backlinks, outgoing links, relations, attachments, tags, and nearby items
+* used to understand the current page context
+
+Manual Local Graph / Page Canvas Graph:
+
+* user-created editable graph
+* saved inside one page, document, project, person profile, or vault canvas
+* does not require graph nodes to be real Mizaan pages
+* nodes can be plain editable labels
+* edges can be manually drawn and labeled
+* edges can have arrows, direction, labels, and custom styles
+* useful for family trees, mind maps, concept maps, study diagrams, project maps, relationship maps, and custom diagrams
+
+Important rule:
+
+```
+Manual Local Graph is for human-made diagrams.
+It does not need to follow the automatic vault graph.
+```
+
+====================================================================
+26B.1 PURPOSE
+=============
+
+Manual Local Graph exists for diagrams the user wants to draw manually.
+
+Examples:
+
+* family tree
+* genogram
+* cousin marriage family structure
+* ancestry map
+* inheritance concept map
+* anatomy concept map
+* biochemistry pathway map
+* project dependency map
+* people relationship map
+* finance relationship map
+* timeline map
+* study revision map
+* evidence/argument map
+* custom visual thinking board
+
+This graph is not automatically created by Mizaan.
+
+The user creates nodes, writes labels, connects nodes, arranges layout, and edits relationships manually.
+
+====================================================================
+26B.2 WHERE MANUAL LOCAL GRAPH CAN APPEAR
+=========================================
+
+Manual Local Graph can exist in two places.
+
+---
+
+## 26B.2.1 Inside a page as a graph block
+
+Example:
+
+Notes → Genetics Family Tree Note → /graph
+
+Page graph:
+
+* belongs to one page
+* appears as a block inside that page
+* only visible inside that page unless exported or linked
+* does not pollute global graph by default
+
+---
+
+## 26B.2.2 As a standalone vault canvas
+
+Example:
+
+Canvas → Family Tree Map
+
+Vault canvas graph:
+
+* standalone visual board
+* appears under Canvas if enabled
+* can be used for larger maps
+* can optionally include linked Mizaan pages
+
+====================================================================
+26B.3 MANUAL GRAPH NODE TYPES
+=============================
+
+Manual graph nodes can be simple or linked.
+
+---
+
+## 26B.3.1 Simple nodes
+
+Simple nodes do not need to link to real Mizaan pages.
+
+Examples:
+
+* plain text node
+* person label
+* concept label
+* event label
+* date label
+* note label
+* custom label
+* explanation node
+* unknown person node
+* question mark node
+
+Example:
+
+Node title:
+Grandfather A
+
+This can remain just a manual node forever.
+
+---
+
+## 26B.3.2 Linked nodes
+
+Linked nodes point to real Mizaan items.
+
+Examples:
+
+* linked Mizaan page
+* linked person profile
+* linked document
+* linked project
+* linked task
+* linked calendar event
+* linked file/attachment
+
+Example:
+
+Node title:
+Ahmed
+
+Linked item:
+People → Ahmed
+
+---
+
+## 26B.3.3 Special family/genogram nodes
+
+Special node types:
+
+* person node
+* couple/marriage node
+* parent group node
+* child node
+* sibling group node
+* unknown parent node
+* adoption marker node
+* remarriage marker node
+* divorce marker node
+* deceased marker node
+* custom relationship marker
+
+---
+
+## 26B.3.4 Card nodes
+
+Card node types:
+
+* note card
+* image card
+* document card
+* task card
+* project card
+* free text card
+
+These allow manual graphs to become visual study maps or planning boards.
+
+---
+
+## 26B.3.5 Default node fields
+
+Manual graph node fields:
+
+* id
+* graph_id
+* node_type
+* title
+* subtitle
+* body
+* x
+* y
+* width
+* height
+* color
+* icon
+* linked_item_id optional
+* created_at
+* updated_at
+* metadata_json
+
+====================================================================
+26B.4 MANUAL GRAPH EDGES
+========================
+
+Manual graph edges are user-created connection lines between nodes.
+
+Edges must support:
+
+* labels
+* arrows
+* direction
+* styles
+* custom relationship types
+
+---
+
+## 26B.4.1 Edge types
+
+Manual edge types:
+
+* related to
+* parent of
+* child of
+* sibling of
+* spouse of
+* cousin of
+* married to
+* divorced from
+* engaged to
+* descendant of
+* ancestor of
+* depends on
+* causes
+* supports
+* contradicts
+* contains
+* belongs to
+* leads to
+* explains
+* evidence for
+* example of
+* custom
+
+---
+
+## 26B.4.2 Edge direction and arrows
+
+Every manual edge can have a direction.
+
+Direction options:
+
+1. Undirected
+   Used when relationship is equal or mutual.
+
+   Example:
+   Person A ── married to ── Person B
+
+2. Source to target
+   Used when relationship flows from one node to another.
+
+   Example:
+   Parent ─────────▶ Child
+
+3. Target to source
+   Used when direction is reversed.
+
+   Example:
+   Child ◀──────── Parent
+
+4. Bidirectional
+   Used when both sides point to each other.
+
+   Example:
+   Person A ◀──────▶ Person B
+
+This is required.
+
+Manual graph must allow arrows from one node to another node.
+
+Examples:
+
+Father ── parent of ──▶ Child
+Mother ── parent of ──▶ Child
+Cause ── leads to ──▶ Effect
+Task A ── blocks ──▶ Task B
+Person A ◀── sibling of ──▶ Person B
+
+---
+
+## 26B.4.3 Edge labels
+
+Every edge can have a label.
+
+Examples:
+
+* parent of
+* married to
+* first cousin of
+* child of
+* depends on
+* causes
+* supports
+* contradicts
+* related to
+* custom label
+
+Labels should be editable inline or from the right properties panel.
+
+---
+
+## 26B.4.4 Edge styles
+
+Edge styles:
+
+* solid
+* dashed
+* dotted
+* thick
+* weak/faded
+* warning
+* custom
+
+Suggested meanings:
+
+Solid:
+
+* normal relation
+
+Dashed:
+
+* uncertain relation
+
+Dotted:
+
+* weak or indirect relation
+
+Thick:
+
+* important relation
+
+Warning:
+
+* conflict, unknown, or needs verification
+
+Custom:
+
+* user-defined meaning
+
+---
+
+## 26B.4.5 Edge fields
+
+Manual edge fields:
+
+* id
+* graph_id
+* source_node_id
+* target_node_id
+* edge_type
+* label
+* direction
+* style
+* created_at
+* updated_at
+* metadata_json
+
+====================================================================
+26B.5 FAMILY TREE / GENOGRAM MODE
+=================================
+
+Manual Local Graph must support family tree and genogram mode.
+
+Family tree mode is important because normal simple tree layouts fail when relatives marry, such as first cousins.
+
+Family tree mode must support:
+
+* person nodes
+* couple/marriage nodes
+* parent-child connections
+* sibling connections
+* cousin relationships
+* repeated visual references to the same person if needed
+* labels for relationship type
+* custom notes on relationships
+* support for consanguinity/first-cousin marriage diagrams
+* ability to manually position nodes when automatic layout is not enough
+
+Example:
+
+Grandfather A ── sibling of ── Grandfather B
+
+Child of Grandfather A ── married to ── Child of Grandfather B
+
+Their child is connected below both parents.
+
+---
+
+## 26B.5.1 Family relationship edge examples
+
+Parent to child:
+
+Father ── parent of ──▶ Child
+Mother ── parent of ──▶ Child
+
+Marriage:
+
+Person A ── married to ── Person B
+
+Siblings:
+
+Person A ◀── sibling of ──▶ Person B
+
+Cousins:
+
+Person A ◀── first cousin of ──▶ Person B
+
+Divorce:
+
+Person A - - divorced from - - Person B
+
+Unknown parent:
+
+Unknown Father ── parent of ──▶ Child
+
+Adoption:
+
+Adoptive Parent ── adoptive parent of ──▶ Child
+
+---
+
+## 26B.5.2 Family tree flexibility rule
+
+The graph must allow non-perfect family trees.
+
+Real families can include:
+
+* cousin marriages
+* remarriages
+* adoption
+* half-siblings
+* step-parents
+* missing parents
+* unknown parents
+* repeated people across branches
+* complex relationships
+* uncertain relationships
+* custom labels
+
+Therefore family tree mode must be editable and flexible.
+
+Do not lock family tree mode into a strict simple tree.
+
+====================================================================
+26B.6 MANUAL GRAPH EDITING BEHAVIOR
+===================================
+
+User can:
+
+* add node
+* edit node title
+* edit node subtitle
+* edit node description
+* move node
+* resize node
+* delete node
+* duplicate node
+* connect nodes
+* label edges
+* change edge type
+* change edge direction
+* add arrow
+* remove arrow
+* change edge style
+* delete edge
+* select multiple nodes
+* group nodes
+* create frame/group
+* pan
+* zoom
+* fit to screen
+* undo
+* redo
+* export graph
+
+Keyboard behavior:
+
+* Delete = delete selected node/edge
+* Ctrl+Z = undo
+* Ctrl+Y = redo
+* Ctrl+C = copy
+* Ctrl+V = paste
+* Ctrl+D = duplicate
+* Esc = deselect/close menu
+* Arrow keys = nudge selected node
+* Shift + Arrow keys = larger nudge
+
+====================================================================
+26B.7 LINKING MANUAL NODES TO REAL PAGES
+========================================
+
+A manual node can stay as a simple label forever.
+
+But the user can optionally convert/link it to a real Mizaan page.
+
+Actions:
+
+* Convert node to page
+* Link node to existing page
+* Create person profile from node
+* Create document record from node
+* Create task from node
+* Create event from node
+* Create project from node
+
+Example:
+
+A family tree node named “Ahmed” can later become:
+
+People → Ahmed
+
+But this is optional.
+
+Manual graphs must not force every node to become a database item.
+
+====================================================================
+26B.8 MANUAL GRAPH STORAGE MODEL
+================================
+
+Manual graphs should be stored separately from automatic graph indexes.
+
+Automatic graph data:
+
+* graph_edges
+* page_links
+* backlinks_cache
+* unresolved_links
+
+Manual graph data:
+
+* manual_graphs
+* manual_graph_nodes
+* manual_graph_edges
+
+---
+
+## 26B.8.1 manual_graphs table
+
+Fields:
+
+* id
+* owner_item_id
+* scope
+* title
+* description
+* graph_type
+* layout_json
+* created_at
+* updated_at
+* metadata_json
+
+Scope values:
+
+* page
+* vault
+
+Graph types:
+
+* freeform
+* mind_map
+* family_tree
+* genogram
+* project_map
+* concept_map
+* timeline_map
+* custom
+
+---
+
+## 26B.8.2 manual_graph_nodes table
+
+Fields:
+
+* id
+* graph_id
+* node_type
+* title
+* subtitle
+* body
+* x
+* y
+* width
+* height
+* color
+* icon
+* linked_item_id
+* created_at
+* updated_at
+* metadata_json
+
+---
+
+## 26B.8.3 manual_graph_edges table
+
+Fields:
+
+* id
+* graph_id
+* source_node_id
+* target_node_id
+* edge_type
+* label
+* direction
+* style
+* created_at
+* updated_at
+* metadata_json
+
+====================================================================
+26B.9 MANUAL GRAPH VAULT FILE LAYOUT
+====================================
+
+Manual graphs should have portable JSON mirrors.
+
+Inside vault:
+
+content/
+canvases/
+family-tree-example.graph.json
+
+indexes/
+graph/
+automatic graph cache here
+
+Manual graph JSON example:
+
+{
+"id": "graph_uuid",
+"title": "Family Tree Example",
+"type": "family_tree",
+"ownerItemId": "page_uuid",
+"nodes": [],
+"edges": [],
+"layout": {},
+"createdAt": "date",
+"updatedAt": "date"
+}
+
+Rules:
+
+* manual graph JSON is portable
+* database stores fast structured version
+* graph JSON mirror protects data from lock-in
+* manual graph does not need to appear in global graph unless user chooses
+* manual graph belongs to the page or canvas where it was created
+
+====================================================================
+26B.10 MANUAL GRAPH VISIBILITY
+==============================
+
+Manual Local Graph visibility options:
+
+1. Page-only
+
+   * visible only inside the page where it was created
+   * default behavior
+
+2. Vault canvas
+
+   * appears in Canvas section
+   * can be opened as standalone visual board
+
+3. Included in global graph
+
+   * optional
+   * only linked page nodes or promoted nodes appear globally
+
+Default rule:
+
+```
+Manual graphs are page-only and do not pollute the global graph.
+```
+
+This prevents personal sketches from making the global graph messy.
+
+====================================================================
+26B.11 MANUAL GRAPH EXPORT
+==========================
+
+Manual graphs should export as:
+
+* PNG
+* SVG
+* PDF
+* JSON
+* embedded in full vault backup
+
+Family tree exports should include:
+
+* graph title
+* node labels
+* edge labels
+* layout
+* date exported
+
+Export should preserve:
+
+* node text
+* node positions
+* edge labels
+* edge arrows
+* edge direction
+* edge styles
+* graph type
+
+====================================================================
+26B.12 MANUAL GRAPH UI LAYOUT
+=============================
+
+Inside a page:
+
+Page content
+Graph block: Family Tree
+
+Graph block toolbar:
+
+* Add node
+* Add edge
+* Layout
+* Family tree mode
+* Export
+* Fullscreen
+* Settings
+
+Fullscreen graph editor:
+
+* left toolbar
+* center canvas
+* right properties panel
+
+Left toolbar:
+
+* select
+* add node
+* add person
+* add couple
+* add child
+* add edge
+* add text
+* add image
+* layout
+* family tree tools
+* export
+
+Right panel:
+
+* selected node properties
+* selected edge properties
+* graph settings
+* export options
+
+Selected node properties:
+
+* title
+* subtitle
+* body
+* node type
+* color
+* icon
+* linked item
+* privacy
+* notes
+
+Selected edge properties:
+
+* source node
+* target node
+* edge type
+* label
+* direction
+* arrow style
+* line style
+* notes
+
+====================================================================
+26B.13 OPEN-SOURCE LIBRARY FOR MANUAL GRAPH
+===========================================
+
+Use React Flow for Manual Local Graph / Page Canvas Graph.
+
+Reason:
+
+* editable nodes
+* draggable nodes
+* custom React node components
+* manual canvas layouts
+* edge creation
+* arrows and directed edges
+* zoom/pan
+* selection
+* diagram-like interactions
+
+Use Cytoscape.js for automatic global/local graphs.
+
+Rule:
+
+```
+Cytoscape.js = automatic generated graph.
+React Flow = manual editable graph/canvas.
+```
+
+====================================================================
+26B.14 RELATIONSHIP TO CANVAS SYSTEM
+====================================
+
+Manual Local Graph is part of Canvas.
+
+Canvas is the broader feature.
+Manual Local Graph is a canvas mode.
+
+Canvas modes:
+
+* freeform board
+* mind map
+* family tree
+* genogram
+* project map
+* concept map
+* timeline map
+
+Manual Local Graph can start as the first Canvas mode.
+
+====================================================================
+26B.15 FINAL GRAPH LAYER RULE
+=============================
+
+Mizaan has three graph layers:
+
+1. Global Graph
+
+   * automatic whole-vault graph
+   * used for discovery
+
+2. Automatic Local Graph
+
+   * automatic current-page graph
+   * used for page context
+
+3. Manual Local Graph / Page Canvas Graph
+
+   * user-created editable graph
+   * saved inside a page or vault canvas
+   * supports editable nodes
+   * supports edges with labels
+   * supports arrows and directions
+   * does not require pages/files/database items to exist
+
+The third graph is for human-made diagrams.
+
+It is perfect for mind maps, family trees, genograms, study maps, project maps, concept maps, and custom relationship diagrams.
+
+
+====================================================================
+27. SEARCH SYSTEM
+====================================================================
+
+Search must be elite.
+
+Search layers:
+
+1. Instant search
+- titles
+- tags
+- metadata
+- recent items
+- commands
+
+2. Full-text search
+- note content
+- OCR text
+- document metadata
+- people notes
+- project notes
+- tasks
+- calendar notes
+
+3. Graph search
+- nodes
+- relations
+- backlinks
+- orphan notes
+- tags
+
+4. Future local semantic search
+- local embeddings only
+- no cloud inference
+
+Search filters:
+- category
+- type
+- tag
+- date range
+- created date
+- updated date
+- has attachment
+- has relation
+- archived
+- deleted
+- favorite
+- private
+- overdue
+- completed
+
+Implementation:
+- SQLite FTS for desktop
+- rebuildable search index
+- index health check
+- reindex command
+
+====================================================================
+28. TEMPLATE SYSTEM
+====================================================================
+
+Templates are first-class.
+
+Current categories:
+- Notes
+- Documents
+- Projects
+- People
+- Finance
+- Calendar
+- Trackers
+
+Future:
+- Tasks
+- Goals
+- Databases
+- Canvas
+
+Template fields:
+- id
+- category
+- name
+- description
+- icon
+- defaultTitle
+- defaultProperties
+- defaultBlocks
+- createdEntityType
+- version
+- createdAt
+- updatedAt
+
+Templates must:
+- create real local items
+- not be fake UI
+- be editable later
+- be exportable
+- live in vault
+- support user-created templates
+
+====================================================================
+29. THEMES SYSTEM
+====================================================================
+
+Themes must be token-based.
+
+Built-in themes:
+- Mizaan Light
+- Mizaan Dark
+- Warm Paper
+- Graphite Dark
+- Sepia Reading
+- OLED Black
+- Academic
+- High Contrast
+
+Theme tokens:
+- background
+- surface
+- surfaceHover
+- text
+- textMuted
+- border
+- accent
+- danger
+- warning
+- success
+- sidebarBackground
+- editorBackground
+- graphBackground
+- graphNodeNote
+- graphNodeDocument
+- graphNodeProject
+- graphNodePerson
+- graphNodeFinance
+- graphNodeCalendar
+- graphNodeTracker
+- graphEdge
+- graphSelectedNode
+
+Theme rules:
+- no hardcoded random colors
+- graph adapts to light/dark
+- node colors are subtle
+- no neon by default
+- allow custom themes later
+- store theme JSON in vault
+
+====================================================================
+30. BACKUP SYSTEM
+====================================================================
+
+Backups are a core product feature.
+
+Types:
+- manual backup
+- automatic backup
+- before migration backup
+- before restore backup
+- before import backup
+- weekly snapshot
+- monthly archive
+
+Backup file example:
+    mizaan-backup-20260528-230000.zip
+
+Backup contains:
+- backup-manifest.json
+- sqlite snapshot
+- content mirrors
+- attachments
+- templates
+- themes
+- config
+- optional logs
+- optional indexes
+
+Indexes can be skipped because they are rebuildable.
+
+Backup manifest:
+- backupId
+- vaultId
+- vaultName
+- createdAt
+- appVersion
+- schemaVersion
+- itemCount
+- attachmentCount
+- checksumManifest
+- backupType
+- notes
+
+Backup validation:
+- zip exists
+- manifest exists
+- database snapshot opens
+- item count matches
+- attachment count matches
+- checksum list validates
+- log entry written
+
+Restore flow:
+1. choose backup
+2. validate backup
+3. show restore preview
+4. create backup of current vault
+5. confirm overwrite/restore
+6. restore files
+7. rebuild indexes
+8. open restored vault
+9. write restore log
+
+====================================================================
+31. IMPORT / EXPORT SYSTEM
+====================================================================
+
+Import:
+- Markdown folder
+- Obsidian vault
+- Notion export
+- CSV
+- JSON
+- PDF folder
+- images folder
+- documents folder
+- ICS calendar
+- backup ZIP
+- plain text
+- QOwnNotes-style markdown notes
+
+Export:
+- full vault ZIP
+- selected workspace
+- selected project
+- selected note as Markdown
+- selected note as PDF
+- selected note as DOCX later
+- database as CSV
+- calendar as ICS
+- documents with metadata
+- graph as JSON
+- graph image later
+
+Rule:
+Exports must preserve relationships wherever possible.
+
+====================================================================
+32. WINDOWS APP PLAN
+====================================================================
+
+Target platform first:
+    Windows desktop app
+
+Recommended stack:
+- Tauri
+- React/TypeScript frontend
+- Rust backend commands
+- SQLite
+- filesystem vault
+- local notifications
+- native file dialogs
+- backup/export engine
+
+Windows app features:
+- installable app
+- app icon
+- file system access
+- open/create vault
+- USB vault support
+- SQLite storage
+- local attachment management
+- native notifications
+- system tray later
+- backup/restore
+- export/import
+- offline operation
+
+Build phases:
+1. verify Windows build tools
+2. add Tauri shell
+3. package current frontend
+4. open app window
+5. add folder picker
+6. add vault creation/opening
+7. add SQLite provider
+8. migrate localStorage to SQLite
+9. add attachments folder
+10. add backup engine
+11. build unsigned installer
+12. test on clean Windows VM
+
+Important:
+Do not jump to mobile before Windows vault architecture works.
+
+====================================================================
+33. ANDROID / IOS PLAN
+====================================================================
+
+Mobile should be later.
+
+Android:
+- possible through directory access / document tree model
+- can potentially open a vault folder from internal storage, SD card, or USB-C drive
+- should start as companion app
+
+iOS:
+- harder for true USB vault workflow
+- should start with import/export backup packages through Files app
+
+Mobile v1 should not attempt full desktop parity.
+
+Mobile v1 features:
+- open/import vault snapshot
+- read notes
+- quick capture
+- edit selected notes
+- view documents metadata
+- view calendar/tasks
+- scan document into package
+- export change package
+- restore package on desktop
+
+Mobile later:
+- direct vault editing
+- sync packages
+- conflict handling
+- local database
+- selected offline files
+- notifications
+
+====================================================================
+34. PORTABLE VAULT “SYNC” MODEL
+====================================================================
+
+The main solution is not real sync.
+
+It is:
+
+    One portable vault, one editor at a time.
+
+Safe flow:
+1. use vault on laptop A
+2. close Mizaan
+3. app removes lock
+4. safely eject USB
+5. plug into laptop B
+6. open same vault
+7. continue work
+
+If two devices edit separate copies, there will be conflicts.
+
+Future sync options:
+1. manual backup/export/import
+2. sync packages in folder
+3. LAN device pairing
+4. optional self-hosted sync
+5. CRDT-powered page/block sync
+
+But these are later.
+
+The first lifetime version should use:
+- portable vault
+- lock file
+- backups
+- restore
+- change logs
+- one-device-at-a-time rule
+
+====================================================================
+35. SECURITY / PRIVACY
+====================================================================
+
+Required:
+- no account
+- no tracking
+- no external requests by default
+- local-only data notice
+- app lock later
+- vault password later
+- encrypted backup later
+- sensitive workspace lock later
+- private people notes later
+- secure temp file cleanup
+- clipboard timeout later
+- import validation
+- safe file opening
+- no automatic execution of imported files
+- backup corruption checks
+- migration rollback
+
+Security levels:
+
+Level 1:
+- local-only
+- backup warnings
+- import validation
+- lock file
+
+Level 2:
+- app lock
+- encrypted backups
+- private notes
+
+Level 3:
+- full vault encryption
+- per-space encryption
+- secure recovery keys
+
+Do not start with full encryption before storage is stable.
+
+====================================================================
+36. PLUGIN / EXTENSION SYSTEM
+====================================================================
+
+Plugins are useful but dangerous.
+
+Defer plugin system.
+
+Future possible plugin types:
+- custom importers
+- custom exporters
+- commands
+- small widgets
+- document processors
+- graph views
+- themes
+
+Do not add a plugin system until:
+- vault is stable
+- backups work
+- security model exists
+- app APIs are documented
+
+====================================================================
+37. DEVELOPMENT ROADMAP FROM CURRENT APP
+====================================================================
+
+Current known state:
+- main branch
+- feature branch merged
+- old branch deleted
+- local items in browser storage
+- templates
+- category pages
+- editor
+- slash commands
+- relation picker
+- graph/trash/settings using real local items
+- local backup UI
+- tests pass
+- app is still prototype-layer storage
+
+--------------------------------------------------------------------
+Phase 1 — Master plan and documentation
+--------------------------------------------------------------------
+
+Create:
+- docs/mizaan-one-plan-and-goal.txt
+- docs/mizaan-portable-vault-spec.md
+- docs/mizaan-storage-migration-plan.md
+- docs/mizaan-windows-tauri-plan.md
+- docs/mizaan-graph-backlinks-plan.md
+- docs/mizaan-mobile-companion-plan.md
+
+No big code changes yet.
+
+--------------------------------------------------------------------
+Phase 2 — Vault abstraction
+--------------------------------------------------------------------
+
+Create provider interface:
+- current localStorage provider
+- future Tauri SQLite provider
+
+Goal:
+UI talks to vault provider, not directly to localStorage.
+
+--------------------------------------------------------------------
+Phase 3 — First-run vault UI
+--------------------------------------------------------------------
+
+Add:
+- create vault screen
+- open vault screen
+- restore vault screen
+- recent vaults
+- missing vault screen
+- vault health panel
+
+In web mode:
+- simulate or use browser local mode
+
+In Tauri mode:
+- real folder picker
+
+--------------------------------------------------------------------
+Phase 4 — Tauri Windows shell
+--------------------------------------------------------------------
+
+Add Tauri without breaking app.
+
+Goal:
+- current app opens as Windows desktop app
+- existing UI still works
+- no storage migration yet
+- build passes
+- installer/test build
+
+--------------------------------------------------------------------
+Phase 5 — SQLite vault provider
+--------------------------------------------------------------------
+
+Add SQLite tables.
+Add Tauri commands.
+Migrate localStorage data.
+Create vault on disk.
+Open vault from disk.
+Persist items, blocks, relations.
+
+--------------------------------------------------------------------
+Phase 6 — File/attachment vault
+--------------------------------------------------------------------
+
+Implement real file import:
+- copy into vault
+- hash file
+- metadata
+- thumbnail
+- relink/repair
+- document page improvements
+
+--------------------------------------------------------------------
+Phase 7 — Search and graph
+--------------------------------------------------------------------
+
+Implement:
+- SQLite FTS
+- backlinks
+- outgoing links
+- graph edges
+- orphan detection
+- unresolved links
+- global graph
+- local graph
+- graph filters
+
+--------------------------------------------------------------------
+Phase 8 — Editor hardening
+--------------------------------------------------------------------
+
+Improve:
+- stability
+- version history
+- markdown mirror
+- block references
+- better slash commands
+- optional editor framework migration
+
+--------------------------------------------------------------------
+Phase 9 — Databases
+--------------------------------------------------------------------
+
+Implement:
+- table/list views
+- properties
+- filters
+- sorting
+- grouping
+- board/calendar/gallery views later
+- relations/rollups/formulas later
+
+--------------------------------------------------------------------
+Phase 10 — Calendar/tasks/trackers
+--------------------------------------------------------------------
+
+Implement:
+- local calendar engine
+- recurring events
+- reminders
+- tasks
+- trackers
+- habits
+- reviews
+- ICS import/export
+
+--------------------------------------------------------------------
+Phase 11 — Backup/recovery hardening
+--------------------------------------------------------------------
+
+Implement:
+- scheduled backups
+- restore preview
+- backup validation
+- corruption recovery
+- migration rollback
+- repair tools
+
+--------------------------------------------------------------------
+Phase 12 — Mobile companion
+--------------------------------------------------------------------
+
+Start Android first.
+iOS later.
+
+Mobile starts as:
+- read/import/export companion
+- quick capture
+- selected editing
+- backup/change package workflow
+
+====================================================================
+38. CODEX IMPLEMENTATION RULES FOR ALL FUTURE TASKS
+====================================================================
+
+Codex must know:
+
+Repository:
+    https://github.com/mhyahya04-beep/mizaan-life-os.git
+
+Local path:
+    E:\Github\Mizaan-Revamp
+
+Branch rule:
+    Work on main only unless explicitly told otherwise.
+
+Before work:
+- cd /d E:\Github\Mizaan-Revamp
+- git status
+- git pull origin main
+- inspect relevant files
+- do not discard user changes
+
+After work:
+- npm run typecheck
+- npm run lint
+- npm test
+- npm run build
+- git diff --check
+- commit
+- push origin main
+- report commit hash
+
+Product rules:
+- no Google
+- no cloud
+- no auth
+- no backend server unless explicitly approved
+- no fake UI
+- no dead buttons
+- all local-first
+- preserve current working features
+- data must survive
+- build must pass or failures must be documented honestly
+
+====================================================================
+39. FINAL APP EXPERIENCE
+====================================================================
+
+A user should feel:
+
+    Mizaan is my private life operating system.
+    Everything is mine.
+    Everything is local.
+    Everything is organized.
+    Everything is connected.
+    Everything can be backed up.
+    Everything can be moved.
+    If the app dies, my data survives.
+
+The app starts with a vault.
+The app ends with a vault.
+The vault is the product.
+
+====================================================================
+40. WARNINGS
+====================================================================
+
+1. USB portable vault is not true sync.
+It is portable storage. It works best when only one device edits the vault at a time.
+
+2. Do not open the same vault on two computers at once.
+This can cause conflicts or database corruption.
+
+3. Use a lock file.
+Mizaan must warn when a vault may already be open elsewhere.
+
+4. Do not build forever on localStorage.
+It is acceptable for prototype work, but not lifetime functionality.
+
+5. Do not sync a live SQLite database through random cloud/network folders.
+Use backup packages or app-controlled change packages later.
+
+6. USB drives can fail.
+Mizaan must encourage backups to another location.
+
+7. Android can work later, but mobile storage is more restricted than Windows.
+Start mobile as a companion, not full parity.
+
+8. iOS is harder for this exact USB vault model.
+Treat iOS as import/export companion first.
+
+9. Do not build mobile before Windows vault architecture is stable.
+Otherwise the storage system will be rewritten multiple times.
+
+10. Do not add every Notion/TickTick feature blindly.
+Merge useful feature categories, remove cloud/team/account/public/billing features, and keep Mizaan focused on lifetime local ownership.
+
+11. Backup is not optional.
+For a local app, backup is the safety net that cloud apps usually pretend to provide.
+
+12. Data portability is the product promise.
+If data becomes trapped, Mizaan has failed.
+
+
+
+====================================================================
+41. FULL APP SCREEN MAP
+====================================================================
+
+It should list every real screen:
+
+First Launch
+Create Vault
+Open Vault
+Restore Vault
+Home
+Notes Space
+Documents Space
+Projects Space
+People Space
+Finance Space
+Calendar Space
+Tasks Space
+Trackers Space
+Goals Space
+Databases Space
+Graph
+Templates
+Trash
+Settings
+Vault Health
+Backup Manager
+Import Manager
+Export Manager
+Search
+Page Editor
+Document Viewer
+Database View
+Calendar View
+Task View
+
+====================================================================
+
+42. PAGE TYPES AND PAGE LAYOUTS
+====================================================================
+
+Because “Page” is the main object. We need to define layouts for:
+
+Note Page
+Document Page
+Project Page
+Person Page
+Finance Page
+Calendar Event Page
+Task Page
+Tracker Page
+Goal Page
+Database Page
+Canvas Page
+Template Page
+
+
+Each page type needs:
+
+Header
+Properties
+Main content
+Right panel
+Relations
+Files
+Graph
+History
+Actions
+
+Example:
+
+Project Page Layout:
+- Breadcrumbs
+- Title
+- Status
+- Due date
+- Linked notes
+- Linked documents
+- Linked tasks
+- Linked people
+- Timeline
+- Local graph
+- Activity log
+====================================================================
+43. NAVIGATION MODEL
+====================================================================
+
+Main:
+Home
+Search
+Graph
+Databases
+
+Pinned Spaces:
+Notes
+Documents
+Projects
+People
+Finance
+Calendar
+Tasks
+Trackers
+Goals
+
+Other Spaces:
+
+Bottom:
+Templates
+Trash
+Settings
+Vault
+
+
+---
+
+====================================================================
+44. IMPORT MANAGER
+====================================================================
+Import queue
+File scan
+Duplicate detection
+Unsupported file handling
+Import preview
+Copy into vault vs link original
+Import progress
+Failed import log
+Retry failed imports
+Batch import
+Folder import
+
+====================================================================
+
+45. EXPORT FORMAT RULES
+====================================================================
+
+Define:
+
+```text
+Note → Markdown, PDF, DOCX
+Database → CSV, JSON, XLSX later
+Calendar → ICS, PDF
+Graph → JSON, PNG/SVG later
+Project → folder export with notes/docs/tasks
+Full vault → ZIP
+```
+
+Also define whether exports include:
+
+```text
+attachments
+relations
+frontmatter
+metadata
+history
+graph links
+```
+
+
+====================================================================
+46. VAULT HEALTH DASHBOARD
+====================================================================
+
+Vault path
+Database status
+Last backup
+Backup age warning
+Item count
+Attachment count
+Missing attachment count
+Broken link count
+Unresolved link count
+Orphan note count
+Search index status
+Graph index status
+Last migration
+Free disk space
+Lock status
+Repair tools
+
+
+====================================================================
+47. REPAIR AND RECOVERY TOOLS
+====================================================================
+Tools:
+Rebuild search index
+Rebuild graph index
+Rebuild backlinks
+Rebuild thumbnails
+Find missing attachments
+Relink missing files
+Check database integrity
+Recover from markdown mirrors
+Recover from backup
+Repair broken frontmatter
+Repair duplicate IDs
+Clear stale lock file
+
+
+====================================================================
+48. VERSION HISTORY MODEL
+====================================================================
+
+
+Autosave history
+Manual snapshots
+Before major edit snapshots
+Before import snapshots
+Before migration snapshots
+Restore single page
+Restore deleted page
+Compare versions
+Show changed blocks
+Prune old versions
+
+How often does Mizaan snapshot?
+Every close
+
+====================================================================
+49. SETTINGS MODEL
+====================================================================
+
+Vault
+Appearance
+Editor
+Backups
+Import/export
+Calendar
+Tasks
+Notifications
+Privacy
+Keyboard shortcuts
+Storage
+Advanced
+About
+```
+
+Important settings:
+
+Default vault
+Backup location
+Auto-backup frequency
+Theme
+Font size
+Editor width
+Default note format
+Week start day
+Time format
+Date format
+Notification behavior
+Index rebuild
+Repair tools
+
+```text
+====================================================================
+50. LOCAL NOTIFICATION ENGINE
+====================================================================
+
+Mizaan needs a local notification/reminder engine for calendar events, tasks, habits, deadlines, study blocks, finance reminders, and recurring routines.
+
+This engine must be local-first.
+
+No cloud notification worker.
+No Google Calendar dependency.
+No Microsoft Calendar dependency.
+No external reminder service.
+
+The notification engine should work with:
+
+- calendar events
+- tasks
+- recurring tasks
+- deadlines
+- exams
+- study blocks
+- focus blocks
+- habits
+- trackers
+- bills
+- subscriptions
+- finance reminders
+- birthdays
+- important people dates
+- custom reminders
+
+--------------------------------------------------------------------
+50.1 Reminder table
+--------------------------------------------------------------------
+
+Create a reminders table.
+
+Fields:
+
+- id
+- source_item_id
+- source_item_type
+- title
+- message
+- trigger_at
+- trigger_offset_minutes
+- timezone
+- recurrence_rule_id
+- status
+- dismissed_at
+- snoozed_until
+- delivered_at
+- missed
+- created_at
+- updated_at
+- metadata_json
+
+Reminder statuses:
+
+- scheduled
+- delivered
+- dismissed
+- snoozed
+- missed
+- cancelled
+
+Source item types:
+
+- calendar_event
+- task
+- habit
+- tracker
+- finance_record
+- project
+- person
+- note
+- custom
+
+--------------------------------------------------------------------
+50.2 Reminder scheduler
+--------------------------------------------------------------------
+
+The scheduler is responsible for checking upcoming reminders and deciding what should fire.
+
+It should:
+
+- load active reminders
+- check reminders due now
+- avoid duplicate delivery
+- respect snoozed reminders
+- mark missed reminders when the app was closed
+- reschedule recurring reminders
+- cancel reminders when source item is deleted
+- update reminders when source item changes
+- log notification delivery
+
+Scheduler behavior:
+
+- when app opens, check missed reminders
+- while app is open, check scheduled reminders at safe intervals
+- when app closes, persist scheduler state
+- when user changes time/date/timezone, re-check reminder timing
+
+--------------------------------------------------------------------
+50.3 Missed reminders
+--------------------------------------------------------------------
+
+If Mizaan was closed when a reminder should have fired, it should not silently lose it.
+
+On next app open:
+
+- detect missed reminders
+- show a missed reminders panel
+- allow user to dismiss
+- allow user to snooze
+- allow user to open source item
+- allow user to mark task/event as done if applicable
+
+Example:
+
+    You missed 3 reminders while Mizaan was closed.
+
+--------------------------------------------------------------------
+50.4 Snooze
+--------------------------------------------------------------------
+
+Snooze options:
+
+- 5 minutes
+- 10 minutes
+- 15 minutes
+- 30 minutes
+- 1 hour
+- tomorrow
+- custom time
+
+Snoozed reminders should:
+
+- update snoozed_until
+- not fire until snooze time
+- keep reference to original source item
+- appear in notification history
+
+--------------------------------------------------------------------
+50.5 Dismiss
+--------------------------------------------------------------------
+
+Dismiss should:
+
+- mark reminder as dismissed
+- store dismissed_at
+- not delete the reminder record immediately
+- keep history for audit/review
+- not affect the source item unless user chooses an action like complete task
+
+--------------------------------------------------------------------
+50.6 Recurring reminders
+--------------------------------------------------------------------
+
+Recurring reminders should connect to recurrence rules.
+
+Use recurrence rules for:
+
+- recurring calendar events
+- recurring tasks
+- recurring habits
+- bills
+- subscriptions
+- birthdays
+- weekly reviews
+- monthly reviews
+
+When a recurring reminder fires:
+
+- mark current occurrence as delivered/dismissed
+- calculate next occurrence
+- create/update next scheduled reminder
+- support recurrence exceptions
+
+--------------------------------------------------------------------
+50.7 App-open reminders
+--------------------------------------------------------------------
+
+Some reminders can be shown when the app opens instead of exact desktop notifications.
+
+Examples:
+
+- backup overdue
+- missed reminders
+- unresolved imports
+- failed backup
+- vault health warnings
+- upcoming exams
+- overdue tasks
+
+These should show in Home, notification center, or top banner.
+
+--------------------------------------------------------------------
+50.8 Desktop notifications
+--------------------------------------------------------------------
+
+In the Windows desktop app, Mizaan should support native desktop notifications through Tauri if practical.
+
+Desktop notifications should show:
+
+- reminder title
+- reminder message
+- source type
+- open action
+- snooze action if supported
+- dismiss action if supported
+
+Limitation:
+
+If the app is closed, native notification behavior depends on Windows/Tauri implementation.
+
+Therefore, Mizaan must always support missed reminder recovery on next app open.
+
+--------------------------------------------------------------------
+50.9 Sound optional
+--------------------------------------------------------------------
+
+Sound alerts are optional.
+
+If implemented:
+
+- allow user to enable/disable sound
+- allow quiet hours
+- allow no sound for private reminders
+- never play sound by default in a disruptive way
+
+--------------------------------------------------------------------
+50.10 Notification history
+--------------------------------------------------------------------
+
+Mizaan should keep notification history.
+
+History includes:
+
+- reminder title
+- source item
+- scheduled time
+- delivered time
+- dismissed time
+- snoozed time
+- missed status
+- action taken
+
+Notification history should be available in Settings
+
+====================================================================
+51. COMMAND PALETTE AND KEYBOARD SHORTCUTS
+====================================================================
+
+Mizaan needs a global command palette and keyboard shortcut system.
+
+This is essential for a fast Notion-like desktop workflow.
+
+--------------------------------------------------------------------
+51.1 Global command palette
+--------------------------------------------------------------------
+
+Shortcut:
+
+    Ctrl+K = command palette
+
+The command palette should allow the user to:
+
+- create note
+- create task
+- create event
+- create project
+- create person profile
+- create document record
+- create tracker
+- create goal
+- open page
+- search vault
+- search commands
+- switch spaces
+- open graph
+- open local graph
+- rebuild search index
+- rebuild graph index
+- export backup
+- restore backup
+- switch theme
+- open settings
+- open vault health
+- open trash
+- run repair tools
+
+Command palette search should search:
+
+- commands
+- pages
+- notes
+- documents
+- projects
+- people
+- tasks
+- calendar events
+- templates
+- settings actions
+
+--------------------------------------------------------------------
+51.2 Keyboard shortcuts
+--------------------------------------------------------------------
+
+Core app shortcuts:
+
+- Ctrl+K = command palette
+- Ctrl+N = new page
+- Ctrl+Shift+N = quick note
+- Ctrl+P = search/open page
+- Ctrl+S = manual save/snapshot
+- Ctrl+F = search within current page
+- Ctrl+Shift+F = search whole vault
+- Ctrl+, = settings
+- Ctrl+Shift+G = open graph
+- Ctrl+Shift+B = create backup
+- Esc = close panels/modals/menus
+
+Editor shortcuts:
+
+- Ctrl+B = bold
+- Ctrl+I = italic
+- Ctrl+U = underline
+- Ctrl+Shift+S = strikethrough if not conflicting
+- Ctrl+E = inline code
+- Ctrl+Alt+1 = heading 1
+- Ctrl+Alt+2 = heading 2
+- Ctrl+Alt+3 = heading 3
+- Tab = indent block
+- Shift+Tab = outdent block
+- Enter = new block
+- Shift+Enter = line break
+- Backspace on empty block = merge/remove safely
+
+Inline triggers:
+
+- / = block command menu
+- [[ = page link
+- # = tag
+- @ = mention person/page/item
+- ! = attach/embed action later
+
+Navigation shortcuts:
+
+- Alt+Left = back
+- Alt+Right = forward
+- Ctrl+1 = Home
+- Ctrl+2 = Notes
+- Ctrl+3 = Documents
+- Ctrl+4 = Projects
+- Ctrl+5 = Calendar
+- Ctrl+6 = Tasks
+- Ctrl+7 = Graph
+
+--------------------------------------------------------------------
+51.3 Slash command menu
+--------------------------------------------------------------------
+
+Slash menu appears when user types:
+
+    /
+
+Options:
+
+- Text
+- Heading 1
+- Heading 2
+- Heading 3
+- Bullet list
+- Numbered list
+- To-do
+- Toggle
+- Quote
+- Callout
+- Divider
+- Code block
+- Table
+- Image
+- File
+- Page link
+- Relation
+- Date
+- Mention
+- Template block
+
+Slash menu behavior:
+
+- ArrowUp/ArrowDown move selection
+- Enter selects
+- Escape closes
+- search filters commands
+- mouse click selects
+- menu is small, calm, and Notion-like
+
+--------------------------------------------------------------------
+51.4 Shortcut settings
+--------------------------------------------------------------------
+
+Settings should eventually allow:
+
+- view shortcuts
+- search shortcuts
+- reset shortcuts
+- change shortcuts later
+- detect conflicts
+
+Do not add complex remapping until core shortcuts are stable.
+
+====================================================================
+52. TEMPLATE CONTENT SPEC
+====================================================================
+
+Templates must be real creation blueprints, not fake buttons.
+
+Every template should define:
+
+- id
+- category
+- name
+- description
+- icon
+- default_title
+- default_properties
+- starting_blocks
+- linked_spaces
+- suggested_relations
+- created_entity_type
+- version
+- created_at
+- updated_at
+
+Templates should live in the vault and be editable later.
+
+--------------------------------------------------------------------
+52.1 Notes templates
+--------------------------------------------------------------------
+
+Blank Note
+
+Default title:
+    Untitled Note
+
+Properties:
+- tags
+- status
+- created date
+- updated date
+
+Blocks:
+- empty paragraph with placeholder: Type / for commands
+
+Suggested relations:
+- none
+
+Daily Note
+
+Default title:
+    Daily Note - {{date}}
+
+Properties:
+- date
+- mood
+- focus
+- tags
+
+Blocks:
+- Today
+- Top priorities
+- Notes
+- Tasks
+- Reflection
+
+Meeting Notes
+
+Default title:
+    Meeting Notes - {{date}}
+
+Properties:
+- date
+- attendees
+- project
+- status
+
+Blocks:
+- Purpose
+- Attendees
+- Agenda
+- Notes
+- Decisions
+- Action items
+- Follow-up
+
+Lecture Notes
+
+Default title:
+    Lecture Notes - {{topic}}
+
+Properties:
+- course
+- topic
+- date
+- exam relevance
+- tags
+
+Blocks:
+- Summary
+- Key definitions
+- Main explanation
+- Diagrams
+- Important questions
+- Clinical/real-world notes
+- Review checklist
+
+Research Notes
+
+Default title:
+    Research Notes - {{topic}}
+
+Properties:
+- topic
+- source
+- author
+- date accessed
+- reliability
+- tags
+
+Blocks:
+- Research question
+- Key findings
+- Evidence
+- Quotes
+- Links
+- My understanding
+- Follow-up questions
+
+Brainstorm
+
+Default title:
+    Brainstorm - {{topic}}
+
+Properties:
+- topic
+- status
+- tags
+
+Blocks:
+- Problem
+- Raw ideas
+- Promising directions
+- Risks
+- Next actions
+
+Journal Entry
+
+Default title:
+    Journal - {{date}}
+
+Properties:
+- date
+- mood
+- tags
+- private
+
+Blocks:
+- Today happened
+- Thoughts
+- Lessons
+- Gratitude
+- Tomorrow
+
+Checklist Note
+
+Default title:
+    Checklist - {{topic}}
+
+Properties:
+- status
+- due date
+- tags
+
+Blocks:
+- To-do checklist
+- Notes
+- Done
+
+Long-form Writing
+
+Default title:
+    Draft - {{topic}}
+
+Properties:
+- topic
+- status
+- word goal
+- tags
+
+Blocks:
+- Working title
+- Outline
+- Draft
+- Notes
+- Revision checklist
+
+Quick Capture
+
+Default title:
+    Quick Capture - {{datetime}}
+
+Properties:
+- captured at
+- inbox
+- tags
+
+Blocks:
+- Captured thought
+- Process later
+
+--------------------------------------------------------------------
+52.2 Document templates
+--------------------------------------------------------------------
+
+Document Record
+
+Default title:
+    Untitled Document
+
+Properties:
+- document type
+- source
+- import date
+- tags
+- status
+
+Blocks:
+- Summary
+- Attached file
+- Metadata
+- Notes
+- Related items
+
+PDF Archive Entry
+
+Default title:
+    PDF Archive - {{filename}}
+
+Properties:
+- file type
+- imported at
+- checksum
+- OCR status
+- tags
+
+Blocks:
+- PDF preview
+- Summary
+- Key pages
+- Related notes
+- Actions
+
+Identity Document
+
+Default title:
+    Identity Document - {{name}}
+
+Properties:
+- document type
+- person
+- issue date
+- expiry date
+- private
+- tags
+
+Blocks:
+- Document summary
+- Important dates
+- Attached file
+- Renewal notes
+- Related person
+
+Receipt Document
+
+Default title:
+    Receipt - {{date}}
+
+Properties:
+- vendor
+- amount
+- currency
+- date
+- finance category
+- linked finance record
+
+Blocks:
+- Receipt summary
+- Attached receipt
+- Payment details
+- Related finance record
+- Notes
+
+Contract / Agreement
+
+Default title:
+    Contract - {{party}}
+
+Properties:
+- party
+- start date
+- end date
+- status
+- private
+- tags
+
+Blocks:
+- Contract summary
+- Key terms
+- Obligations
+- Dates
+- Attached file
+- Notes
+
+Certificate
+
+Default title:
+    Certificate - {{name}}
+
+Properties:
+- issuer
+- issue date
+- expiry date
+- tags
+
+Blocks:
+- Certificate summary
+- Attached file
+- Related project/person
+- Notes
+
+Scanned Document
+
+Default title:
+    Scanned Document - {{date}}
+
+Properties:
+- scan date
+- OCR status
+- document type
+- tags
+
+Blocks:
+- Scan preview
+- OCR text
+- Notes
+- Related items
+
+Document Review Note
+
+Default title:
+    Document Review - {{document}}
+
+Properties:
+- linked document
+- review status
+- reviewed date
+- tags
+
+Blocks:
+- Summary
+- Important points
+- Issues
+- Follow-up actions
+- Related notes
+
+--------------------------------------------------------------------
+52.3 Project templates
+--------------------------------------------------------------------
+
+Blank Project
+
+Default title:
+    Untitled Project
+
+Properties:
+- status
+- start date
+- target date
+- priority
+- tags
+
+Blocks:
+- Overview
+- Goals
+- Tasks
+- Notes
+- Documents
+- Timeline
+
+Academic Project
+
+Default title:
+    Academic Project - {{name}}
+
+Properties:
+- course
+- deadline
+- status
+- priority
+- tags
+
+Blocks:
+- Project brief
+- Requirements
+- Research notes
+- Tasks
+- Deadlines
+- Submission checklist
+- Linked documents
+
+Software Project
+
+Default title:
+    Software Project - {{name}}
+
+Properties:
+- repo
+- status
+- priority
+- stack
+- tags
+
+Blocks:
+- Product goal
+- Features
+- Technical notes
+- Bugs
+- Tasks
+- Releases
+- Documentation
+- Linked files
+
+Research Project
+
+Default title:
+    Research Project - {{topic}}
+
+Properties:
+- topic
+- status
+- deadline
+- tags
+
+Blocks:
+- Research question
+- Sources
+- Notes
+- Findings
+- Drafts
+- Tasks
+- Final output
+
+Project Retrospective
+
+Default title:
+    Retrospective - {{project}}
+
+Properties:
+- project
+- date
+- status
+- tags
+
+Blocks:
+- What worked
+- What failed
+- Lessons learned
+- Improvements
+- Archive checklist
+
+--------------------------------------------------------------------
+52.4 People templates
+--------------------------------------------------------------------
+
+Person Profile
+
+Default title:
+    Person - {{name}}
+
+Properties:
+- name
+- relationship type
+- where known from
+- tags
+- private
+
+Blocks:
+- Context
+- Important details
+- Interaction history
+- Linked projects
+- Linked documents
+- Notes
+
+Relationship Notes
+
+Default title:
+    Relationship Notes - {{person}}
+
+Properties:
+- person
+- relationship type
+- status
+- tags
+- private
+
+Blocks:
+- Relationship context
+- History
+- Important memories
+- Boundaries/preferences
+- Follow-up
+
+Interaction Log
+
+Default title:
+    Interaction - {{person}} - {{date}}
+
+Properties:
+- person
+- date
+- type
+- tags
+- private
+
+Blocks:
+- What happened
+- Key points
+- Follow-up
+- Related items
+
+--------------------------------------------------------------------
+52.5 Finance templates
+--------------------------------------------------------------------
+
+Expense Record
+
+Default title:
+    Expense - {{date}}
+
+Properties:
+- amount
+- currency
+- category
+- account
+- date
+- linked receipt
+
+Blocks:
+- Expense summary
+- Receipt
+- Notes
+- Related project/person
+
+Subscription Tracker
+
+Default title:
+    Subscription - {{service}}
+
+Properties:
+- service
+- amount
+- billing cycle
+- renewal date
+- account
+- status
+
+Blocks:
+- Subscription details
+- Renewal notes
+- Cancellation info
+- Payment history
+
+Budget Page
+
+Default title:
+    Budget - {{month}}
+
+Properties:
+- month
+- income estimate
+- spending limit
+- status
+
+Blocks:
+- Income
+- Fixed costs
+- Variable costs
+- Savings
+- Notes
+- Review
+
+Loan Record
+
+Default title:
+    Loan - {{name}}
+
+Properties:
+- lender/borrower
+- amount
+- balance
+- due date
+- status
+- private
+
+Blocks:
+- Loan summary
+- Payment plan
+- History
+- Notes
+
+--------------------------------------------------------------------
+52.6 Calendar/task/tracker templates
+--------------------------------------------------------------------
+
+Event
+
+Default title:
+    Event - {{title}}
+
+Properties:
+- date
+- start time
+- end time
+- calendar
+- reminder
+- type
+
+Blocks:
+- Details
+- Preparation
+- Linked notes
+- Follow-up
+
+Task
+
+Default title:
+    Task - {{title}}
+
+Properties:
+- status
+- due date
+- priority
+- project
+- tags
+
+Blocks:
+- Task description
+- Checklist
+- Notes
+- Related items
+
+Habit Tracker
+
+Default title:
+    Habit Tracker - {{habit}}
+
+Properties:
+- habit
+- frequency
+- goal
+- streak
+- status
+
+Blocks:
+- Habit goal
+- Check-in log
+- Weekly review
+- Notes
+
+Study Tracker
+
+Default title:
+    Study Tracker - {{subject}}
+
+Properties:
+- subject
+- exam date
+- target hours
+- status
+
+Blocks:
+- Study plan
+- Topics
+- Sessions
+- Weak areas
+- Review checklist
+
+Goal Tracker
+
+Default title:
+    Goal - {{goal}}
+
+Properties:
+- goal
+- deadline
+- status
+- progress
+- priority
+
+Blocks:
+- Why this matters
+- Milestones
+- Tasks
+- Habits
+- Review
+
+====================================================================
+53. DATABASE ENGINE SPEC
+====================================================================
+
+Mizaan databases are Notion-like structured pages.
+
+Core rule:
+
+    Database rows are pages/items.
+
+A database is a special item/page that displays a collection of items using structured views.
+
+--------------------------------------------------------------------
+53.1 Database schema
+--------------------------------------------------------------------
+
+Database object fields:
+
+- id
+- title
+- description
+- icon
+- source_type
+- source_filter_json
+- properties_schema_json
+- views_json
+- default_view_id
+- created_at
+- updated_at
+
+Database row/item fields:
+
+- item id
+- title
+- type
+- category
+- properties
+- tags
+- relations
+- created_at
+- updated_at
+
+--------------------------------------------------------------------
+53.2 Views
+--------------------------------------------------------------------
+
+Supported views:
+
+Phase 1:
+- table
+- list
+
+Phase 2:
+- board
+- calendar
+- gallery
+- timeline
+
+Phase 3:
+- charts
+- forms maybe local-only
+
+View configuration:
+
+- id
+- name
+- type
+- filters
+- sorts
+- groups
+- visible_properties
+- property_order
+- layout_settings
+- created_at
+- updated_at
+
+--------------------------------------------------------------------
+53.3 Properties
+--------------------------------------------------------------------
+
+Property types:
+
+- title
+- text
+- number
+- select
+- multi-select
+- status
+- date
+- checkbox
+- URL
+- email
+- phone
+- file
+- relation
+- created time
+- updated time
+- ID
+
+Later:
+
+- formula
+- rollup
+- button
+- progress
+
+Property settings:
+
+- name
+- type
+- required
+- default value
+- options for select/status
+- display format
+- visible/hidden
+- width
+- order
+
+--------------------------------------------------------------------
+53.4 Table view
+--------------------------------------------------------------------
+
+Table view supports:
+
+- add row
+- edit cell
+- open row as page
+- hide/show properties
+- reorder columns
+- sort
+- filter
+- group later
+- bulk select
+- bulk edit later
+- CSV import
+- CSV export
+
+--------------------------------------------------------------------
+53.5 List view
+--------------------------------------------------------------------
+
+List view supports:
+
+- title
+- selected properties
+- status
+- tags
+- due date
+- quick open
+- quick edit
+- filtering
+- sorting
+
+--------------------------------------------------------------------
+53.6 Board view
+--------------------------------------------------------------------
+
+Board view groups items by:
+
+- status
+- select property
+- person
+- project
+- priority
+
+Board supports:
+
+- columns
+- drag item between columns
+- update grouped property on drag
+- card preview settings
+- hidden groups
+- empty group state
+
+--------------------------------------------------------------------
+53.7 Calendar view
+--------------------------------------------------------------------
+
+Calendar view uses date properties.
+
+Supports:
+
+- month view
+- week view later
+- show items on dates
+- drag item to another date
+- open item
+- create item on date
+
+--------------------------------------------------------------------
+53.8 Gallery view
+--------------------------------------------------------------------
+
+Gallery view supports:
+
+- card title
+- cover image
+- preview text
+- selected properties
+- tags
+- open item
+
+Good for:
+
+- documents
+- recipes later
+- people
+- visual projects
+
+--------------------------------------------------------------------
+53.9 Timeline view
+--------------------------------------------------------------------
+
+Timeline view uses:
+
+- start date
+- end date
+- status
+- project
+- milestone
+
+Good for:
+
+- projects
+- deadlines
+- study plans
+- roadmaps
+
+--------------------------------------------------------------------
+53.10 Linked database views
+--------------------------------------------------------------------
+
+A linked database view shows an existing database with different filters.
+
+Example:
+
+- Project page shows linked tasks database filtered to this project.
+- Person page shows linked interactions filtered to this person.
+- Finance page shows linked receipts filtered to this month.
+
+Linked views should not duplicate data.
+They only store view configuration.
+
+--------------------------------------------------------------------
+53.11 CSV import/export
+--------------------------------------------------------------------
+
+CSV import:
+
+- user chooses CSV
+- Mizaan previews columns
+- user maps columns to properties
+- user confirms import
+- Mizaan creates items
+- failed rows go to import error report
+
+CSV export:
+
+- selected database
+- selected view
+- visible properties only or all properties
+- include item IDs optionally
+- include relations as titles/IDs optionally
+
+====================================================================
+54. CANVAS SYSTEM
+====================================================================
+
+Canvas is different from graph.
+
+    Graph = automatic generated network.
+    Canvas = manual visual board/mind map.
+
+Graph shows relationships that already exist.
+Canvas lets the user arrange ideas manually.
+
+--------------------------------------------------------------------
+54.1 Canvas purpose
+--------------------------------------------------------------------
+
+Canvas is for:
+
+- mind maps
+- project planning
+- concept maps
+- study diagrams
+- visual brainstorming
+- document analysis boards
+- relationship maps
+- workflow maps
+
+--------------------------------------------------------------------
+54.2 Canvas item types
+--------------------------------------------------------------------
+
+Canvas can contain:
+
+- page card
+- document card
+- text card
+- image card
+- file card
+- task card
+- person card
+- project card
+- group/frame
+- connector/edge
+
+--------------------------------------------------------------------
+54.3 Canvas behavior
+--------------------------------------------------------------------
+
+Canvas supports:
+
+- add page card
+- add document card
+- add text card
+- add image
+- add task card
+- connect cards
+- move cards manually
+- resize cards
+- group cards
+- zoom
+- pan
+- select multiple
+- duplicate card
+- delete card
+- open linked page
+- save layout
+- export image/PDF
+
+--------------------------------------------------------------------
+54.4 Canvas storage
+--------------------------------------------------------------------
+
+Canvas item:
+
+- id
+- title
+- type = canvas
+- blocks/properties
+- layout_json
+
+Canvas layout stores:
+
+- card ids
+- card positions
+- card sizes
+- connector positions
+- zoom/default view
+- groups/frames
+
+Canvas cards can point to existing Mizaan items.
+They should not duplicate the original page unless explicitly copied.
+
+--------------------------------------------------------------------
+54.5 Canvas and graph relationship
+--------------------------------------------------------------------
+
+Canvas can use graph data as input, but it is not the graph.
+
+Examples:
+
+- user opens project graph
+- sends selected nodes to canvas
+- arranges them manually
+- adds explanation cards
+- exports as study map
+
+====================================================================
+55. DOCUMENT PREVIEW ENGINE
+====================================================================
+
+Mizaan must preview documents safely without making preview failure destroy or block document storage.
+
+Core rule:
+
+    Preview failure must not break document storage.
+
+--------------------------------------------------------------------
+55.1 Supported previews
+--------------------------------------------------------------------
+
+Phase 1:
+
+- PDF preview
+- image preview
+- text preview
+- markdown preview
+- basic metadata preview for unsupported files
+
+Phase 2:
+
+- DOCX metadata and extracted text preview
+- Office file conversion preview if local tool available
+- thumbnail generation
+- OCR text preview
+
+Phase 3:
+
+- richer Office previews
+- side-by-side document notes
+- annotation layer
+
+--------------------------------------------------------------------
+55.2 PDF preview
+--------------------------------------------------------------------
+
+PDF preview supports:
+
+- page navigation
+- zoom
+- fit width
+- thumbnails later
+- text extraction later
+- linked notes panel
+- open external viewer
+- reveal in folder
+
+--------------------------------------------------------------------
+55.3 Image preview
+--------------------------------------------------------------------
+
+Image preview supports:
+
+- zoom
+- pan
+- rotate later
+- metadata
+- open external viewer
+- reveal in folder
+
+--------------------------------------------------------------------
+55.4 Text and Markdown preview
+--------------------------------------------------------------------
+
+Text preview supports:
+
+- plain text view
+- markdown rendered view
+- raw/source toggle
+- copy text
+
+--------------------------------------------------------------------
+55.5 Office file preview
+--------------------------------------------------------------------
+
+Office files should initially show:
+
+- filename
+- file type
+- size
+- path
+- modified date
+- linked notes
+- open externally
+- conversion status if available
+
+DOCX preview can be added later using local conversion tools.
+
+--------------------------------------------------------------------
+55.6 Unsupported file state
+--------------------------------------------------------------------
+
+Unsupported files should still be stored.
+
+UI should show:
+
+- unsupported preview message
+- file metadata
+- open externally
+- reveal in folder
+- linked notes
+- relations
+- tags
+
+--------------------------------------------------------------------
+55.7 Preview cache
+--------------------------------------------------------------------
+
+Preview cache lives in:
+
+    indexes/metadata/
+    attachments/thumbnails/
+
+Cache is rebuildable.
+
+If cache breaks:
+
+- do not lose document
+- show fallback preview
+- allow rebuild preview
+
+====================================================================
+56. WINDOWS RELEASE PLAN
+====================================================================
+
+Mizaan’s first serious platform is Windows desktop.
+
+The release process must protect user vaults.
+
+--------------------------------------------------------------------
+56.1 Build types
+--------------------------------------------------------------------
+
+Development build:
+
+- used by developer
+- logs enabled
+- not for normal users
+
+Portable build:
+
+- app runs without installer
+- useful for USB/external testing
+- does not require admin installation if possible
+
+Installer build:
+
+- installs Mizaan into Windows
+- creates Start Menu shortcut
+- optional desktop shortcut
+- does not create or delete user vault automatically
+
+Unsigned build:
+
+- acceptable for early private testing
+- Windows may warn user
+
+Signed build later:
+
+- required for public trust
+- code signing certificate needed
+
+--------------------------------------------------------------------
+56.2 Clean VM test
+--------------------------------------------------------------------
+
+Before release, test on clean Windows VM:
+
+- install app
+- open app
+- create vault
+- import document
+- create note
+- close app
+- reopen app
+- open vault
+- backup vault
+- restore vault
+- uninstall app
+- confirm vault remains untouched
+
+--------------------------------------------------------------------
+56.3 Uninstall behavior
+--------------------------------------------------------------------
+
+Critical rule:
+
+    Uninstalling Mizaan must never delete vault data.
+
+Uninstaller may remove:
+
+- app files
+- shortcuts
+- app cache if user confirms
+
+Uninstaller must not remove:
+
+- user-selected vault folder
+- backups
+- attachments
+- exported files
+
+--------------------------------------------------------------------
+56.4 App data behavior
+--------------------------------------------------------------------
+
+Mizaan may store app-level data outside the vault:
+
+- recent vault paths
+- window size
+- app preferences
+- crash logs
+- update metadata
+
+But user content must live in the vault.
+
+--------------------------------------------------------------------
+56.5 Update strategy
+--------------------------------------------------------------------
+
+Updates must:
+
+- detect vault schema version
+- create backup before migration
+- migrate safely
+- allow app to refuse opening too-new vaults
+- never silently corrupt old vaults
+
+--------------------------------------------------------------------
+56.6 Versioning
+--------------------------------------------------------------------
+
+Use semantic versioning:
+
+    major.minor.patch
+
+Examples:
+
+- 0.1.0 prototype
+- 0.2.0 Tauri shell
+- 0.3.0 SQLite vault
+- 1.0.0 first stable lifetime release
+
+Release notes must include:
+
+- features added
+- migrations run
+- backup changes
+- known issues
+- rollback notes if needed
+
+====================================================================
+57. QA AND TESTING STANDARD
+====================================================================
+
+Mizaan must be tested like a lifetime data app, not like a disposable UI demo.
+
+--------------------------------------------------------------------
+57.1 Required automated tests
+--------------------------------------------------------------------
+
+Unit tests:
+
+- item creation
+- block editing
+- relation creation
+- tag parsing
+- template creation
+- date handling
+
+Storage tests:
+
+- create vault
+- open vault
+- save item
+- read item
+- update item
+- delete/archive item
+
+Migration tests:
+
+- migrate old schema to new schema
+- migration creates backup
+- migration logs result
+- failed migration restores safely
+
+Backup/restore tests:
+
+- create backup
+- validate backup
+- restore backup
+- reject invalid backup
+- restore preserves item count
+- restore preserves attachments
+
+Import/export tests:
+
+- markdown import
+- markdown export
+- CSV import
+- CSV export
+- ICS import/export later
+- invalid import handling
+
+Graph tests:
+
+- relation creates edge
+- wiki link creates edge
+- tag creates edge
+- attachment creates edge
+- unresolved link is detected
+- backlinks are generated
+- graph rebuild works
+
+Search tests:
+
+- title search
+- tag search
+- full-text search
+- filter search
+- index rebuild
+
+Editor tests:
+
+- create block
+- edit block
+- delete block
+- move block
+- slash command insert
+- markdown shortcut conversion
+- autosave
+
+Calendar recurrence tests:
+
+- daily recurrence
+- weekly recurrence
+- monthly recurrence
+- yearly recurrence
+- recurrence exception
+- edit single occurrence
+- edit future occurrences
+- delete occurrence
+
+Filesystem tests:
+
+- copy file into vault
+- missing attachment detection
+- relink file
+- thumbnail cache rebuild
+- permission denied handling
+
+Tauri command tests:
+
+- folder picker command
+- vault create command
+- SQLite command
+- file import command
+- backup command
+
+--------------------------------------------------------------------
+57.2 Manual QA
+--------------------------------------------------------------------
+
+Manual QA must verify:
+
+- first launch
+- create vault
+- open vault
+- USB vault open
+- create note
+- create document
+- import file
+- create relation
+- graph view
+- search
+- backup
+- restore
+- close/reopen
+- bad shutdown recovery
+- stale lock handling
+- no cloud/auth/Google UI
+
+--------------------------------------------------------------------
+57.3 Browser/app QA
+--------------------------------------------------------------------
+
+Use browser automation or Tauri test process where possible.
+
+Verify:
+
+- no console errors
+- no broken routes
+- no dead buttons
+- UI works at desktop sizes
+- basic keyboard navigation
+- slash command works
+- command palette works
+- graph loads
+- settings works
+
+--------------------------------------------------------------------
+57.4 Clean Windows VM test
+--------------------------------------------------------------------
+
+Before serious release:
+
+- install on clean Windows
+- create vault on internal drive
+- create vault on USB drive
+- import files
+- backup/restore
+- uninstall app
+- confirm vault remains
+
+--------------------------------------------------------------------
+57.5 USB vault test
+--------------------------------------------------------------------
+
+Test:
+
+- create vault on USB
+- write note
+- import document
+- close app
+- safely eject USB
+- plug into another Windows machine
+- open vault
+- confirm data exists
+- edit note
+- close app
+- reopen on first machine
+
+--------------------------------------------------------------------
+57.6 Bad shutdown test
+--------------------------------------------------------------------
+
+Test:
+
+- open vault
+- create item
+- force close app
+- reopen app
+- stale lock warning appears
+- recovery path works
+- database remains valid
+- no data loss from last committed writes
+
+====================================================================
+58. MIGRATION STRATEGY
+====================================================================
+
+Mizaan will evolve over time, so migrations must be safe.
+
+Core rule:
+
+    Never migrate without a backup.
+
+--------------------------------------------------------------------
+58.1 Migration rules
+--------------------------------------------------------------------
+
+Every migration must:
+
+- have a version number
+- have a name
+- have a timestamp
+- create pre-migration backup
+- log what changed
+- run inside a transaction where possible
+- validate result
+- fail safely
+- restore backup if needed
+- update schema version only after success
+
+--------------------------------------------------------------------
+58.2 Migration flow
+--------------------------------------------------------------------
+
+When app opens a vault:
+
+1. read current schema version
+2. compare with app-supported schema version
+3. if schema is older, show migration required
+4. create pre-migration backup
+5. run migrations in order
+6. validate database
+7. rebuild indexes if needed
+8. update schema version
+9. open vault
+
+If migration fails:
+
+- stop opening vault
+- show error
+- restore pre-migration backup if possible
+- write migration log
+- offer manual repair
+
+--------------------------------------------------------------------
+58.3 Too-new vault
+--------------------------------------------------------------------
+
+If vault schema is newer than the app supports:
+
+Do not open normally.
+
+Show:
+
+    This vault was created or updated by a newer version of Mizaan.
+    Please update Mizaan before opening this vault.
+
+Options:
+
+- Open read-only if safe
+- Cancel
+- Locate backup
+
+Never downgrade automatically.
+
+--------------------------------------------------------------------
+58.4 Migration logs
+--------------------------------------------------------------------
+
+Migration logs live in:
+
+    logs/migration.log
+
+Each log entry includes:
+
+- migration id
+- from version
+- to version
+- started_at
+- completed_at
+- success/failure
+- error message
+- backup path
+
+====================================================================
+59. ERROR STATES AND USER RECOVERY
+====================================================================
+
+Mizaan must handle failure states clearly.
+
+Do not build only happy paths.
+
+--------------------------------------------------------------------
+59.1 Vault missing
+--------------------------------------------------------------------
+
+Message:
+
+    Your last vault was not found.
+
+Actions:
+
+- Retry
+- Locate vault
+- Restore backup
+- Open demo mode
+
+--------------------------------------------------------------------
+59.2 USB unplugged while open
+--------------------------------------------------------------------
+
+Message:
+
+    Mizaan lost access to the vault. Stop editing until the drive is reconnected.
+
+Actions:
+
+- Retry connection
+- Save emergency recovery copy if possible
+- Close vault safely
+
+--------------------------------------------------------------------
+59.3 Database locked
+--------------------------------------------------------------------
+
+Message:
+
+    This vault appears to be open somewhere else.
+
+Actions:
+
+- Open read-only
+- Cancel
+- Force unlock after confirmation
+
+--------------------------------------------------------------------
+59.4 Database corrupted
+--------------------------------------------------------------------
+
+Message:
+
+    Mizaan could not safely open the vault database.
+
+Actions:
+
+- Run integrity check
+- Restore from backup
+- Recover from markdown mirrors
+- Open repair mode
+
+--------------------------------------------------------------------
+59.5 Attachment missing
+--------------------------------------------------------------------
+
+Message:
+
+    This file is missing from the vault.
+
+Actions:
+
+- Locate file
+- Search vault
+- Mark missing
+- Remove attachment reference
+
+--------------------------------------------------------------------
+59.6 Backup failed
+--------------------------------------------------------------------
+
+Message:
+
+    Backup could not be completed.
+
+Show:
+
+- reason
+- available disk space
+- failed file if known
+- suggested fix
+
+Actions:
+
+- Retry
+- Choose another backup location
+- Open backup log
+
+--------------------------------------------------------------------
+59.7 Restore failed
+--------------------------------------------------------------------
+
+Actions:
+
+- keep current vault untouched if possible
+- show failed step
+- open restore log
+- retry
+- choose another backup
+
+--------------------------------------------------------------------
+59.8 Index rebuild failed
+--------------------------------------------------------------------
+
+Indexes are rebuildable and non-critical.
+
+Actions:
+
+- continue using app
+- show degraded search/graph warning
+- retry rebuild
+- open log
+
+--------------------------------------------------------------------
+59.9 Import failed
+--------------------------------------------------------------------
+
+Import failure should not corrupt existing data.
+
+Actions:
+
+- show failed files
+- retry failed items
+- export error report
+- skip unsupported files
+
+--------------------------------------------------------------------
+59.10 Unsupported file
+--------------------------------------------------------------------
+
+Unsupported files can still be stored.
+
+Actions:
+
+- save metadata
+- store file
+- show unsupported preview
+- open externally
+- reveal in folder
+
+--------------------------------------------------------------------
+59.11 Not enough disk space
+--------------------------------------------------------------------
+
+Actions:
+
+- stop operation
+- show required vs available space
+- choose another location
+- clean cache
+- skip thumbnails if needed
+
+--------------------------------------------------------------------
+59.12 Permission denied
+--------------------------------------------------------------------
+
+Actions:
+
+- explain missing permission
+- choose another folder
+- retry
+- open Windows permissions help later
+
+--------------------------------------------------------------------
+59.13 Stale lock file
+--------------------------------------------------------------------
+
+Actions:
+
+- show last device and time
+- open read-only
+- force unlock
+- cancel
+
+--------------------------------------------------------------------
+59.14 Schema too new
+--------------------------------------------------------------------
+
+Actions:
+
+- update Mizaan
+- open read-only if safe
+- restore older backup
+- cancel
+
+====================================================================
+60. PRIVACY AND LOCKED CONTENT UX
+====================================================================
+
+Mizaan is local-first, but some local content is still sensitive.
+
+Privacy features should be introduced carefully.
+
+--------------------------------------------------------------------
+60.1 Private page
+--------------------------------------------------------------------
+
+A private page is hidden or blurred in normal browsing.
+
+Private pages can:
+
+- blur preview
+- hide from recent items
+- hide from graph optionally
+- hide from search optionally
+- require app unlock to open
+
+--------------------------------------------------------------------
+60.2 Private person profile
+--------------------------------------------------------------------
+
+People data is sensitive.
+
+Private person profiles can:
+
+- hide name in previews
+- hide from graph optionally
+- hide from global search optionally
+- require unlock to open
+- hide linked interaction notes
+
+--------------------------------------------------------------------
+60.3 Hidden space
+--------------------------------------------------------------------
+
+A hidden space is not visible in sidebar until unlocked.
+
+Examples:
+
+- private people notes
+- sensitive finance
+- personal journal
+
+--------------------------------------------------------------------
+60.4 App lock
+--------------------------------------------------------------------
+
+App lock should support:
+
+- password/PIN later
+- lock on app start
+- lock after inactivity
+- manual lock shortcut
+- lock private content only or whole app
+
+Do not implement weak fake security.
+If app lock exists, be honest about what it protects.
+
+--------------------------------------------------------------------
+60.5 Blur private previews
+--------------------------------------------------------------------
+
+Private content should be blurred or replaced with:
+
+    Private content
+
+This applies to:
+
+- recent items
+- search results
+- graph nodes
+- backlinks
+- notifications
+- task/calendar previews
+
+--------------------------------------------------------------------
+60.6 Hide from graph optionally
+--------------------------------------------------------------------
+
+Private content can be:
+
+- visible in graph normally
+- shown as private node
+- hidden completely
+
+User chooses privacy behavior.
+
+--------------------------------------------------------------------
+60.7 Hide from search optionally
+--------------------------------------------------------------------
+
+Private content can be:
+
+- included in search after unlock
+- excluded from search until unlock
+- shown as private result placeholder
+
+--------------------------------------------------------------------
+60.8 Encrypted backup later
+--------------------------------------------------------------------
+
+Encrypted backups are a later security feature.
+
+Do not implement before backup/restore is stable.
+
+When implemented:
+
+- user sets passphrase
+- app warns that lost passphrase means backup cannot be restored
+- encryption applies to backup archive
+- restore requires passphrase
+```
+
+
+====================================================================
+IMPLEMENTATION STATUS TRACKER
+=============================
+
+Last updated: 2026-05-29 20:32 +08:00
+Validation at update: typecheck pass, 31/31 tests pass, Git unavailable (not a repository).
+
+Phase 1 — Master Plan, Folder Selection, and Audit ✅ implemented
+Phase 2 — VaultProvider Abstraction ✅ implemented
+Phase 3 — Vault Lifecycle Boundary - partially implemented — prototype local vault lifecycle exists; demo mode has no isolated storage sandbox
+Phase 4 — Notion-like Page Workspace and Editor Foundation - partially implemented — sidebar zones with PINNED/PAGES sections, template-first page creation, page workspace, writing-focused UI, collapsible Page data right panel, right panel toggle via Menu icon, sidebar hover actions and three-dot menus, interactive pin/unpin, system tools at bottom, Calendar in Core nav; full rich editor, wiki-link indexing, and automatic graph remain later
+Phase 5 — Editable Simple Table and Basic Database Foundation - partially implemented — simple table blocks and basic database table pages are editable and provider-backed; formulas, rollups, advanced views, and the final database engine remain later
+Phase 6 — Calendar Core Module - partially implemented — month/week/agenda views, event CRUD modal, event filtering exist; day view, time-slot grid, recurrence, ICS, and a real calendar engine remain later; Calendar is correctly in Core navigation, not a promoted page
+Phase 7 — Native Windows/Tauri Readiness Boundary ❌ — blueprint exists, implementation not started
+Phase 8 — SQLite Portable Vault Provider ❌ — not implemented
+Phase 9 — Portable Folder Vault and File Layout ❌ — not implemented
+Phase 10 — Markdown Mirrors and Export Survival Layer ❌ — not implemented
+Phase 11 — Document Import and Preview Pipeline ❌ — not implemented
+Phase 12 — Search, Backlinks, and Graph Index Foundation - partially implemented — title/summary/tag/status search exists; full-text block index, wiki-link backlinks, and graph indexes remain later
+Phase 13 — Global Graph and Automatic Local Graph - partially implemented — relation graph foundation exists; full indexed graph remains later
+Phase 14 — Manual Local Graph / Page Canvas Graph ❌ — not implemented
+Phase 15 — Final Database Engine - partially implemented — basic local editable tables with add/remove/rename column and row support exist; formulas, rollups, advanced views, and export/import remain later
+Phase 16 — Tasks, Trackers, Goals, and Reminders - partially implemented — tracker pages exist as promoted space; task, goal, and reminder engines are not implemented
+Phase 17 — Backup, Restore, Repair, and Migration Hardening ❌ — not implemented
+Phase 18 — Themes, Privacy, Settings, and App Lock - partially implemented — Light/Dark/Night theme system is implemented and verified; settings not fully editable; privacy controls and app lock not implemented
+Phase 19 — Windows Packaging, Installer, and Clean VM Testing ❌ — not implemented
+Phase 20 — Android Companion Plan ❌ — not implemented
+Phase 21 — iOS Companion Plan ❌ — not implemented
+Phase 22 — Lifetime Stabilization and Final QA ❌ — not implemented
+
+Git status note:
+E:\Github\Mizaan-Revamp is not a Git repository.
+Git commit verification is unavailable.
+No commit hash is available.
+Do not initialize a Git repository without explicit user approval.
+
+Screenshot note:
+47 screenshot files and browser QA JSON logs exist in docs/screenshots/ covering Phase 4 and combined Phase 4/5 runs.
+No screenshots exist for theme switching, sidebar hover menus, right panel toggle, or calendar view from later sessions.
+
+====================================================================
+CURRENT PRODUCT MODEL CLARIFICATION
+=====================================
+
+This section defines the corrected product model as of 2026-05-29.
+
+All spaces are pages, but not all pages are spaces.
+A space is a promoted page/container created from a template.
+
+Vault:
+The whole local-first data container.
+All items live inside the vault.
+
+Core modules (always in Core sidebar section, not pages):
+- Home
+- Search
+- Graph
+- Calendar
+
+Important: Calendar is a core module, not a promoted page.
+Calendar events may be item/page-like records, but the Calendar module itself must use real calendar UI (month/week/day/agenda views).
+Calendar must not be treated as a promoted space or page in the sidebar page tree.
+
+Promoted page spaces (can be pinned, contain child pages):
+- Notes
+- Documents
+- Projects
+- People
+- Finance
+- Trackers
+
+System tools (always at bottom of sidebar):
+- Templates
+- Vault
+- Trash
+- Settings
+
+Normal pages/items (created inside spaces or as standalone pages):
+- Meeting Notes
+- Project Plan
+- Personal Profile
+- Basic Database
+- Getting Started
+- Document records
+- Finance records
+- Tracker pages
+- Child pages (any depth)
+
+Future user-created spaces should be promoted page containers created from templates.
+
+Rules:
+- Do not claim Calendar is fully implemented as a Google Calendar-style module.
+- Do not claim SQLite, Tauri, portable folder vault, or markdown mirrors are implemented.
+- Do not claim the full database engine (formulas, rollups, advanced views) is implemented.
+- Do not mark tasks, goals, reminders, or app lock as implemented.
+- Do not falsely claim Git commits exist at E:\Github\Mizaan-Revamp.
+

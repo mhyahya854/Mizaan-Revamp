@@ -1,0 +1,29 @@
+{
+  "steps": [
+    "Opened Home.",
+    "Opened Notes space.",
+    "Created a note from the Lecture Notes template.",
+    "Edited title and first block.",
+    "Opened slash command menu and inserted Heading 2.",
+    "Opened relation and outgoing right panel sections.",
+    "Refreshed and confirmed title/block persistence.",
+    "Created/opened a document record.",
+    "Created/opened a project page.",
+    "Created/opened a person profile.",
+    "Opened Vault.",
+    "Opened Settings.",
+    "Opened Graph.",
+    "Archived and restored an item through Trash."
+  ],
+  "screenshots": [
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-0705-phase-4-home.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-0705-phase-4-notes-space.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-0705-phase-4-page-workspace.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-0705-phase-4-slash-menu.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-0705-phase-4-page-right-panel-relations.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-0705-phase-4-relation-outgoing-section.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-0705-phase-4-vault-still-working.png",
+    "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260529-0705-phase-4-settings-vault-link.png"
+  ],
+  "consoleErrors": []
+}
