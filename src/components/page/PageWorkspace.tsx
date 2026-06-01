@@ -15,6 +15,11 @@ import {
   useVaultSnapshot,
 } from "@/lib/vault/use-vault";
 import { PageTemplatePicker } from "./PageTemplatePicker";
+import {
+  isDocumentRecordItem,
+  normalizeDocumentMetadataForItem,
+  updateDocumentMetadata,
+} from "@/lib/documents/document-record";
 
 export function PageWorkspace({ itemId }: { itemId: string }) {
   const provider = useVaultProvider();
@@ -30,8 +35,21 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
   }, [model.item.title]);
 
   function updateTitle(title: string) {
+    const nextTitle = title || "Untitled";
     setDraftTitle(title);
-    if (model.state === "ready") provider.updateItem(model.item.id, { title: title || "Untitled" });
+    if (model.state !== "ready") return;
+
+    if (isDocumentRecordItem(model.item)) {
+      provider.updateItem(model.item.id, {
+        title: nextTitle,
+        metadata: updateDocumentMetadata(normalizeDocumentMetadataForItem(model.item), {
+          documentTitle: nextTitle,
+        }),
+      });
+      return;
+    }
+
+    provider.updateItem(model.item.id, { title: nextTitle });
   }
 
   function handleCreateChild() {

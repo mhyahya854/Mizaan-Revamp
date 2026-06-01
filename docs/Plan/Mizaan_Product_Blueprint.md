@@ -73,7 +73,7 @@ Current module truth:
 - Search: [PARTIAL] - provider-backed title, summary, status, category, type, tag, property, metadata, and block search exist with filters; saved searches and native indexes do not.
 - Databases/Tables: [PARTIAL] - basic provider-backed table model, row/column/cell editing, stats, empty states, validation helper, and tests exist; full database engine does not.
 - Calendar: [PARTIAL] - local calendar module, event model helpers, views, CRUD flow, and tests exist; recurrence, reminders, ICS, native notifications, and sync do not.
-- Documents: [PARTIAL] - documents route and document page template exist as metadata-like pages; dedicated document record model, detail metadata editor, real import, preview, OCR, and native storage are not implemented yet.
+- Documents: [PARTIAL] - metadata-only document records now have typed helpers, provider-backed creation, route/list UI, detail metadata editing, template defaults, metadata search coverage, relation-id normalization helpers, tests, and browser QA. Real filesystem import, preview, OCR, thumbnails, duplicate detection, SQLite/native storage, and vault-file attachment remain not implemented.
 - Graph: [PARTIAL] - relation graph foundation renders provider items and relation edges; backlink index, wiki links, manual canvas, filters, clustering, and export do not.
 - Templates: [PARTIAL] - implemented templates create provider-backed pages; full template editor and template management do not.
 - Vault: [PARTIAL] - provider and health UI state prototype truth; portable folders, SQLite, Tauri filesystem, lock file, markdown mirrors, backup/restore engine, and repair center do not.
@@ -172,7 +172,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | System | Trash | [PARTIAL] | Route exists | deletedAt records | localStorage prototype | Limited | No retention/permanent deletion policy | Repair/recovery center |
 | System | Settings | [PARTIAL] | Route exists | Theme/session/provider facts | localStorage prototype | Theme tests exist | Mostly read-only | Settings hardening |
 | Pages | Notes | [PARTIAL] | Route/space exists | Item/block model | localStorage prototype | Page workspace tests | Rich text incomplete | Editor hardening |
-| Pages | Documents | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No dedicated document metadata model | Documents foundation |
+| Pages | Documents | [PARTIAL] | Metadata-only records route and detail panel exist | Typed document metadata in item metadata | localStorage prototype | Helper tests and browser QA | Real import/preview/OCR/native storage missing | Native document import later |
 | Pages | Projects | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No task engine | Projects/tasks foundation |
 | Pages | People | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No contact schema | People foundation |
 | Pages | Finance | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No ledger/model validation | Finance foundation |
@@ -195,15 +195,19 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Editor | Drag/drop blocks | [BLUEPRINT ONLY] | Not implemented | Not modeled | None | None | No reordering UI | Editor foundation |
 | Editor | Version history | [NOT STARTED] | Not visible | Not modeled | None | None | Needs storage/version layer | Version history |
 | Editor | Export | [NOT STARTED] | Not visible | Not modeled | None | None | Needs export manager | Import/export manager |
-| Documents | Metadata records | [PARTIAL] | Generic document pages exist | Generic item properties | localStorage prototype | Limited | No typed helper yet | Documents foundation |
+| Documents | Metadata records | [IMPLEMENTED] | Dedicated metadata-only records exist | Typed document metadata helper | localStorage prototype | Unit tests and browser QA | Prototype storage only | Native storage later |
+| Documents | Record creation | [IMPLEMENTED] | New document record action works | `createDocumentRecordInput` | localStorage prototype | Unit tests and browser QA | Creates records only, not files | Native file attachment later |
+| Documents | Route/list foundation | [IMPLEMENTED] | Documents route lists real records with metadata states | Provider-backed document items | localStorage prototype | Browser QA | No bulk actions or import manager | Documents route expansion later |
+| Documents | Detail metadata UI | [IMPLEMENTED] | Page right panel edits title, kind, status, source, date, file metadata, and notes | Item metadata | localStorage prototype | Browser QA | No rich relation picker or file attachment | Relation UI/native file phase |
+| Documents | Template defaults | [IMPLEMENTED] | General, receipt, identity, invoice, contract, and reference record templates exist | Template metadata defaults | localStorage prototype | Unit tests | No template editor | Templates expansion |
 | Documents | File import | [FUTURE NATIVE] | Should be future-only | Not modeled | None | None | Needs native filesystem | Native filesystem document import |
 | Documents | PDF preview | [NOT STARTED] | Should be future-only | Not modeled | None | None | No renderer | Native/filesystem later |
 | Documents | DOCX preview | [NOT STARTED] | Should be future-only | Not modeled | None | None | No renderer | Native/filesystem later |
 | Documents | Image preview | [NOT STARTED] | Should be future-only | Not modeled | None | None | No file storage | Native/filesystem later |
 | Documents | OCR | [FUTURE LOCAL AI] | Should be future-only | Not modeled | None | None | No local AI/OCR engine | Local AI planning |
-| Documents | Tags/categories | [PARTIAL] | Generic tags exist | Item tags | localStorage prototype | Search tests | No document-specific taxonomy | Documents foundation |
-| Documents | Relations | [PARTIAL] | Generic relation model exists | Relation records | localStorage prototype | Provider tests | No document-specific UI | Documents foundation |
-| Documents | Search indexing | [PARTIAL] | Generic metadata search exists | Search helper | localStorage prototype | Search tests | No extracted text | Documents foundation |
+| Documents | Tags/categories | [PARTIAL] | Record tags persist | Item tags and document metadata tags | localStorage prototype | Unit tests | No document taxonomy manager | Documents taxonomy later |
+| Documents | Relations | [PARTIAL] | Generic relation panel plus normalized relation-id metadata helper | Relation records and metadata arrays | localStorage prototype | Unit tests/provider tests | No document-specific relation picker | Graph relation foundation |
+| Documents | Search indexing | [PARTIAL] | Metadata fields are searchable through existing search route | Search helper indexes item metadata | localStorage prototype | Unit tests and browser QA | No extracted file text/OCR index | Native document index later |
 | Documents | Duplicate detection | [NOT STARTED] | Not visible | Not modeled | None | None | Needs file hashes/storage | Future native/local AI |
 | Documents | Similarity suggestions | [FUTURE LOCAL AI] | Not visible | Not modeled | None | None | Needs local embeddings | Local AI planning |
 | Databases | Rows | [IMPLEMENTED] | Add/delete/edit basic rows | Database helper | localStorage prototype | Unit and browser QA | Prototype only | Database views and filters |
@@ -402,19 +406,19 @@ the UI must show its status.
 - Purpose: organize important document records now and attach real files later.
 - User mental model: a document record is a local page containing metadata and notes.
 - Current status: [PARTIAL]
-- UI now: documents route uses generic `SpacePage`.
-- Implemented now: generic document pages/templates only.
-- Not implemented yet: typed document metadata model, new record action tuned for metadata-only records, detail metadata editor, import state, preview state, storage state, real file import, preview, OCR, thumbnails, duplicate detection.
-- Data model: currently generic item properties/metadata; document-specific model is next.
+- UI now: documents route is a dedicated metadata-only document record list with provider-backed creation, record template buttons, metadata state badges, and honest unsupported import/preview/storage messaging.
+- Implemented now: typed document metadata helper, metadata normalization/update/create helpers, provider-backed new record action, detail metadata editor in the page right panel, document template defaults, relation-id normalization helpers, and metadata search coverage through the existing local search index.
+- Not implemented yet: real file import, folder/batch/drag-drop import, PDF/DOCX/image preview, OCR, thumbnails, extracted text indexing, duplicate detection, similarity suggestions, native vault file storage, SQLite document storage, Tauri filesystem commands, document encryption/app lock, cloud sync, Google Drive sync, and mobile document capture.
+- Data model: document fields live in provider-backed `MizaanItem.metadata` in the current browser/localStorage prototype; future native phases need SQLite rows plus vault file pointers.
 - Routes: `/documents`, `/page/$id`
-- Main components: `SpacePage`, future `DocumentMetadataPanel`, future helper.
-- Empty states: should explain metadata-only record creation.
-- Error states: unsupported import/preview state must be visible.
-- Actions: create metadata-only document record.
+- Main components: documents route, `DocumentMetadataPanel`, and `src/lib/documents/document-record.ts`.
+- Empty states: explain metadata-only record creation and future native import.
+- Error states: unsupported import/preview/storage state is visible in route and detail UI.
+- Actions: create metadata-only document record; create from document record templates; edit metadata fields in the page right panel.
 - Disabled/future actions: import, preview, OCR, thumbnails, native file paths.
-- Tests required: metadata normalization, create input, relation normalization, route/list and detail UI.
-- Screenshots required: documents route, new record, metadata panel, unsupported state.
-- Done criteria: create/edit/persist metadata-only record and no fake file behavior.
+- Tests required: helper tests exist for defaults, enum normalization, update preservation, relation-id normalization, create input, template defaults, state honesty, and search metadata coverage. Route/detail UI remains covered by browser QA rather than component tests.
+- Screenshots required: captured for documents route, new record, metadata panel, unsupported state, search, and persistence proof.
+- Done criteria: foundational metadata-only record phase is implemented and verified, but the overall Documents module remains partial until real file import/preview/native storage exists.
 - Future phases: native file import, preview, local OCR.
 
 ### 6.8 Projects
@@ -1034,13 +1038,13 @@ Mizaan-specific differentiation:
 
 ### Document Metadata Model
 
-- Current status: [NOT STARTED]
+- Current status: [IMPLEMENTED]
 - Proposed fields: title, kind, status, source, date, file name/type/size/extension, import state, preview state, storage state, category, tags, notes, linked page/project/person/finance ids.
-- Storage now: item metadata after next phase.
+- Storage now: provider-backed `MizaanItem.metadata` in the browser/localStorage prototype.
 - Storage later: SQLite document table plus vault file pointer.
 - Validation rules: normalize invalid enums, trim strings, preserve unknown safe metadata, remove duplicate/invalid relation ids, no fake file paths.
 - Migration notes: keep generic document pages intact.
-- Test requirements: document metadata helper tests.
+- Test requirements: document metadata helper tests exist; native storage migration tests remain future.
 
 ### Calendar Event Model
 
@@ -1164,6 +1168,7 @@ Mizaan-specific differentiation:
 ### Phase B - Documents foundation
 
 - Goal: make document metadata-only records useful in the browser prototype.
+- Current status: [IMPLEMENTED] as a bounded foundation; Documents overall remains [PARTIAL].
 - Why now: documents need honest records before native import/preview.
 - Preconditions: Phase A complete and pushed.
 - Implementation tasks: document metadata helper, record defaults, route/list hardening, detail metadata panel, template/search/relation integration if safe.
@@ -1172,7 +1177,7 @@ Mizaan-specific differentiation:
 - Browser QA required: create/edit/refresh/search document record.
 - Screenshots required: documents list, new record, metadata panel, unsupported state.
 - Documentation required: blueprint update, master append, phase report, DOCX.
-- Done criteria: create and edit persisted metadata-only document record with no fake file behavior.
+- Done criteria: create and edit persisted metadata-only document record with no fake file behavior. Verified for the browser prototype on 2026-06-01.
 - What not to implement: native import, preview, OCR, thumbnails, duplicate detection.
 - Next phase: Graph relation foundation.
 
@@ -1604,4 +1609,3 @@ Do not implement future native/mobile/cloud/auth/encryption/OCR/import behavior 
 Run typecheck, lint, tests, build, git diff --check, red-flag scans, browser QA, screenshots, docs updates, DOCX update, commit, push, and parity verification.
 Report honestly with implemented, partial, not implemented, deliberately not implemented, blocked, and future-only categories.
 ```
-

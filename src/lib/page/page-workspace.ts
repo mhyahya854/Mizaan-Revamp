@@ -15,6 +15,10 @@ import {
   normalizeDatabaseModel,
   toDatabaseMetadata,
 } from "../database/database-table";
+import {
+  createDefaultDocumentMetadata,
+  updateDocumentMetadata,
+} from "../documents/document-record";
 import { createDefaultTableData, serializeTableData } from "../table/simple-table";
 
 interface Breadcrumb {
@@ -336,19 +340,173 @@ const TEMPLATES: TemplateDefinition[] = [
   },
   {
     id: "document-record",
-    name: "Document Record",
+    name: "General Document Record",
     icon: "D",
     category: "documents",
     type: "document",
-    title: "Untitled Document",
-    summary: "Document metadata and notes.",
+    title: "Untitled document",
+    summary: "Metadata-only document record.",
     tags: ["document"],
-    properties: { status: "Needs file", fileState: "No file attached" },
+    properties: {
+      status: "Metadata-only",
+      documentKind: "General",
+      fileState: "Browser record",
+    },
+    metadata: createDefaultDocumentMetadata(),
     blocks: [
       { type: "heading1", content: "Summary" },
       { type: "paragraph", content: "" },
-      { type: "heading2", content: "Attached file" },
-      { type: "callout", content: "File import is planned for a later phase." },
+      { type: "heading2", content: "File state" },
+      {
+        type: "callout",
+        content:
+          "This is a metadata-only record. File import, preview, OCR, and native vault file storage are planned for later phases.",
+      },
+    ],
+  },
+  {
+    id: "receipt-document-record",
+    name: "Receipt Document Record",
+    icon: "D",
+    category: "documents",
+    type: "document",
+    title: "Receipt - Untitled",
+    summary: "Metadata-only receipt record.",
+    tags: ["document", "receipt"],
+    properties: {
+      status: "Metadata-only",
+      documentKind: "Receipt",
+      fileState: "Browser record",
+    },
+    metadata: createDefaultDocumentMetadata({
+      documentTitle: "Receipt - Untitled",
+      documentKind: "receipt",
+      tags: ["document", "receipt"],
+    }),
+    blocks: [
+      { type: "heading1", content: "Receipt summary" },
+      { type: "paragraph", content: "" },
+      {
+        type: "callout",
+        content:
+          "Receipt file import and preview are future native/filesystem work. This record stores metadata only.",
+      },
+    ],
+  },
+  {
+    id: "identity-document-record",
+    name: "Identity Document Record",
+    icon: "D",
+    category: "documents",
+    type: "document",
+    title: "Identity document - Untitled",
+    summary: "Metadata-only identity document record.",
+    tags: ["document", "identity"],
+    properties: {
+      status: "Metadata-only",
+      documentKind: "Identity",
+      fileState: "Browser record",
+    },
+    metadata: createDefaultDocumentMetadata({
+      documentTitle: "Identity document - Untitled",
+      documentKind: "identity",
+      tags: ["document", "identity"],
+    }),
+    blocks: [
+      { type: "heading1", content: "Identity document summary" },
+      { type: "paragraph", content: "" },
+      {
+        type: "callout",
+        content:
+          "Do not store secrets here yet. Privacy, app lock, encryption, and native file storage are later phases.",
+      },
+    ],
+  },
+  {
+    id: "invoice-document-record",
+    name: "Invoice Document Record",
+    icon: "D",
+    category: "documents",
+    type: "document",
+    title: "Invoice - Untitled",
+    summary: "Metadata-only invoice record.",
+    tags: ["document", "invoice"],
+    properties: {
+      status: "Metadata-only",
+      documentKind: "Invoice",
+      fileState: "Browser record",
+    },
+    metadata: createDefaultDocumentMetadata({
+      documentTitle: "Invoice - Untitled",
+      documentKind: "invoice",
+      tags: ["document", "invoice"],
+    }),
+    blocks: [
+      { type: "heading1", content: "Invoice summary" },
+      { type: "paragraph", content: "" },
+      {
+        type: "callout",
+        content:
+          "This record can organize invoice metadata now. File import and preview are future native work.",
+      },
+    ],
+  },
+  {
+    id: "contract-document-record",
+    name: "Contract Document Record",
+    icon: "D",
+    category: "documents",
+    type: "document",
+    title: "Contract - Untitled",
+    summary: "Metadata-only contract record.",
+    tags: ["document", "contract"],
+    properties: {
+      status: "Metadata-only",
+      documentKind: "Contract",
+      fileState: "Browser record",
+    },
+    metadata: createDefaultDocumentMetadata({
+      documentTitle: "Contract - Untitled",
+      documentKind: "contract",
+      tags: ["document", "contract"],
+    }),
+    blocks: [
+      { type: "heading1", content: "Contract summary" },
+      { type: "paragraph", content: "" },
+      {
+        type: "callout",
+        content:
+          "This is a metadata-only contract record. Native file storage, preview, and OCR are not implemented.",
+      },
+    ],
+  },
+  {
+    id: "reference-document-record",
+    name: "Reference Document Record",
+    icon: "D",
+    category: "documents",
+    type: "document",
+    title: "Reference document - Untitled",
+    summary: "Metadata-only reference record.",
+    tags: ["document", "reference"],
+    properties: {
+      status: "Metadata-only",
+      documentKind: "Reference",
+      fileState: "Browser record",
+    },
+    metadata: createDefaultDocumentMetadata({
+      documentTitle: "Reference document - Untitled",
+      documentKind: "reference",
+      tags: ["document", "reference"],
+    }),
+    blocks: [
+      { type: "heading1", content: "Reference summary" },
+      { type: "paragraph", content: "" },
+      {
+        type: "callout",
+        content:
+          "Metadata is usable now. Full document import, previews, and extracted text remain future phases.",
+      },
     ],
   },
   {
@@ -582,8 +740,21 @@ export function createPageFromTemplate(
   const template = TEMPLATES.find((entry) => entry.id === templateId) ?? TEMPLATES[0];
   const category = template.universal ? (options.category ?? template.category) : template.category;
   const type = template.universal ? typeForCategory(category) : template.type;
+  const title = options.title ?? template.title;
+  const metadata =
+    category === "documents" && type === "document"
+      ? updateDocumentMetadata(
+          {
+            documentTitle: title,
+            tags: template.tags,
+            ...(template.metadata ?? {}),
+            templateId: template.id,
+          },
+          { documentTitle: title },
+        )
+      : { ...(template.metadata ?? {}), templateId: template.id };
   const page = provider.createItem({
-    title: options.title ?? template.title,
+    title,
     category,
     type,
     icon: template.universal ? SPACE_ICONS[category] : template.icon,
@@ -592,7 +763,7 @@ export function createPageFromTemplate(
     tags: template.tags,
     properties: template.properties,
     parentId: options.parentId,
-    metadata: { ...(template.metadata ?? {}), templateId: template.id },
+    metadata,
   });
 
   const blocks = options.initialContent

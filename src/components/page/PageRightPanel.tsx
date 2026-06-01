@@ -2,7 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
+import { DocumentMetadataPanel } from "@/components/documents/DocumentMetadataPanel";
 import { PageLinkedContext } from "./PageLinkedContext";
+import { isDocumentRecordItem } from "@/lib/documents/document-record";
 import type { PageWorkspaceModel } from "@/lib/page/page-workspace";
 import type { MizaanItem, VaultProvider } from "@/lib/vault/types";
 
@@ -143,6 +145,9 @@ function PageDataPanel({
 
   return (
     <div className="space-y-4">
+      {isDocumentRecordItem(model.item) && (
+        <DocumentMetadataPanel item={model.item} provider={provider} />
+      )}
       {/* 1. Basic */}
       <CollapsibleSection title="Basic" isOpenDefault={true}>
         <MetadataRow label="Type" value={model.properties.type} />

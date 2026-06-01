@@ -20779,3 +20779,294 @@ Current implementation status remains:
 Next prompt should start from:
 - The Phase Roadmap in `docs/Plan/Mizaan_Product_Blueprint.md`.
 - The next recommended bounded phase is Phase B - Documents foundation.
+
+---
+
+## Append-Only Document System Foundation Implementation - 2026-06-01
+
+Date/time: 2026-06-01 16:00 +08:00
+
+Selected phase:
+- Phase B - Documents foundation.
+
+Blueprint file read:
+- `docs/Plan/Mizaan_Product_Blueprint.md`
+
+Blueprint updated:
+- Yes. Documents remains [• PARTIAL] overall.
+- Document metadata model, record creation, route/list foundation, detail metadata UI, template defaults, metadata search coverage, and relation-id normalization helpers were updated accurately.
+- Real filesystem import, PDF/DOCX/image preview, OCR, thumbnails, duplicate detection, native vault storage, SQLite, Tauri commands, encryption, cloud sync, Google Drive sync, and mobile capture remain not implemented.
+
+Validation before work:
+- `npm run typecheck`: passed.
+- `npm run lint`: passed with 10 known Fast Refresh warnings.
+- `npm test`: passed with 9 files and 56 tests.
+- `npm run build`: passed with existing build warnings.
+
+Red-flag scans:
+- `localStorage` hits remained the expected prototype/provider/theme/session/right-panel references.
+- Cloud/auth/provider hits remained documentation/product-law language, icon names, and `class-variance-authority`; no runtime provider integration was added.
+- Fake readiness phrases remained historical report text only.
+- `console.log|debugger`: no source matches.
+- Runtime URL/font scan in `src`: no matches.
+
+Browser QA before work:
+- Checked `/`, `/blueprint`, `/documents`, `/search`, `/settings`, `/templates`, `/databases`, `/calendar`, `/graph`, `/trash`, and `/page/note-principles`.
+- Screenshots captured before implementation.
+
+Implementation summary:
+- Added typed document metadata helpers and tests.
+- Replaced the generic `/documents` space view with a dedicated metadata-only document record route.
+- Added a real provider-backed New document record action.
+- Added document record template defaults for general, receipt, identity, invoice, contract, and reference records.
+- Added document-specific metadata editing in the page right panel.
+- Preserved existing provider/localStorage architecture and did not add direct UI localStorage writes.
+- Kept import, preview, OCR, thumbnails, native vault files, SQLite, Tauri, cloud, and mobile future-only.
+
+Files changed:
+- `src/lib/documents/document-record.ts`
+- `src/lib/documents/document-record.test.ts`
+- `src/routes/documents.tsx`
+- `src/components/documents/DocumentMetadataPanel.tsx`
+- `src/components/page/PageWorkspace.tsx`
+- `src/components/page/PageRightPanel.tsx`
+- `src/lib/page/page-workspace.ts`
+- `docs/Plan/Mizaan_Product_Blueprint.md`
+- `docs/Phases/phase-document-system-foundation.md`
+- `docs/Plan/Mizaan Work Log.docx`
+- Document implementation screenshots under `docs/screenshots`
+
+Tests added/updated:
+- Added `src/lib/documents/document-record.test.ts`.
+- Covered defaults, enum normalization, trimming, unknown safe field preservation, update preservation, relation ID normalization, metadata-only/import/preview honesty, create input defaults, display labels, template defaults, and metadata search coverage.
+
+Screenshots:
+- `docs/screenshots/20260601-1531-doc-impl-before-home.png`
+- `docs/screenshots/20260601-1531-doc-impl-before-blueprint.png`
+- `docs/screenshots/20260601-1531-doc-impl-before-documents.png`
+- `docs/screenshots/20260601-1555-doc-impl-documents.png`
+- `docs/screenshots/20260601-1555-doc-impl-new-record.png`
+- `docs/screenshots/20260601-1556-doc-impl-metadata.png`
+- `docs/screenshots/20260601-1556-doc-impl-unsupported-state.png`
+- `docs/screenshots/20260601-1557-doc-impl-documents-after-create.png`
+- `docs/screenshots/20260601-1557-doc-impl-proof.png`
+- `docs/screenshots/20260601-1558-doc-impl-search-if-implemented.png`
+
+Browser QA after work:
+- Created a new metadata-only document record.
+- Edited title, kind, status, source, document date, file name, file type, extension, and notes.
+- Refreshed the page and verified metadata persisted.
+- Verified Documents list showed the edited metadata.
+- Searched for `policy-2026` and verified the document was found through metadata search.
+- Console warnings/errors: none found in checked routes.
+
+Remaining limitations:
+- Documents is still a browser/localStorage prototype feature.
+- The Documents module remains [• PARTIAL] because real file import, real previews, OCR, thumbnails, duplicate detection, native vault files, SQLite, Tauri, and mobile capture are not implemented.
+
+Next recommended blueprint phase:
+- Phase C - Graph relation foundation, because Documents now has normalized metadata relation IDs and the next system dependency is stronger relation/graph behavior.
+
+### Feature: Documents module [• PARTIAL]
+
+Goal:
+Make Documents useful as metadata-only local records while keeping native file behavior future-only.
+
+[What Codex understood:
+Documents should become usable now as provider-backed metadata records, not as fake imported files.]
+
+[How it is implemented:
+`/documents` now lists real document records, creates new metadata-only records, shows record templates, displays metadata state badges, and links records into `/page/$id` detail pages with a document metadata panel.]
+
+[Evidence:
+Document helper tests pass; browser QA created and edited `Insurance Policy 2026`, refreshed it, found it on `/documents`, and found `policy-2026` through `/search`.]
+
+[Next required work:
+Native filesystem import, preview, OCR, thumbnails, duplicate detection, and vault-file storage remain future phases.]
+
+### Feature: Document metadata model [✅ IMPLEMENTED]
+
+Goal:
+Provide typed, normalized metadata for document records.
+
+[What Codex understood:
+Document fields need a helper-owned model, not scattered route parsing.]
+
+[How it is implemented:
+`src/lib/documents/document-record.ts` defines document kind/status/import/preview/storage states, metadata defaults, normalization, update helpers, display summaries, unsupported reasons, and relation ID normalization.]
+
+[Evidence:
+`npx vitest run src/lib/documents/document-record.test.ts` passed with 11 tests.]
+
+[Next required work:
+Add migration/native-storage tests when SQLite and vault-file storage exist.]
+
+### Feature: Document record creation [✅ IMPLEMENTED]
+
+Goal:
+Create real provider-backed metadata-only document records.
+
+[What Codex understood:
+The action must create a `MizaanItem`, persist through the provider, and avoid fake file paths or attachments.]
+
+[How it is implemented:
+`createDocumentRecordInput` builds document items, and `/documents` uses `provider.createItem` plus starter blocks before routing to `/page/$id`.]
+
+[Evidence:
+Browser QA clicked New document record and opened a new provider-backed page at `/page/item-...`.]
+
+[Next required work:
+Native file attachment remains future.]
+
+### Feature: Documents route/list foundation [✅ IMPLEMENTED]
+
+Goal:
+Show document records with metadata and honest unsupported states.
+
+[What Codex understood:
+The route should not list the promoted Documents space as a document record and should not expose fake import/preview buttons.]
+
+[How it is implemented:
+`src/routes/documents.tsx` filters document records with `isDocumentRecordItem`, shows metadata badges, templates, empty state, search, and future-native explanations.]
+
+[Evidence:
+Browser QA showed the edited document record with file name, file type, source, date, import state, preview state, and storage state.]
+
+[Next required work:
+Bulk actions and import manager remain future.]
+
+### Feature: Document detail metadata UI [✅ IMPLEMENTED]
+
+Goal:
+Allow metadata edits on document pages.
+
+[What Codex understood:
+Document-specific metadata belongs in page detail context without cluttering normal notes/pages.]
+
+[How it is implemented:
+`DocumentMetadataPanel` appears only for document record items inside the right panel and edits title, kind, status, source, date, file metadata, and notes through `provider.updateItem`.]
+
+[Evidence:
+Browser QA edited all supported fields, refreshed the page, and verified values persisted.]
+
+[Next required work:
+Document-specific relation picker and native file attachment remain future.]
+
+### Feature: Honest unsupported import/preview state [✅ IMPLEMENTED]
+
+Goal:
+Make unsupported document features visible without fake controls.
+
+[What Codex understood:
+Import, preview, OCR, thumbnails, and native vault file storage must be clearly future-only.]
+
+[How it is implemented:
+Documents route and detail panel show record-only import, unavailable preview, browser-record storage, and explanatory text. No active import/preview/OCR buttons were added.]
+
+[Evidence:
+Screenshots captured `doc-impl-unsupported-state` and no fake import/preview controls were present.]
+
+[Next required work:
+Build real native import/preview only after Tauri/native filesystem phases.]
+
+### Feature: Document template integration [✅ IMPLEMENTED]
+
+Goal:
+Allow templates to create provider-backed document records with correct metadata defaults.
+
+[What Codex understood:
+Templates must create real records, not static fake examples.]
+
+[How it is implemented:
+`page-workspace.ts` now includes general, receipt, identity, invoice, contract, and reference document record templates using `createDefaultDocumentMetadata`.]
+
+[Evidence:
+Document helper tests verify invoice template metadata defaults and starter callout block creation.]
+
+[Next required work:
+Template editor and user-authored template management remain future.]
+
+### Feature: Document search integration [• PARTIAL]
+
+Goal:
+Make document metadata findable through local search.
+
+[What Codex understood:
+Search should use existing provider metadata indexing without rewriting the search engine.]
+
+[How it is implemented:
+Document metadata is stored in item metadata, which the existing search helper already indexes. Tests verify `fileName` metadata search, and browser QA found `policy-2026` on `/search`.]
+
+[Evidence:
+Search test passed and browser QA screenshot `doc-impl-search-if-implemented` captured the result.]
+
+[Next required work:
+Extracted text, OCR text, metadata filters, duplicate detection, and native indexes remain future.]
+
+### Feature: Document relation normalization [• PARTIAL]
+
+Goal:
+Normalize and preserve document relation ID arrays.
+
+[What Codex understood:
+Relation metadata can be normalized now, but a document-specific relation picker should not be faked.]
+
+[How it is implemented:
+`normalizeDocumentRelationIds` removes invalid/duplicate IDs for linked pages, projects, people, and finance records; existing generic relation UI remains available separately.]
+
+[Evidence:
+Unit tests cover duplicate and invalid relation ID repair.]
+
+[Next required work:
+Graph relation foundation should add richer relation UI and graph behavior.]
+
+### Feature: Real filesystem import [❌ NOT IMPLEMENTED]
+
+Goal:
+Attach real files to document records.
+
+[What Codex understood:
+This requires native filesystem/Tauri and must not be faked in the browser prototype.]
+
+[How it is implemented:
+Not implemented. The UI states this is future native work and exposes no fake import button.]
+
+[Evidence:
+No Tauri/native filesystem code was added.]
+
+[Next required work:
+Native filesystem document import phase.]
+
+### Feature: PDF/DOCX preview [❌ NOT IMPLEMENTED]
+
+Goal:
+Preview real document files.
+
+[What Codex understood:
+Preview requires real file storage and renderers; adding fake previews would mislead users.]
+
+[How it is implemented:
+Not implemented. Preview state is displayed as unavailable.]
+
+[Evidence:
+No PDF/DOCX preview renderer was added.]
+
+[Next required work:
+Native/filesystem preview phase after file storage exists.]
+
+### Feature: OCR/document intelligence [❌ NOT IMPLEMENTED]
+
+Goal:
+Extract text and intelligence from documents.
+
+[What Codex understood:
+OCR belongs to a future local-AI/native document phase and must not call cloud services.]
+
+[How it is implemented:
+Not implemented. OCR is mentioned only as future/unavailable.]
+
+[Evidence:
+No OCR engine, extracted text index, local AI runtime, cloud AI, or remote service was added.]
+
+[Next required work:
+Local AI planning after document storage exists.]
