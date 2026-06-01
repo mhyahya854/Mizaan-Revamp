@@ -21070,3 +21070,348 @@ No OCR engine, extracted text index, local AI runtime, cloud AI, or remote servi
 
 [Next required work:
 Local AI planning after document storage exists.]
+## Append-Only Graph Relation Foundation Implementation - 2026-06-01
+
+Date/time: 2026-06-01 22:05 +08:00
+
+Selected phase:
+- Phase C - Graph Relation Foundation.
+
+Blueprint file read:
+- `docs/Plan/Mizaan_Product_Blueprint.md`
+
+Blueprint updated:
+- Yes. Graph remains [PARTIAL] overall.
+- The bounded graph model/helper, provider-backed global graph foundation, route filters, direct local focus, source summaries, orphan state, and open-node behavior were recorded as implemented for the browser prototype.
+
+Validation before work:
+- `npm run typecheck`: passed.
+- `npm run lint`: passed with 0 errors and 10 existing Fast Refresh warnings.
+- `npm test`: passed with 10 files and 67 tests.
+- `npm run build`: passed with existing Vite chunk-size and TanStack external-unused warnings.
+
+Red-flag scans before work:
+- `localStorage`: expected prototype/provider/theme/session/right-panel references only.
+- Cloud/auth/provider hits: documentation/product-law text, historical notes, `class-variance-authority`, and `HardDrive` icon names only.
+- Fake readiness phrases: historical report text only.
+- `TODO|FIXME|mock|fake|placeholder|any`: generated route-tree casts, normal placeholders, and anti-fake copy/tests only.
+- `console.log|debugger`: no source matches.
+- Runtime URL/font scan in `src`: no matches.
+
+Browser QA before work:
+- Checked `/`, `/blueprint`, `/graph`, `/documents`, `/search`, `/settings`, `/templates`, `/databases`, `/calendar`, `/trash`, and `/page/note-principles`.
+- In-app Browser route smoke passed with meaningful DOM, no framework overlay, and 0 console warnings/errors.
+- In-app Browser screenshots initially timed out, so isolated headless Chrome captured before screenshots.
+
+Graph code inspection summary:
+- `src/routes/graph.tsx` used route-local circular SVG logic from the first 24 `snapshot.items` and explicit provider `snapshot.relations`.
+- `VaultProvider` already exposes real provider-backed items and relations.
+- Page workspace/right panel already resolves outgoing and incoming provider relations.
+- Document metadata already normalizes `linkedPageIds`, `linkedProjectIds`, `linkedPersonIds`, and `linkedFinanceIds`.
+- Search has metadata indexing but no graph index.
+- No reusable graph helper or graph test module existed before this phase.
+
+Implementation summary:
+- Added `src/lib/graph/graph-model.ts`.
+- Added `src/lib/graph/graph-model.test.ts`.
+- Rebuilt `/graph` to use the helper instead of route-local ad hoc graph construction.
+- Added real node/edge summaries, type counts, edge-source counts, orphan state, filters, node list, edge list, visual map, direct local focus panel, and open-node actions.
+- Kept manual canvas, editable standalone graph nodes, saved layouts, graph export, clustering, embeddings, OCR-derived edges, and semantic/local-AI graph as future-only text, not active controls.
+
+What was implemented:
+- Graph model/helper.
+- Provider-backed global graph foundation.
+- Relation edge extraction from provider relations.
+- Relation edge extraction from document metadata relation arrays when targets exist.
+- Parent/child hierarchy edge extraction from real `parentId` values.
+- Duplicate edge dedupe and invalid target skipping.
+- Orphan node detection.
+- Deterministic node and edge IDs.
+- Global graph summaries.
+- Direct local selected-item graph.
+- Graph filters for all, documents, pages/notes, projects, people, finance, orphans, and connected nodes.
+- Node focus and open actions.
+
+What was deliberately not implemented:
+- Tauri.
+- SQLite.
+- Native filesystem storage.
+- Portable vault folders.
+- Mobile.
+- Encryption/app lock/private graph behavior.
+- OCR.
+- Embeddings.
+- Semantic AI graph.
+- Cloud graph or sync.
+- Manual local graph/canvas.
+- Editable standalone graph nodes.
+- Directed manual arrows.
+- Saved canvas layouts.
+- Graph export image/PDF.
+- Graph clustering.
+- Graph version history.
+- Native graph persistence.
+
+Files changed:
+- `src/lib/graph/graph-model.ts`
+- `src/lib/graph/graph-model.test.ts`
+- `src/routes/graph.tsx`
+- `docs/Plan/Mizaan_Product_Blueprint.md`
+- `docs/Plan/Mizaan_A_to_Z_Plan.md`
+- `docs/Plan/Mizaan Work Log.docx`
+- `docs/Phases/phase-graph-relation-foundation.md`
+- `docs/screenshots/20260601-2130-graph-foundation-before-home.png`
+- `docs/screenshots/20260601-2130-graph-foundation-before-graph.png`
+- `docs/screenshots/20260601-2130-graph-foundation-before-documents.png`
+- `docs/screenshots/20260601-2130-graph-foundation-before-page.png`
+- `docs/screenshots/20260601-2155-graph-foundation-route.png`
+- `docs/screenshots/20260601-2155-graph-foundation-global.png`
+- `docs/screenshots/20260601-2155-graph-foundation-local-if-implemented.png`
+- `docs/screenshots/20260601-2155-graph-foundation-empty-or-orphans.png`
+- `docs/screenshots/20260601-2155-graph-foundation-proof.png`
+
+Tests added/updated:
+- Added `src/lib/graph/graph-model.test.ts`.
+- Coverage includes node creation, category/type mapping, document relation arrays, invalid target skipping, duplicate edge dedupe, orphan detection, global summaries, direct local graph, empty graph behavior, no fake edges, unknown categories, deterministic IDs, edge type counts, and parent-child hierarchy.
+
+Validation after implementation before documentation:
+- `npx vitest run src/lib/graph/graph-model.test.ts`: failed first because `./graph-model` did not exist, then passed with 20 tests after implementation.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed with 0 errors and 10 existing Fast Refresh warnings after formatting touched graph files.
+- `npm test`: passed with 11 files and 87 tests.
+- `npm run build`: passed with existing Vite chunk-size and TanStack external-unused warnings.
+
+Browser QA after implementation:
+- In-app Browser verified `/graph` identity, nonblank DOM, future notices, 0 console warnings/errors, Connected filter behavior, direct local focus behavior, and open-node navigation to `/page/doc-architecture`.
+- In-app Browser click-by-role was flaky, so DOM CUA and isolated headless Chrome were used for interaction/screenshot proof without clearing user storage.
+- Verified filter: Connected changed the graph to 13 of 14 real nodes.
+- Verified local focus: focused `Mizaan Revamp` showed a direct local graph with 4 nodes, 3 edges, and 0 local orphans.
+- Verified orphan filter: Orphans changed the graph to 1 of 14 real nodes.
+- Verified open action: Open navigated to the real `Architecture Notes` document record page.
+
+Screenshots:
+- `docs/screenshots/20260601-2130-graph-foundation-before-home.png`
+- `docs/screenshots/20260601-2130-graph-foundation-before-graph.png`
+- `docs/screenshots/20260601-2130-graph-foundation-before-documents.png`
+- `docs/screenshots/20260601-2130-graph-foundation-before-page.png`
+- `docs/screenshots/20260601-2155-graph-foundation-route.png`
+- `docs/screenshots/20260601-2155-graph-foundation-global.png`
+- `docs/screenshots/20260601-2155-graph-foundation-local-if-implemented.png`
+- `docs/screenshots/20260601-2155-graph-foundation-empty-or-orphans.png`
+- `docs/screenshots/20260601-2155-graph-foundation-proof.png`
+
+Remaining limitations:
+- Graph remains a browser/localStorage prototype.
+- No backlink index or wiki-link parser exists.
+- No manual canvas/editor exists.
+- No graph layout persistence exists.
+- No privacy-aware graph hiding exists.
+- No native graph index or readable graph files exist.
+- No semantic/local-AI graph exists.
+
+Next recommended blueprint phase:
+- Calendar completion or Projects/tasks foundation. Calendar remains a core module with recurrence/reminders/ICS still missing; Projects/tasks would make graph relations more useful by adding stronger typed project/task entities.
+
+### Feature: Graph module [PARTIAL]
+
+Goal:
+Make Mizaan's local knowledge relationships visible without fake graph data.
+
+[What Codex understood:
+The Graph module should remain partial overall, but this phase should make the automatic provider-backed relation foundation truthful and testable.]
+
+[How it is implemented:
+`/graph` now consumes `buildGlobalGraph` and `buildLocalGraph`, renders real provider-backed nodes/edges, summaries, filters, local focus, node lists, edge lists, and future-only graph/canvas notices.]
+
+[Evidence:
+Graph helper tests passed with 20 tests; full tests passed with 87 tests; browser QA verified filter, focus, orphan, and open-node behavior.]
+
+[Next required work:
+Backlink indexing, wiki-link parsing, manual graph/canvas, saved layouts, export, privacy-aware hiding, and native graph persistence.]
+
+### Feature: Graph model/helper [IMPLEMENTED]
+
+Goal:
+Create a reusable pure graph model that can be tested outside the route.
+
+[What Codex understood:
+Graph construction should not be route-local UI math and should not read browser storage directly.]
+
+[How it is implemented:
+`src/lib/graph/graph-model.ts` builds deterministic global/local graph models from provider `items` and `relations`.]
+
+[Evidence:
+`npx vitest run src/lib/graph/graph-model.test.ts` passed with 20 tests.]
+
+[Next required work:
+Extend only when new real edge sources, privacy fields, or graph layout persistence exist.]
+
+### Feature: Provider-backed global graph [IMPLEMENTED]
+
+Goal:
+Show current local provider items and real relation edges.
+
+[What Codex understood:
+Sparse real data is better than a visually rich fake graph.]
+
+[How it is implemented:
+Global graph nodes come from active provider items. Edges come from explicit provider relations, document metadata relation IDs, and parentId hierarchy when real targets exist.]
+
+[Evidence:
+Browser QA showed 14 real nodes, 9 real edges, 1 orphan, type/source summaries, and the Connected filter.]
+
+[Next required work:
+Backlink index, wiki-link parsing, saved graph views, and later native graph storage.]
+
+### Feature: Relation edge extraction [IMPLEMENTED]
+
+Goal:
+Extract edges only from safe real sources.
+
+[What Codex understood:
+Edges must not come from title similarity, random generation, shared category, or AI inference.]
+
+[How it is implemented:
+Provider relations, document `linkedPageIds`, `linkedProjectIds`, `linkedPersonIds`, `linkedFinanceIds`, and parentId hierarchy are accepted. Invalid/missing targets and duplicate edges are skipped.]
+
+[Evidence:
+Unit tests cover document relation fields, invalid targets, duplicate IDs, duplicate provider edges, and parent-child hierarchy.]
+
+[Next required work:
+Add wiki-link/backlink extraction only after stored page link IDs exist.]
+
+### Feature: Local graph foundation [PARTIAL]
+
+Goal:
+Show a selected real item's direct relation neighborhood.
+
+[What Codex understood:
+Local graph in this phase means direct neighbors only, not a full manual canvas or second-degree graph.]
+
+[How it is implemented:
+`buildLocalGraph` filters the global graph to the selected node and its direct incoming/outgoing neighbors. `/graph` exposes this through Focus actions.]
+
+[Evidence:
+Browser QA focused `Mizaan Revamp` and verified 4 local nodes, 3 edges, and 0 local orphans.]
+
+[Next required work:
+Second-degree expansion, wiki links, saved local layout, and page-right-panel integration if needed.]
+
+### Feature: Graph route/list/visual UI [IMPLEMENTED]
+
+Goal:
+Make graph truth inspectable in the route.
+
+[What Codex understood:
+A truthful structured graph UI is safer than a fake complex graph editor.]
+
+[How it is implemented:
+The route shows summary cards, filterable visual map, node list, edge list, source summary, local focus panel, and future-only graph work.]
+
+[Evidence:
+Screenshots show route, global/filter state, local focus, orphan state, and document open proof.]
+
+[Next required work:
+Richer layout controls only after a saved layout model exists.]
+
+### Feature: Graph filters/focus/open behavior [IMPLEMENTED]
+
+Goal:
+Provide real controls with observable state changes.
+
+[What Codex understood:
+Every visible button must work or be clearly future-only text.]
+
+[How it is implemented:
+Filter buttons update the graph view. Focus buttons select a local graph. Open links navigate to real provider page routes.]
+
+[Evidence:
+Browser QA verified Connected, Orphans, Focus, and Open behavior with 0 console warnings/errors.]
+
+[Next required work:
+Saved filters/search integration later.]
+
+### Feature: Manual local graph/canvas [NOT IMPLEMENTED]
+
+Goal:
+Allow user-authored canvas/graph layouts later.
+
+[What Codex understood:
+Manual canvas is separate from automatic relation graph foundation.]
+
+[How it is implemented:
+Not implemented. The route only shows future-only text and no active canvas controls.]
+
+[Evidence:
+No manual canvas model, standalone nodes, arrow editor, or layout persistence was added.]
+
+[Next required work:
+Create a real canvas data model, editor UI, tests, persistence, and browser QA before enabling controls.]
+
+### Feature: Editable standalone graph nodes [NOT IMPLEMENTED]
+
+Goal:
+Let users add graph-only nodes later.
+
+[What Codex understood:
+Adding fake "Add node" controls would be misleading without a saved model.]
+
+[How it is implemented:
+Not implemented.]
+
+[Evidence:
+No standalone node model or button was added.]
+
+[Next required work:
+Manual graph/canvas phase.]
+
+### Feature: Directed manual arrows [NOT IMPLEMENTED]
+
+Goal:
+Let users draw/edit manual arrows later.
+
+[What Codex understood:
+Provider relation direction exists, but manual arrow editing is a different feature.]
+
+[How it is implemented:
+Not implemented.]
+
+[Evidence:
+No arrow editor or manual edge persistence was added.]
+
+[Next required work:
+Manual graph/canvas phase.]
+
+### Feature: Graph clustering/export [NOT IMPLEMENTED]
+
+Goal:
+Cluster and export graph views later.
+
+[What Codex understood:
+These depend on stronger graph/layout/export foundations.]
+
+[How it is implemented:
+Not implemented.]
+
+[Evidence:
+No clustering engine, image export, or PDF export was added.]
+
+[Next required work:
+Graph layout/export phase after manual graph model exists.]
+
+### Feature: Local AI semantic graph [NOT IMPLEMENTED]
+
+Goal:
+Use local-only AI/embeddings later.
+
+[What Codex understood:
+This phase must not add semantic inference, embeddings, OCR-derived graph edges, or cloud AI.]
+
+[How it is implemented:
+Not implemented.]
+
+[Evidence:
+No embedding, OCR, semantic, cloud, or AI graph code was added.]
+
+[Next required work:
+Future local AI architecture only.]

@@ -74,7 +74,7 @@ Current module truth:
 - Databases/Tables: [PARTIAL] - basic provider-backed table model, row/column/cell editing, stats, empty states, validation helper, and tests exist; full database engine does not.
 - Calendar: [PARTIAL] - local calendar module, event model helpers, views, CRUD flow, and tests exist; recurrence, reminders, ICS, native notifications, and sync do not.
 - Documents: [PARTIAL] - metadata-only document records now have typed helpers, provider-backed creation, route/list UI, detail metadata editing, template defaults, metadata search coverage, relation-id normalization helpers, tests, and browser QA. Real filesystem import, preview, OCR, thumbnails, duplicate detection, SQLite/native storage, and vault-file attachment remain not implemented.
-- Graph: [PARTIAL] - relation graph foundation renders provider items and relation edges; backlink index, wiki links, manual canvas, filters, clustering, and export do not.
+- Graph: [PARTIAL] - graph model/helper, provider-backed global graph foundation, relation/document metadata/parent hierarchy edge extraction, orphan summaries, filters, direct local focus, and open-node actions are implemented for the browser prototype; backlink index, wiki links, manual canvas, saved layouts, clustering, export, and semantic/local-AI graph do not.
 - Templates: [PARTIAL] - implemented templates create provider-backed pages; full template editor and template management do not.
 - Vault: [PARTIAL] - provider and health UI state prototype truth; portable folders, SQLite, Tauri filesystem, lock file, markdown mirrors, backup/restore engine, and repair center do not.
 - Trash: [PARTIAL] - soft trash/restore provider paths exist; retention policy, permanent deletion flow, audit history, and native recovery do not.
@@ -165,7 +165,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Core | Sidebar | [PARTIAL] | Navigation and page tree exist | Item metadata | localStorage prototype | Sidebar tree tests exist | Blueprint modules not fully visible yet | Blueprint UI baseline |
 | Core | Search | [PARTIAL] | Route exists | Search helper | localStorage prototype | Unit tests exist | No saved searches or extracted document text | Search metadata expansion |
 | Core | Databases | [PARTIAL] | Route and table page exist | Database metadata helper | localStorage prototype | Unit and browser QA exist | No filters/sorts/views/formulas/rollups | Database views and filters |
-| Core | Graph | [PARTIAL] | Route exists | Relation edges | localStorage prototype | Limited | No indexes/wiki links/manual canvas | Graph relation foundation |
+| Core | Graph | [PARTIAL] | Filterable route and local focus foundation | Provider items, relations, document metadata arrays, parentId hierarchy | localStorage prototype | Graph helper tests and browser QA | No backlink index/wiki links/manual canvas/export | Graph search/canvas later |
 | Core | Calendar | [PARTIAL] | Route exists | Calendar helper | localStorage prototype | Unit and browser QA exist | No recurrence/reminders/ICS | Calendar completion |
 | System | Templates | [PARTIAL] | Template picker and route exist | Template definitions | provider-backed creations | Page template tests exist | No template editor | Templates expansion |
 | System | Vault | [PARTIAL] | Route exists | Provider info/health | localStorage prototype | Provider tests exist | No portable folder/SQLite/native | Backup/export/restore hardening |
@@ -236,14 +236,14 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Calendar | Reminders | [FUTURE NATIVE] | Not visible | Not modeled | None | None | Needs native notifications | Native Windows readiness |
 | Calendar | Task links | [PARTIAL] | Relation model can link | Relations | localStorage prototype | Limited | No task engine | Projects/tasks foundation |
 | Calendar | ICS | [NOT STARTED] | Not visible | Not modeled | None | None | Needs import/export | Import/export manager |
-| Graph | Global graph | [PARTIAL] | Route exists | Provider items/relations | localStorage prototype | Limited | No index/filter | Graph relation foundation |
-| Graph | Local automatic graph | [NOT STARTED] | Not visible | Not modeled | None | None | No wiki-link parsing | Graph relation foundation |
+| Graph | Global graph foundation | [IMPLEMENTED] | Route renders real nodes, edges, summaries, filters, orphan state, and node open actions | Provider items, provider relations, document metadata arrays, parentId hierarchy | localStorage prototype | Graph helper tests and browser QA | No backlink index/wiki-link parser/manual layout engine | Graph search/canvas later |
+| Graph | Local automatic graph foundation | [PARTIAL] | Direct selected-node focus panel exists | Graph helper direct-neighbor model | localStorage prototype | Graph helper tests and browser QA | No second-degree expansion, wiki-link parsing, or saved layouts | Local graph expansion |
 | Graph | Manual local canvas | [NOT STARTED] | Not visible | Not modeled | None | None | No canvas model | Later graph/canvas phase |
 | Graph | Editable nodes | [NOT STARTED] | Not visible | Not modeled | None | None | No graph editor | Later graph/canvas phase |
 | Graph | Directed arrows | [PARTIAL] | Relation lines exist | Relation records | localStorage prototype | Limited | No direction UI | Graph relation foundation |
-| Graph | Filters | [NOT STARTED] | Not visible | Not modeled | None | None | No filter model | Graph relation foundation |
+| Graph | Filters | [IMPLEMENTED] | All, documents, pages/notes, projects, people, finance, orphans, and connected filters work on real graph nodes | Graph model node metadata | localStorage prototype | Browser QA | No saved graph views | Graph search/canvas later |
 | Graph | Clustering | [NOT STARTED] | Not visible | Not modeled | None | None | No graph engine | Later graph/canvas phase |
-| Graph | Focus mode | [NOT STARTED] | Not visible | Not modeled | None | None | No focused graph | Later graph/canvas phase |
+| Graph | Focus mode | [PARTIAL] | Direct local focus panel works for selected real nodes | Graph helper direct-neighbor model | localStorage prototype | Graph helper tests and browser QA | No second-degree expansion or saved layout | Local graph expansion |
 | Graph | Export image/PDF | [NOT STARTED] | Not visible | Not modeled | None | None | Needs export manager | Import/export manager |
 | Vault/storage | VaultProvider | [PARTIAL] | Used app-wide | Interface exists | localStorage prototype | Provider tests | Final providers missing | Native readiness |
 | Vault/storage | LocalStorage provider | [IMPLEMENTED] | Labeled prototype | Provider exists | browser localStorage | Provider tests | Prototype only | Keep until native storage |
@@ -346,19 +346,19 @@ the UI must show its status.
 - Purpose: visualize relations across local items.
 - User mental model: see connected pages and relation links.
 - Current status: [PARTIAL]
-- UI now: global relation graph route.
-- Implemented now: provider items as nodes and relations as lines.
-- Not implemented yet: local graph, manual canvas, filters, clustering, backlinks index, wiki-link parsing, export.
-- Data model: `MizaanRelation` plus provider items.
+- UI now: provider-backed global graph route with summaries, filters, node/edge lists, a visual map, direct local focus, orphan state, source summaries, and open-node actions.
+- Implemented now: tested `src/lib/graph/graph-model.ts` helper, provider items as nodes, explicit provider relations as edges, document relation metadata arrays as edges when targets exist, parentId hierarchy as edges, deterministic edge IDs, duplicate/invalid edge filtering, orphan detection, global summary counts, direct local graph builder, route filters, and focus/open behavior.
+- Not implemented yet: backlink index, wiki-link parsing, manual canvas, editable standalone nodes, manual arrows, saved layouts, clustering, export, graph search, privacy-aware hiding, embeddings, OCR-derived graph edges, and semantic/local-AI graph.
+- Data model: `MizaanRelation`, provider `MizaanItem`, document metadata arrays, parentId hierarchy, and graph helper models.
 - Routes: `/graph`
 - Main components: graph route.
-- Empty states: no provider items.
-- Error states: invalid relations are skipped.
-- Actions: open nodes.
-- Disabled/future actions: no fake graph editing.
-- Tests required: relation graph helper once extracted.
-- Screenshots required: graph overview.
-- Done criteria: filters and relation focus work before full implemented claim.
+- Empty states: sparse/empty graph explains current relation limits.
+- Error states: invalid/missing relation targets are skipped; orphan nodes are labeled.
+- Actions: filter, focus, and open real nodes.
+- Disabled/future actions: no fake graph editing, fake canvas controls, fake export, or fake AI graph controls.
+- Tests required: graph helper tests exist.
+- Screenshots required: graph route, global/filter state, local focus, orphan state, and open-node proof.
+- Done criteria: full Graph remains partial until backlink indexing, wiki-link parsing, manual graph/canvas, saved layouts, export, privacy-aware graph hiding, and later native graph persistence are implemented.
 - Future phases: graph relation foundation and canvas.
 
 ### 6.5 Calendar
@@ -1183,16 +1183,17 @@ Mizaan-specific differentiation:
 
 ### Phase C - Graph relation foundation
 
+- Current status: [IMPLEMENTED] as a bounded browser-prototype foundation; Graph overall remains [PARTIAL].
 - Goal: make relations more explicit and graph filters/focus more useful.
 - Why now: documents/projects/people need relation truth.
 - Preconditions: document metadata relation ids normalized.
 - Implementation tasks: graph helpers, filters, relation summaries, selected node focus.
 - Files likely touched: graph route, relation helpers/tests, page panel.
-- Tests required: node/edge/filter tests.
+- Tests required: graph helper tests.
 - Browser QA required: graph route and linked records.
 - Screenshots required: graph filtered/focus states.
 - Documentation required: blueprint and reports.
-- Done criteria: graph uses real provider records and filters work.
+- Done criteria: graph uses real provider records and filters work. This bounded foundation is implemented; full Graph remains partial.
 - What not to implement: full manual canvas.
 - Next phase: Calendar completion.
 
