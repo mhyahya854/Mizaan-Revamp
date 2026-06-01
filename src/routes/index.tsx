@@ -4,6 +4,7 @@ import { ArrowUpRight, Briefcase, Calendar, FileText, HardDrive, Target } from "
 
 import { PageTemplatePicker } from "@/components/page/PageTemplatePicker";
 import { createPageFromTemplate } from "@/lib/page/page-workspace";
+import { getModuleStatusCounts, productModules } from "@/lib/blueprint/product-map";
 import { useVaultProvider, useVaultSnapshot } from "@/lib/vault/use-vault";
 import type { ItemCategory, MizaanItem } from "@/lib/vault/types";
 
@@ -39,6 +40,7 @@ function Home() {
   const projects = activeItems.filter((item) => item.category === "projects").slice(0, 4);
   const events = activeItems.filter((item) => item.category === "calendar").slice(0, 4);
   const trackers = activeItems.filter((item) => item.category === "trackers").slice(0, 4);
+  const blueprintCounts = getModuleStatusCounts(productModules);
 
   function createPage(templateId: string, category?: ItemCategory, content = "", title?: string) {
     const item = createPageFromTemplate(provider, templateId, {
@@ -109,6 +111,39 @@ function Home() {
           <MiniStat label="Items" value={String(snapshot.health.itemCount)} />
           <MiniStat label="Blocks" value={String(snapshot.health.blockCount)} />
           <MiniStat label="Relations" value={String(snapshot.health.relationCount)} />
+        </div>
+      </section>
+
+      <section className="mt-4 rounded-md border hairline bg-surface p-4">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-[13px] font-medium">
+              <FileText className="h-3.5 w-3.5 text-faint" />
+              Product map
+            </div>
+            <p className="mt-1 max-w-2xl text-[12.5px] text-faint">
+              The blueprint shows the complete planned product structure with honest implemented,
+              partial, blueprint-only, and future-native statuses.
+            </p>
+          </div>
+          <Link to="/blueprint" className="shrink-0 text-[12px] text-faint hover:text-foreground">
+            Open Product Map
+          </Link>
+        </div>
+        <div className="mt-4 grid grid-cols-3 gap-2 text-[12px]">
+          <MiniStat label="Partial" value={String(blueprintCounts.partial)} />
+          <MiniStat
+            label="Planned"
+            value={String(blueprintCounts.blueprintOnly + blueprintCounts.notStarted)}
+          />
+          <MiniStat
+            label="Future"
+            value={String(
+              blueprintCounts.futureNative +
+                blueprintCounts.futureMobile +
+                blueprintCounts.futureLocalAi,
+            )}
+          />
         </div>
       </section>
 

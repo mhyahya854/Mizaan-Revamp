@@ -41,6 +41,7 @@ import {
 
 type NavTo =
   | "/"
+  | "/blueprint"
   | "/search"
   | "/notes"
   | "/documents"
@@ -70,6 +71,7 @@ const coreNav: NavItem[] = [
 ];
 
 const systemTools: NavItem[] = [
+  { label: "Product Map", to: "/blueprint", icon: FileText },
   { label: "Templates", to: "/templates", icon: LayoutTemplate },
   { label: "Vault", to: "/vault", icon: HardDrive },
   { label: "Trash", to: "/trash", icon: Trash2 },

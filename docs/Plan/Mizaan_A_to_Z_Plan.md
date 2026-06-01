@@ -20738,3 +20738,44 @@ New tests prove duplicate columns, duplicate rows, and stale row order entries a
 
 [Next required work:
 Surface validation warnings in the database UI only when doing so will not create noisy or misleading prototype states.]
+
+---
+
+## Blueprint Layer Added - 2026-06-01
+
+Date/time: 2026-06-01 15:18 +08:00
+
+Blueprint file:
+- `docs/Plan/Mizaan_Product_Blueprint.md`
+
+Purpose:
+- A new clean, current product blueprint layer now exists for the full Mizaan app.
+- The blueprint covers product definition, current implementation truth, product laws, information architecture, feature status matrix, module blueprints, UI blueprint, route map, data model blueprint, implementation roadmap, testing standard, and future prompt standard.
+- The blueprint is not an implementation claim. It is a planning and traceability layer.
+
+How future prompts should use it:
+- Read `docs/Plan/Mizaan_Product_Blueprint.md` first.
+- Read this historical master Markdown second.
+- Implement one bounded roadmap phase at a time.
+- Update the blueprint status only after verified implementation.
+- Append this master Markdown when a phase changes the implementation state.
+
+Current UI baseline goal:
+- The app now exposes a Product Map / Blueprint UI at `/blueprint`.
+- The sidebar includes a `Product Map` system-tool link.
+- Home includes a Product Map summary.
+- Future-only modules are shown as planned/status-only areas, not as fake working routes.
+
+Current implementation status remains:
+- Browser/localStorage prototype.
+- `LocalStorageVaultProvider` remains the active provider.
+- Tauri remains not implemented.
+- SQLite remains not implemented.
+- Portable vault folders remain not implemented.
+- Native filesystem access remains not implemented.
+- Mobile apps remain not implemented.
+- Real document import, preview, OCR, thumbnails, and native document vault storage remain not implemented.
+
+Next prompt should start from:
+- The Phase Roadmap in `docs/Plan/Mizaan_Product_Blueprint.md`.
+- The next recommended bounded phase is Phase B - Documents foundation.

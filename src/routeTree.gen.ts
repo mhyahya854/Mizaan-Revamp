@@ -22,6 +22,7 @@ import { Route as FinanceRouteImport } from './routes/finance'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as DatabasesRouteImport } from './routes/databases'
 import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as BlueprintRouteImport } from './routes/blueprint'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NotesIndexRouteImport } from './routes/notes.index'
 import { Route as PageIdRouteImport } from './routes/page.$id'
@@ -92,6 +93,11 @@ const CalendarRoute = CalendarRouteImport.update({
   path: '/calendar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlueprintRoute = BlueprintRouteImport.update({
+  id: '/blueprint',
+  path: '/blueprint',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -115,6 +121,7 @@ const NotesIdRoute = NotesIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/blueprint': typeof BlueprintRoute
   '/calendar': typeof CalendarRoute
   '/databases': typeof DatabasesRoute
   '/documents': typeof DocumentsRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blueprint': typeof BlueprintRoute
   '/calendar': typeof CalendarRoute
   '/databases': typeof DatabasesRoute
   '/documents': typeof DocumentsRoute
@@ -154,6 +162,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/blueprint': typeof BlueprintRoute
   '/calendar': typeof CalendarRoute
   '/databases': typeof DatabasesRoute
   '/documents': typeof DocumentsRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/blueprint'
     | '/calendar'
     | '/databases'
     | '/documents'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/blueprint'
     | '/calendar'
     | '/databases'
     | '/documents'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/blueprint'
     | '/calendar'
     | '/databases'
     | '/documents'
@@ -233,6 +245,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BlueprintRoute: typeof BlueprintRoute
   CalendarRoute: typeof CalendarRoute
   DatabasesRoute: typeof DatabasesRoute
   DocumentsRoute: typeof DocumentsRoute
@@ -344,6 +357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blueprint': {
+      id: '/blueprint'
+      path: '/blueprint'
+      fullPath: '/blueprint'
+      preLoaderRoute: typeof BlueprintRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -377,6 +397,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BlueprintRoute: BlueprintRoute,
   CalendarRoute: CalendarRoute,
   DatabasesRoute: DatabasesRoute,
   DocumentsRoute: DocumentsRoute,
