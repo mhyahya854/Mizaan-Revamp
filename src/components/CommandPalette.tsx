@@ -75,6 +75,12 @@ const createActions: Array<{
     templateId: "person-profile",
   },
   {
+    title: "New interaction log",
+    sub: "Create a provider-backed interaction record",
+    icon: Users,
+    templateId: "interaction-log",
+  },
+  {
     title: "New database",
     sub: "Create a basic editable database table",
     icon: Database,

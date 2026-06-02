@@ -21517,3 +21517,84 @@ Project/task normalization moved into helper modules, route-only metadata parsin
 
 Next recommended blueprint phase:
 People/CRM foundation, because projects/tasks now have safe `linkedPersonIds` relation fields but People still needs a typed local profile model before project ownership/contact context can be honest.
+
+## Append-Only People and CRM Foundation Implementation - 2026-06-02 18:25 +08:00
+
+Date/time:
+2026-06-02 18:25 +08:00.
+
+Selected phase:
+People and CRM Foundation.
+
+Blueprint file read:
+`docs/Plan/Mizaan_Product_Blueprint.md`.
+
+Blueprint updated:
+Yes. People, Person/Contact Model, and Phase I status were updated to reflect the implemented foundation while keeping People/CRM overall [PARTIAL].
+
+Validation before work:
+`npm run typecheck`, `npm run lint`, `npm test`, and `npm run build` passed before implementation. Baseline tests were 13 files and 120 tests.
+
+Red-flag scans:
+Scans for localStorage, cloud/auth/Google Contacts terms, fake readiness phrases, placeholder/mock terms, console/debugger, external runtime URLs/fonts, and privacy/encryption/lock language were run before implementation. No runtime cloud/auth/contact sync, fake people data, direct route localStorage writes, external runtime font/resource, or fake privacy implementation was found.
+
+Browser QA before work:
+The in-app Browser tool was unavailable, so isolated Chrome DevTools fallback was used without clearing user storage. Routes `/`, `/blueprint`, `/people`, `/projects`, `/graph`, `/search`, `/documents`, `/settings`, `/templates`, `/databases`, `/calendar`, `/trash`, `/page/note-principles`, `/page/project-mizaan`, and `/page/doc-architecture` loaded nonblank. Before screenshots were captured.
+
+People/CRM code inspection summary:
+`src/routes/people.tsx` was a generic `SpacePage` wrapper. The provider model already supported category `people` and type `person`, but there was no typed person helper, no typed interaction item type, no relationship/follow-up/privacy metadata panel, no person-derived graph edges, and no people-specific route list. Projects/tasks/documents already exposed safe `linkedPersonIds`, so People could become a real graph/search relation target.
+
+Implementation summary:
+The phase added typed person and interaction helpers, provider-backed person records, provider-backed linked interaction records, a dedicated People route/list, a person/interaction right-panel metadata UI, graph/search/template integration, and tests. The implementation keeps private/sensitive flags as metadata only and does not claim encryption, app lock, or hidden search/graph behavior.
+
+Feature blocks:
+[ IMPLEMENTED] People module foundation - provider-backed local people route/list and person page metadata UI.
+[ IMPLEMENTED] Person metadata model - tested normalization, enums, relation IDs, privacy summary, graph targets, and search metadata.
+[ IMPLEMENTED] Person record creation - real provider-backed records via helper input and People route New person action.
+[ IMPLEMENTED] People route/list foundation - real records only, no fake contact rows or fake CRM metrics.
+[ IMPLEMENTED] Person detail metadata UI - relationship, contact-context, follow-up, notes/context/boundaries, and metadata-only privacy fields persist through provider updates.
+[ IMPLEMENTED] Interaction log foundation - real provider-backed interaction records can be created from person detail and edited; full timeline views remain future.
+[ IMPLEMENTED] People graph integration - person/interaction nodes and metadata relation edges are covered by graph tests and browser proof.
+[ IMPLEMENTED] People search integration - person and interaction metadata are indexed through the existing search path.
+[ IMPLEMENTED] People template integration - Person Profile, Relationship Notes, Contact Context, Follow-up Note, and Interaction Log templates produce normalized metadata.
+[ IMPLEMENTED] Privacy metadata flags - private/sensitive booleans are local metadata only with honest UI copy.
+[ NOT IMPLEMENTED] Real privacy/app lock - no encryption, lock, or hidden-from-search/graph behavior exists.
+[ NOT IMPLEMENTED] Google Contacts/contact import - no Google Contacts, vCard/CSV import, phone contact import, or cloud sync was added.
+[ NOT IMPLEMENTED] CRM automation - no AI summaries, automatic interaction capture, relationship analytics, team CRM, reminders, or native notifications were added.
+
+What was deliberately not implemented:
+Google Contacts, contact import/sync, phone contact import, email/message import, AI relationship summaries, automatic meeting history, real privacy/app lock, encrypted contacts, hidden-from-search behavior, hidden-from-graph behavior, reminder engines, native notifications, mobile capture, cloud CRM, and team/collaboration were excluded because this phase is a truthful local-first browser/localStorage foundation.
+
+Files changed:
+Source files include people helper modules, People route, People metadata panel, page workspace/right-panel integration, graph model, product map, command palette, template metadata, and vault type vocabulary.
+Test files include person, interaction, graph, search, and page-template tests.
+Docs/screenshots include the product blueprint, this append-only plan entry, the phase report, DOCX work log entry, and People/CRM screenshots.
+
+Tests added/updated:
+Person helper tests, interaction helper tests, graph model relation tests, search metadata test, and page-workspace template metadata test.
+
+Screenshots:
+`docs/screenshots/20260602-1723-people-before-home.png`
+`docs/screenshots/20260602-1723-people-before-people.png`
+`docs/screenshots/20260602-1723-people-before-graph.png`
+`docs/screenshots/20260602-1807-people-foundation-route.png`
+`docs/screenshots/20260602-1807-people-foundation-new-person.png`
+`docs/screenshots/20260602-1807-people-foundation-person-metadata.png`
+`docs/screenshots/20260602-1807-people-foundation-interaction-section.png`
+`docs/screenshots/20260602-1807-people-foundation-proof.png`
+`docs/screenshots/20260602-1807-people-foundation-graph-if-implemented.png`
+
+Validation after work:
+Implementation validation passed before documentation updates: targeted people/interaction/graph/search/template tests, `npm run typecheck`, `npm run lint`, `npm test`, and `npm run build`. Final validation and final push evidence are recorded in `docs/Phases/phase-people-crm-foundation.md`.
+
+Browser QA after work:
+Created a real person, edited relationship/contact/follow-up/notes/privacy metadata, created a real linked interaction, edited interaction metadata, refreshed and verified persistence, searched person metadata, verified graph person/interaction nodes and edges, and swept required routes for nonblank rendering. Chrome reported no runtime console errors; form-field `id`/`name` issue notices remained as a nonblocking accessibility issue.
+
+Remaining limitations:
+Still browser/localStorage prototype only. People/CRM is partial. No Google Contacts sync, vCard/CSV import, phone contact import, cloud CRM, email/message import, AI relationship summaries, automatic interaction capture, encrypted private contacts, real app lock/privacy lock, hidden-from-search behavior, hidden-from-graph behavior, reminder engine, native notifications, mobile contact capture, full interaction timeline, relationship analytics, collaboration/team CRM, SQLite, Tauri, native filesystem, or portable vault folders.
+
+Spaghetti cleanup:
+Person and interaction metadata parsing moved into tested helper modules, route-only metadata parsing was avoided, direct localStorage writes were not added, fake people/contact/import/privacy controls were avoided, and graph relations are metadata-id based rather than inferred from names or organizations. (spaghetti code cleared)
+
+Next recommended blueprint phase:
+Finance foundation, because People now provides local person relation targets and the next missing core data layer is local finance records that can connect to documents, projects, tasks, calendar, and people without bank/cloud integration.

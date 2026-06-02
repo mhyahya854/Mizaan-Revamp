@@ -178,7 +178,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Pages | Documents | [PARTIAL] | Metadata-only records route and detail panel exist | Typed document metadata in item metadata | localStorage prototype | Helper tests and browser QA | Real import/preview/OCR/native storage missing | Native document import later |
 | Pages | Projects | [PARTIAL] | Dedicated route/list and project detail metadata panel exist | Typed project metadata in item metadata | localStorage prototype | Helper/search/graph/template tests and browser QA | No kanban, timeline/Gantt, milestones, dependencies, reminders, native storage, or dashboards | People/CRM foundation |
 | Pages | Tasks | [PARTIAL] | Project-linked task section and task metadata panel exist; no `/tasks` route | Typed task metadata in item metadata | localStorage prototype | Helper/search/graph/template tests and browser QA | No dedicated task route, task database, recurrence, reminders, notifications, dependencies, or calendar scheduling | People/CRM foundation |
-| Pages | People | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No contact schema | People foundation |
+| Pages | People | [PARTIAL] | Dedicated provider-backed route/list, person detail metadata panel, and interaction foundation exist | Typed person and interaction metadata in `MizaanItem.metadata` | localStorage prototype | Person/interaction helper tests, graph/search/template tests, and browser QA | No contact import/sync, encryption/app lock, hidden search/graph privacy, analytics, mobile capture, or full CRM timeline | Finance foundation |
 | Pages | Finance | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No ledger/model validation | Finance foundation |
 | Pages | Trackers | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No tracker engine | Trackers/goals foundation |
 | Pages | Goals | [BLUEPRINT ONLY] | Not visible as working module | Not modeled | None | None | No route/model | Goals foundation |
@@ -470,20 +470,20 @@ the UI must show its status.
 - Purpose: local relationship context and personal profiles.
 - User mental model: people are local profile pages, not a cloud CRM.
 - Current status: [PARTIAL]
-- UI now: people route and person template.
-- Implemented now: generic person pages.
-- Not implemented yet: typed contact model, interactions, relationship links, privacy rules.
-- Data model: generic item and blocks.
+- UI now: dedicated provider-backed People route, person records list, person templates, person detail metadata panel, and linked interaction section.
+- Implemented now: typed local person metadata, typed interaction metadata, provider-backed person creation, provider-backed linked interaction creation/editing, relationship type/status fields, contact-context fields, follow-up metadata, private/sensitive metadata badges, graph relations, search metadata, and template defaults for the browser/localStorage prototype.
+- Not implemented yet: Google Contacts, contact import/sync, phone contact import, email/message import, encrypted private contacts, real app lock/privacy lock, hidden-from-search behavior, hidden-from-graph behavior, native reminders, CRM automation, mobile capture, and full interaction timeline.
+- Data model: provider-backed `MizaanItem.metadata` with typed person/interaction helper normalization.
 - Routes: `/people`, `/page/$id`
-- Main components: `SpacePage`, `PageWorkspace`.
-- Empty states: no people pages.
-- Error states: generic page errors.
-- Actions: create person page.
-- Disabled/future actions: no cloud contact sync or CRM integrations.
-- Tests required: person metadata helper later.
-- Screenshots required: people list and detail.
-- Done criteria: local profile model and relation UI verified.
-- Future phases: People/CRM foundation.
+- Main components: `PeoplePage`, `PageWorkspace`, `PageRightPanel`, `PeopleMetadataPanel`.
+- Empty states: honest empty state with working New person action.
+- Error states: provider errors remain surfaced through the shared provider/UI patterns.
+- Actions: create person record, open person page, edit person metadata, mark private/sensitive as metadata only, create linked interaction record, edit interaction metadata, search person metadata, and show graph person/interaction relations.
+- Disabled/future actions: no cloud contact sync, Google Contacts, contact import, real privacy lock, fake encryption, fake reminders, or CRM integrations.
+- Tests required: [IMPLEMENTED] person metadata helper, interaction metadata helper, graph relations, search metadata, and template defaults.
+- Screenshots required: [IMPLEMENTED] people route, new person, person metadata, interaction section, graph proof, and persistence/search proof.
+- Done criteria: [IMPLEMENTED FOR FOUNDATION] local people profiles and linked interactions work without sync; overall People/CRM remains partial until privacy enforcement, import, full timeline, and native/mobile systems exist.
+- Future phases: Finance foundation.
 
 ### 6.10 Finance
 
@@ -1082,13 +1082,15 @@ Mizaan-specific differentiation:
 
 ### Person/Contact Model
 
-- Current status: [NOT STARTED]
-- Proposed fields: name, relationship, contact notes, categories, linked items.
-- Storage now: generic item until helper exists.
+- Current status: [PARTIAL]
+- Implemented fields now: display name, legal name, preferred name, aliases, relationship type, relationship status, where-known-from, organization, role/title, location note, primary email/phone as local text metadata, preferred contact method, last interaction date, next follow-up date, follow-up status, birthday, private/sensitive metadata flags, notes, context, boundaries, linked project/task/document/finance/calendar/goal ids, and tags.
+- Implemented interaction fields now: interaction title, type, status, person id, interaction date, summary, follow-up-needed flag, follow-up date, linked project/task/document/calendar ids, notes, and private/sensitive metadata flags.
+- Proposed fields later: import source metadata, privacy enforcement policy, hidden-from-search/graph flags after real privacy rules, richer timeline views, reminder scheduling metadata, mobile capture metadata, and native contact import manifests if explicitly allowed later.
+- Storage now: provider-backed `MizaanItem.metadata` in the browser/localStorage prototype.
 - Storage later: SQLite person table plus mirror.
-- Validation rules: no cloud contact sync, local-only fields.
-- Migration notes: preserve person pages.
-- Test requirements: person helper tests.
+- Validation rules: normalize invalid enums, trim strings, preserve unknown safe metadata, dedupe relation ids, remove invalid ids, keep private/sensitive as metadata-only flags, and do not claim encryption, hidden indexes, Google Contacts, or cloud sync.
+- Migration notes: preserve existing person pages and normalize older generic people metadata at read/use time.
+- Test requirements: [IMPLEMENTED] person helper tests, interaction helper tests, graph edge tests, search metadata tests, and template default tests.
 
 ### Project/Task Model
 
@@ -1302,14 +1304,14 @@ Mizaan-specific differentiation:
 - Goal: local person profile model and relation summaries.
 - Why now: projects/documents/finance link to people.
 - Preconditions: relation helpers stable.
-- Implementation tasks: person metadata helper, route/list/detail UI.
-- Files likely touched: people route, helpers/tests.
-- Tests required: person normalization.
-- Browser QA required: create/edit person.
-- Screenshots required: people route/detail.
-- Documentation required: blueprint and reports.
-- Done criteria: local people profiles work without sync.
-- What not to implement: cloud contacts or CRM integrations.
+- Implementation tasks: [IMPLEMENTED FOR FOUNDATION] person metadata helper, interaction metadata helper, provider-backed person/interaction records, People route/list, person detail metadata UI, graph/search/template integration, tests, browser QA, screenshots, and docs.
+- Files touched: people helpers/tests, People route, People metadata panel, page workspace/right panel, graph/search/template tests, provider vocabulary, product map, blueprint/docs/screenshots.
+- Tests required: [IMPLEMENTED] person normalization, interaction normalization, record inputs, relation id handling, privacy-summary honesty, graph edges, search metadata, and template defaults.
+- Browser QA required: [IMPLEMENTED] create/edit person, create/edit linked interaction, refresh persistence, search proof, graph proof, route sweep, and screenshots.
+- Screenshots required: [IMPLEMENTED] people route, new person, metadata panel, interaction section, graph, and persistence/search proof.
+- Documentation required: [IMPLEMENTED] blueprint, phase report, old master Markdown append, and DOCX work log entry.
+- Done criteria: [IMPLEMENTED FOR FOUNDATION] local people profiles work without sync and linked interactions are real provider-backed records; overall People/CRM remains partial.
+- What not to implement: cloud contacts, Google Contacts, contact import/sync, real privacy/app lock, encrypted contacts, hidden search/graph behavior, reminders, AI summaries, mobile capture, or CRM integrations.
 - Next phase: Finance foundation.
 
 ### Phase J - Finance foundation

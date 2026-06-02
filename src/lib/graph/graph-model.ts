@@ -1,5 +1,15 @@
 import { normalizeDocumentMetadataForItem } from "../documents/document-record";
 import {
+  getInteractionGraphTargets,
+  isInteractionRecordItem,
+  normalizeInteractionMetadataForItem,
+} from "../people/interaction-record";
+import {
+  getPersonGraphTargets,
+  isPersonRecordItem,
+  normalizePersonMetadataForItem,
+} from "../people/person-record";
+import {
   getProjectGraphRelationTargets,
   isProjectRecordItem,
   normalizeProjectMetadataForItem,
@@ -17,6 +27,7 @@ export type GraphNodeType =
   | "document"
   | "project"
   | "person"
+  | "interaction"
   | "finance"
   | "calendar"
   | "task"
@@ -105,6 +116,7 @@ const GRAPH_NODE_BY_TYPE: Partial<Record<ItemType, GraphNodeType>> = {
   document: "document",
   project: "project",
   person: "person",
+  interaction: "interaction",
   finance: "finance",
   calendar: "calendar",
   task: "task",
@@ -286,6 +298,42 @@ function buildEdges(
         bidirectional: false,
         metadata: {
           relationSource: "task-metadata",
+        },
+      });
+    }
+  }
+
+  for (const personItem of items.filter(isPersonRecordItem)) {
+    const metadata = normalizePersonMetadataForItem(personItem);
+    for (const target of getPersonGraphTargets(metadata)) {
+      addEdge({
+        sourceId: personItem.id,
+        targetId: target.targetId,
+        type: target.edgeType,
+        label: target.label,
+        strength: 1,
+        sourceField: target.sourceField,
+        bidirectional: false,
+        metadata: {
+          relationSource: "person-metadata",
+        },
+      });
+    }
+  }
+
+  for (const interactionItem of items.filter(isInteractionRecordItem)) {
+    const metadata = normalizeInteractionMetadataForItem(interactionItem);
+    for (const target of getInteractionGraphTargets(metadata)) {
+      addEdge({
+        sourceId: interactionItem.id,
+        targetId: target.targetId,
+        type: target.edgeType,
+        label: target.label,
+        strength: 1,
+        sourceField: target.sourceField,
+        bidirectional: false,
+        metadata: {
+          relationSource: "interaction-metadata",
         },
       });
     }

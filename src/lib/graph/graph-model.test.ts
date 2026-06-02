@@ -73,6 +73,7 @@ describe("graph model", () => {
     ["projects", "project", "project"],
     ["tasks", "task", "task"],
     ["people", "person", "person"],
+    ["people", "interaction", "interaction"],
     ["finance", "finance", "finance"],
     ["calendar", "calendar", "calendar"],
     ["trackers", "tracker", "tracker"],
@@ -333,6 +334,154 @@ describe("graph model", () => {
     expect(graph.edges.map((edge) => edge.id).sort()).toEqual([
       "project-1->task-1:task-link",
       "task-1->project-1:project-link",
+    ]);
+  });
+
+  it("creates person-project and person-task edges from person metadata", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("person-1", {
+          category: "people",
+          type: "person",
+          metadata: {
+            linkedProjectIds: ["project-1"],
+            linkedTaskIds: ["task-1"],
+            linkedDocumentIds: ["doc-1"],
+          },
+        }),
+        item("project-1", { category: "projects", type: "project" }),
+        item("task-1", { category: "tasks", type: "task" }),
+        item("doc-1", { category: "documents", type: "document" }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "person-1->project-1:project-link",
+        sourceId: "person-1",
+        targetId: "project-1",
+        type: "project-link",
+        sourceField: "linkedProjectIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "person-1->task-1:task-link",
+        sourceId: "person-1",
+        targetId: "task-1",
+        type: "task-link",
+        sourceField: "linkedTaskIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "person-1->doc-1:document-link",
+        sourceId: "person-1",
+        targetId: "doc-1",
+        type: "document-link",
+        sourceField: "linkedDocumentIds",
+      }),
+    );
+  });
+
+  it("creates project-person and task-person edges from existing linkedPersonIds metadata", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("person-1", { category: "people", type: "person" }),
+        item("project-1", {
+          category: "projects",
+          type: "project",
+          metadata: { linkedPersonIds: ["person-1"] },
+        }),
+        item("task-1", {
+          category: "tasks",
+          type: "task",
+          metadata: { linkedPersonIds: ["person-1"] },
+        }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "project-1->person-1:person-link",
+        sourceId: "project-1",
+        targetId: "person-1",
+        type: "person-link",
+        sourceField: "linkedPersonIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "task-1->person-1:person-link",
+        sourceId: "task-1",
+        targetId: "person-1",
+        type: "person-link",
+        sourceField: "linkedPersonIds",
+      }),
+    );
+  });
+
+  it("creates interaction-person edges and recognizes interaction nodes", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("person-1", { category: "people", type: "person" }),
+        item("interaction-1", {
+          category: "people",
+          type: "interaction",
+          metadata: {
+            personId: "person-1",
+            linkedProjectIds: ["project-1"],
+          },
+        }),
+        item("project-1", { category: "projects", type: "project" }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.nodes.find((node) => node.id === "interaction-1")?.type).toBe("interaction");
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "interaction-1->person-1:person-link",
+        sourceId: "interaction-1",
+        targetId: "person-1",
+        type: "person-link",
+        sourceField: "personId",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "interaction-1->project-1:project-link",
+        sourceId: "interaction-1",
+        targetId: "project-1",
+        type: "project-link",
+        sourceField: "linkedProjectIds",
+      }),
+    );
+  });
+
+  it("dedupes duplicate person/interaction relation IDs and ignores invalid targets", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("person-1", {
+          category: "people",
+          type: "person",
+          metadata: { linkedProjectIds: ["project-1", "project-1", "bad id", "missing"] },
+        }),
+        item("interaction-1", {
+          category: "people",
+          type: "interaction",
+          metadata: { personId: "person-1", linkedProjectIds: ["missing-project"] },
+        }),
+        item("project-1", { category: "projects", type: "project" }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges.map((edge) => edge.id).sort()).toEqual([
+      "interaction-1->person-1:person-link",
+      "person-1->project-1:project-link",
     ]);
   });
 });

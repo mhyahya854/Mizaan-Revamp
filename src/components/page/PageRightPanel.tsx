@@ -4,11 +4,17 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { DocumentMetadataPanel } from "@/components/documents/DocumentMetadataPanel";
 import {
+  InteractionMetadataPanel,
+  PeopleMetadataPanel,
+} from "@/components/people/PeopleMetadataPanel";
+import {
   ProjectMetadataPanel,
   TaskMetadataPanel,
 } from "@/components/projects/ProjectMetadataPanel";
 import { PageLinkedContext } from "./PageLinkedContext";
 import { isDocumentRecordItem } from "@/lib/documents/document-record";
+import { isInteractionRecordItem } from "@/lib/people/interaction-record";
+import { isPersonRecordItem } from "@/lib/people/person-record";
 import { isProjectRecordItem } from "@/lib/projects/project-record";
 import { isTaskRecordItem } from "@/lib/tasks/task-record";
 import type { PageWorkspaceModel } from "@/lib/page/page-workspace";
@@ -161,6 +167,12 @@ function PageDataPanel({
       )}
       {isTaskRecordItem(model.item) && (
         <TaskMetadataPanel item={model.item} provider={provider} items={items} />
+      )}
+      {isPersonRecordItem(model.item) && (
+        <PeopleMetadataPanel item={model.item} provider={provider} items={items} />
+      )}
+      {isInteractionRecordItem(model.item) && (
+        <InteractionMetadataPanel item={model.item} provider={provider} items={items} />
       )}
       {/* 1. Basic */}
       <CollapsibleSection title="Basic" isOpenDefault={true}>

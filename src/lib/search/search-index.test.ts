@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import type { MizaanBlock, MizaanItem, VaultSnapshot } from "../vault/types";
+import { createInteractionRecordInput } from "../people/interaction-record";
+import { createPersonRecordInput } from "../people/person-record";
 import { createProjectRecordInput } from "../projects/project-record";
 import { createTaskRecordInput } from "../tasks/task-record";
 import { buildSearchResults, highlightMatches } from "./search-index";
@@ -208,5 +210,49 @@ describe("search index", () => {
     expect(
       buildSearchResults(data, { query: "2026-06-30" }).map((result) => result.item.id),
     ).toEqual(["task-1"]);
+  });
+
+  it("finds person and interaction metadata through existing metadata indexing", () => {
+    const personInput = createPersonRecordInput({
+      displayName: "Ada Lovelace",
+      relationshipType: "mentor",
+      relationshipStatus: "follow-up",
+      whereKnownFrom: "Research circle",
+      organization: "Analytical Engine",
+      context: "Mathematics and graph context",
+    });
+    const interactionInput = createInteractionRecordInput({
+      title: "Call with Ada",
+      type: "call",
+      status: "follow-up-needed",
+      personId: "person-1",
+      interactionDate: "2026-06-02",
+      summary: "Discussed analytical notes",
+    });
+    const data = snapshot([
+      item({
+        id: "person-1",
+        title: personInput.title,
+        category: personInput.category,
+        type: personInput.type,
+        status: personInput.status,
+        metadata: personInput.metadata,
+      }),
+      item({
+        id: "interaction-1",
+        title: interactionInput.title,
+        category: interactionInput.category,
+        type: interactionInput.type,
+        status: interactionInput.status,
+        metadata: interactionInput.metadata,
+      }),
+    ]);
+
+    expect(
+      buildSearchResults(data, { query: "Research circle" }).map((result) => result.item.id),
+    ).toEqual(["person-1"]);
+    expect(
+      buildSearchResults(data, { query: "2026-06-02" }).map((result) => result.item.id),
+    ).toEqual(["interaction-1"]);
   });
 });

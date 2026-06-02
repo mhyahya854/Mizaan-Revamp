@@ -16,6 +16,7 @@ export type ItemType =
   | "project"
   | "task"
   | "person"
+  | "interaction"
   | "finance"
   | "calendar"
   | "tracker"

@@ -30,6 +30,16 @@ import {
   normalizeTaskMetadataForItem,
   updateTaskMetadata,
 } from "@/lib/tasks/task-record";
+import {
+  isPersonRecordItem,
+  normalizePersonMetadataForItem,
+  updatePersonMetadata,
+} from "@/lib/people/person-record";
+import {
+  isInteractionRecordItem,
+  normalizeInteractionMetadataForItem,
+  updateInteractionMetadata,
+} from "@/lib/people/interaction-record";
 
 export function PageWorkspace({ itemId }: { itemId: string }) {
   const provider = useVaultProvider();
@@ -74,6 +84,26 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
         title: nextTitle,
         metadata: updateTaskMetadata(normalizeTaskMetadataForItem(model.item), {
           taskTitle: nextTitle,
+        }),
+      });
+      return;
+    }
+
+    if (isPersonRecordItem(model.item)) {
+      provider.updateItem(model.item.id, {
+        title: nextTitle,
+        metadata: updatePersonMetadata(normalizePersonMetadataForItem(model.item), {
+          displayName: nextTitle,
+        }),
+      });
+      return;
+    }
+
+    if (isInteractionRecordItem(model.item)) {
+      provider.updateItem(model.item.id, {
+        title: nextTitle,
+        metadata: updateInteractionMetadata(normalizeInteractionMetadataForItem(model.item), {
+          interactionTitle: nextTitle,
         }),
       });
       return;

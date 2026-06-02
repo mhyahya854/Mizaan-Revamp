@@ -110,6 +110,27 @@ describe("page workspace model", () => {
     expect(database.metadata.database).toBeDefined();
   });
 
+  it("creates people and interaction templates with normalized metadata defaults", () => {
+    const provider = createProvider();
+
+    const person = createPageFromTemplate(provider, "person-profile");
+    const relationship = createPageFromTemplate(provider, "relationship-notes");
+    const followUp = createPageFromTemplate(provider, "follow-up-note");
+    const interaction = createPageFromTemplate(provider, "interaction-log");
+
+    expect(person.category).toBe("people");
+    expect(person.type).toBe("person");
+    expect(person.metadata.displayName).toBe(person.title);
+    expect(person.metadata.relationshipType).toBe("unknown");
+    expect(relationship.metadata.context).toContain("relationship context");
+    expect(followUp.metadata.relationshipStatus).toBe("follow-up");
+    expect(followUp.metadata.followUpStatus).toBe("follow-up-needed");
+    expect(interaction.category).toBe("people");
+    expect(interaction.type).toBe("interaction");
+    expect(interaction.metadata.interactionTitle).toBe(interaction.title);
+    expect(interaction.metadata.interactionStatus).toBe("logged");
+  });
+
   it("handles archived and deleted page state safely", () => {
     const provider = createProvider();
     const item = provider.createItem({ title: "Removed", category: "notes", type: "note" });

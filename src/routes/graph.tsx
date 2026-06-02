@@ -527,7 +527,7 @@ function matchesFilter(node: GraphNode, filter: GraphFilter) {
     case "projects":
       return node.type === "project";
     case "people":
-      return node.type === "person";
+      return node.type === "person" || node.type === "interaction";
     case "finance":
       return node.type === "finance";
     case "orphans":

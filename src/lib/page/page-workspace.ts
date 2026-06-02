@@ -21,6 +21,11 @@ import {
 } from "../documents/document-record";
 import { createDefaultProjectMetadata, updateProjectMetadata } from "../projects/project-record";
 import { createDefaultTaskMetadata, updateTaskMetadata } from "../tasks/task-record";
+import { createDefaultPersonMetadata, updatePersonMetadata } from "../people/person-record";
+import {
+  createDefaultInteractionMetadata,
+  updateInteractionMetadata,
+} from "../people/interaction-record";
 import { createDefaultTableData, serializeTableData } from "../table/simple-table";
 
 interface Breadcrumb {
@@ -634,12 +639,128 @@ const TEMPLATES: TemplateDefinition[] = [
     title: "Person Profile - New Person",
     summary: "Context, relationship notes, and linked items.",
     tags: ["person"],
-    properties: { status: "Active", relation: "" },
+    properties: { status: "Unknown", relationshipType: "Unknown", followUpStatus: "None" },
+    metadata: createDefaultPersonMetadata({
+      displayName: "Person Profile - New Person",
+      relationshipType: "unknown",
+      relationshipStatus: "unknown",
+      context: "Context, relationship notes, and linked items.",
+    }),
     blocks: [
       { type: "heading1", content: "Context" },
       { type: "paragraph", content: "" },
       { type: "heading2", content: "Interaction notes" },
       { type: "bullet", content: "" },
+    ],
+  },
+  {
+    id: "relationship-notes",
+    name: "Relationship Notes",
+    icon: "U",
+    category: "people",
+    type: "person",
+    title: "Relationship Notes - New Person",
+    summary: "Local relationship context and boundaries.",
+    tags: ["person", "relationship"],
+    properties: { status: "Unknown", relationshipType: "Unknown", followUpStatus: "None" },
+    metadata: createDefaultPersonMetadata({
+      displayName: "Relationship Notes - New Person",
+      relationshipType: "unknown",
+      relationshipStatus: "unknown",
+      context: "Local relationship context and boundaries.",
+    }),
+    blocks: [
+      { type: "heading1", content: "How we know each other" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Context" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Boundaries or preferences" },
+      { type: "paragraph", content: "" },
+    ],
+  },
+  {
+    id: "contact-context",
+    name: "Contact Context",
+    icon: "U",
+    category: "people",
+    type: "person",
+    title: "Contact Context - New Person",
+    summary: "Organization, role, contact notes, and local context.",
+    tags: ["person", "contact"],
+    properties: { status: "Unknown", relationshipType: "Unknown", followUpStatus: "None" },
+    metadata: createDefaultPersonMetadata({
+      displayName: "Contact Context - New Person",
+      relationshipType: "unknown",
+      relationshipStatus: "unknown",
+      context: "Organization, role, contact notes, and local context.",
+    }),
+    blocks: [
+      { type: "heading1", content: "Contact context" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Organization and role" },
+      { type: "paragraph", content: "" },
+      {
+        type: "callout",
+        content:
+          "This stores local metadata only. Contact import, Google Contacts sync, and cloud CRM are not implemented.",
+      },
+    ],
+  },
+  {
+    id: "follow-up-note",
+    name: "Follow-up Note",
+    icon: "U",
+    category: "people",
+    type: "person",
+    title: "Follow-up - New Person",
+    summary: "Person profile with follow-up metadata ready to edit.",
+    tags: ["person", "follow-up"],
+    properties: { status: "Follow-up", relationshipType: "Unknown", followUpStatus: "Needed" },
+    metadata: createDefaultPersonMetadata({
+      displayName: "Follow-up - New Person",
+      relationshipType: "unknown",
+      relationshipStatus: "follow-up",
+      followUpStatus: "follow-up-needed",
+    }),
+    blocks: [
+      { type: "heading1", content: "Follow-up context" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Next step" },
+      {
+        type: "todo",
+        content: "Set the next follow-up date in the metadata panel",
+        checked: false,
+      },
+      {
+        type: "callout",
+        content:
+          "This does not create reminders or native notifications. It stores follow-up metadata only.",
+      },
+    ],
+  },
+  {
+    id: "interaction-log",
+    name: "Interaction Log",
+    icon: "I",
+    category: "people",
+    type: "interaction",
+    title: "Interaction - Untitled",
+    summary: "Provider-backed interaction record.",
+    tags: ["interaction"],
+    properties: { status: "Logged", interactionType: "Note", personId: "" },
+    metadata: createDefaultInteractionMetadata({
+      interactionTitle: "Interaction - Untitled",
+      interactionType: "note",
+      interactionStatus: "logged",
+    }),
+    blocks: [
+      { type: "heading1", content: "Interaction summary" },
+      { type: "paragraph", content: "" },
+      {
+        type: "callout",
+        content:
+          "This is a real local interaction record. Email capture, calendar reminders, imports, and automatic meeting history are not implemented.",
+      },
     ],
   },
   {
@@ -918,6 +1039,17 @@ function createTemplateMetadata(
 
   if (category === "tasks" && type === "task") {
     return updateTaskMetadata({ taskTitle: title, ...base }, { taskTitle: title });
+  }
+
+  if (category === "people" && type === "person") {
+    return updatePersonMetadata({ displayName: title, ...base }, { displayName: title });
+  }
+
+  if (category === "people" && type === "interaction") {
+    return updateInteractionMetadata(
+      { interactionTitle: title, ...base },
+      { interactionTitle: title },
+    );
   }
 
   return base;

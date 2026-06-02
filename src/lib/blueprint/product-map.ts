@@ -128,9 +128,11 @@ export const productModules: ProductModule[] = [
     category: "workspace",
     status: "partial",
     route: "/people",
-    summary: "Local personal profile pages and relationship context.",
-    currentTruth: "Generic person pages exist; typed local profile model is future.",
-    nextPhase: "People foundation.",
+    summary:
+      "Provider-backed local person records with relationship metadata and linked interactions.",
+    currentTruth:
+      "Person metadata, person creation, People route/list UI, person detail metadata, interaction records, search metadata, graph edges, privacy metadata flags, and templates are implemented for the browser prototype. Contact import/sync, real privacy lock/encryption, hidden search/graph behavior, reminders, AI summaries, and full CRM timelines are future.",
+    nextPhase: "Finance foundation.",
   },
   {
     id: "finance",
