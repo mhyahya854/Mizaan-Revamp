@@ -484,4 +484,81 @@ describe("graph model", () => {
       "person-1->project-1:project-link",
     ]);
   });
+
+  it("creates finance metadata edges to local documents, projects, people, tasks, and calendar items", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("finance-1", {
+          category: "finance",
+          type: "finance",
+          metadata: {
+            linkedDocumentIds: ["doc-1"],
+            linkedProjectIds: ["project-1"],
+            linkedTaskIds: ["task-1"],
+            linkedPersonIds: ["person-1"],
+            linkedCalendarEventIds: ["calendar-1"],
+          },
+        }),
+        item("doc-1", { category: "documents", type: "document" }),
+        item("project-1", { category: "projects", type: "project" }),
+        item("task-1", { category: "tasks", type: "task" }),
+        item("person-1", { category: "people", type: "person" }),
+        item("calendar-1", { category: "calendar", type: "calendar" }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "finance-1->doc-1:document-link",
+        sourceId: "finance-1",
+        targetId: "doc-1",
+        type: "document-link",
+        sourceField: "linkedDocumentIds",
+        metadata: expect.objectContaining({ relationSource: "finance-metadata" }),
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "finance-1->project-1:project-link",
+        sourceField: "linkedProjectIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "finance-1->task-1:task-link",
+        sourceField: "linkedTaskIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "finance-1->person-1:person-link",
+        sourceField: "linkedPersonIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "finance-1->calendar-1:calendar-link",
+        sourceField: "linkedCalendarEventIds",
+      }),
+    );
+  });
+
+  it("dedupes duplicate finance relation IDs and ignores invalid finance targets", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("finance-1", {
+          category: "finance",
+          type: "finance",
+          metadata: {
+            linkedDocumentIds: ["doc-1", "doc-1", "bad id", "missing-doc", 12],
+          },
+        }),
+        item("doc-1", { category: "documents", type: "document" }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges.map((edge) => edge.id)).toEqual(["finance-1->doc-1:document-link"]);
+  });
 });

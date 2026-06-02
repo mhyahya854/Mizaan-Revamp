@@ -140,9 +140,11 @@ export const productModules: ProductModule[] = [
     category: "workspace",
     status: "partial",
     route: "/finance",
-    summary: "Local finance record pages without bank integrations or online connections.",
-    currentTruth: "Generic finance pages exist; ledger validation is future.",
-    nextPhase: "Finance foundation.",
+    summary:
+      "Provider-backed local finance records with typed transaction, budget, bill, subscription, and reimbursement metadata.",
+    currentTruth:
+      "Finance metadata, record creation, route/list UI, detail metadata panel, local summary totals, search metadata, graph edges, command-palette creation, and template defaults are implemented for the browser prototype. Bank sync/import, receipt OCR, tax/accounting systems, automated budgets, reminders, privacy enforcement, and native storage are future.",
+    nextPhase: "Trackers/goals foundation.",
   },
   {
     id: "trackers",

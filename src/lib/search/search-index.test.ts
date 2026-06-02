@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { MizaanBlock, MizaanItem, VaultSnapshot } from "../vault/types";
+import { createFinanceRecordInput } from "../finance/finance-record";
 import { createInteractionRecordInput } from "../people/interaction-record";
 import { createPersonRecordInput } from "../people/person-record";
 import { createProjectRecordInput } from "../projects/project-record";
@@ -254,5 +255,38 @@ describe("search index", () => {
     expect(
       buildSearchResults(data, { query: "2026-06-02" }).map((result) => result.item.id),
     ).toEqual(["interaction-1"]);
+  });
+
+  it("finds finance metadata through existing metadata indexing", () => {
+    const financeInput = createFinanceRecordInput({
+      title: "BrowserQA rent",
+      kind: "transaction",
+      transactionType: "expense",
+      status: "pending",
+      amount: "1500",
+      currency: "MYR",
+      transactionDate: "2026-06-02",
+      category: "Housing",
+      merchant: "Landlord",
+      accountLabel: "Local wallet",
+    });
+    const data = snapshot([
+      item({
+        id: "finance-1",
+        title: financeInput.title,
+        category: financeInput.category,
+        type: financeInput.type,
+        status: financeInput.status,
+        metadata: financeInput.metadata,
+      }),
+    ]);
+
+    expect(buildSearchResults(data, { query: "Landlord" }).map((result) => result.item.id)).toEqual(
+      ["finance-1"],
+    );
+    expect(buildSearchResults(data, { query: "1500" })[0]?.matchedFields).toContain("property");
+    expect(
+      buildSearchResults(data, { query: "2026-06-02" }).map((result) => result.item.id),
+    ).toEqual(["finance-1"]);
   });
 });

@@ -1,5 +1,10 @@
 import { normalizeDocumentMetadataForItem } from "../documents/document-record";
 import {
+  getFinanceGraphTargets,
+  isFinanceRecordItem,
+  normalizeFinanceMetadataForItem,
+} from "../finance/finance-record";
+import {
   getInteractionGraphTargets,
   isInteractionRecordItem,
   normalizeInteractionMetadataForItem,
@@ -334,6 +339,24 @@ function buildEdges(
         bidirectional: false,
         metadata: {
           relationSource: "interaction-metadata",
+        },
+      });
+    }
+  }
+
+  for (const financeItem of items.filter(isFinanceRecordItem)) {
+    const metadata = normalizeFinanceMetadataForItem(financeItem);
+    for (const target of getFinanceGraphTargets(metadata)) {
+      addEdge({
+        sourceId: financeItem.id,
+        targetId: target.targetId,
+        type: target.edgeType,
+        label: target.label,
+        strength: 1,
+        sourceField: target.sourceField,
+        bidirectional: false,
+        metadata: {
+          relationSource: "finance-metadata",
         },
       });
     }

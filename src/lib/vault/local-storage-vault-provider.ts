@@ -17,6 +17,7 @@ import type {
   VaultProviderInfo,
   VaultSnapshot,
 } from "./types";
+import { createDefaultFinanceMetadata } from "../finance/finance-record";
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -311,7 +312,13 @@ function createSeedState(now: string): ProviderState {
     parentId: "space-finance",
     properties: { month: "May 2026" },
     attachedFiles: [],
-    metadata: {},
+    metadata: createDefaultFinanceMetadata({
+      financeTitle: "Monthly Budget Review",
+      financeKind: "budget",
+      financeStatus: "planned",
+      category: "Household",
+      tags: ["finance", "budget"],
+    }),
   });
   makeItem({
     id: "calendar-review",

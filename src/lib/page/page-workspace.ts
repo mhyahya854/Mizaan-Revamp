@@ -26,6 +26,7 @@ import {
   createDefaultInteractionMetadata,
   updateInteractionMetadata,
 } from "../people/interaction-record";
+import { createDefaultFinanceMetadata, updateFinanceMetadata } from "../finance/finance-record";
 import { createDefaultTableData, serializeTableData } from "../table/simple-table";
 
 interface Breadcrumb {
@@ -771,8 +772,15 @@ const TEMPLATES: TemplateDefinition[] = [
     type: "finance",
     title: "Finance Record - New Entry",
     summary: "Local finance record.",
-    tags: ["finance"],
+    tags: ["finance", "transaction", "expense"],
     properties: { status: "Draft", amount: 0 },
+    metadata: createDefaultFinanceMetadata({
+      financeTitle: "Finance Record - New Entry",
+      financeKind: "transaction",
+      transactionType: "expense",
+      financeStatus: "draft",
+      tags: ["finance", "transaction", "expense"],
+    }),
     blocks: [
       { type: "heading1", content: "Summary" },
       { type: "paragraph", content: "" },
@@ -1050,6 +1058,10 @@ function createTemplateMetadata(
       { interactionTitle: title, ...base },
       { interactionTitle: title },
     );
+  }
+
+  if (category === "finance" && type === "finance") {
+    return updateFinanceMetadata({ financeTitle: title, ...base }, { financeTitle: title });
   }
 
   return base;

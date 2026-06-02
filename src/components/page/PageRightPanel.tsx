@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { DocumentMetadataPanel } from "@/components/documents/DocumentMetadataPanel";
+import { FinanceMetadataPanel } from "@/components/finance/FinanceMetadataPanel";
 import {
   InteractionMetadataPanel,
   PeopleMetadataPanel,
@@ -13,6 +14,7 @@ import {
 } from "@/components/projects/ProjectMetadataPanel";
 import { PageLinkedContext } from "./PageLinkedContext";
 import { isDocumentRecordItem } from "@/lib/documents/document-record";
+import { isFinanceRecordItem } from "@/lib/finance/finance-record";
 import { isInteractionRecordItem } from "@/lib/people/interaction-record";
 import { isPersonRecordItem } from "@/lib/people/person-record";
 import { isProjectRecordItem } from "@/lib/projects/project-record";
@@ -173,6 +175,9 @@ function PageDataPanel({
       )}
       {isInteractionRecordItem(model.item) && (
         <InteractionMetadataPanel item={model.item} provider={provider} items={items} />
+      )}
+      {isFinanceRecordItem(model.item) && (
+        <FinanceMetadataPanel item={model.item} provider={provider} />
       )}
       {/* 1. Basic */}
       <CollapsibleSection title="Basic" isOpenDefault={true}>

@@ -21598,3 +21598,75 @@ Person and interaction metadata parsing moved into tested helper modules, route-
 
 Next recommended blueprint phase:
 Finance foundation, because People now provides local person relation targets and the next missing core data layer is local finance records that can connect to documents, projects, tasks, calendar, and people without bank/cloud integration.
+
+## Append-Only Finance Foundation Implementation - 2026-06-02 23:09 +08:00
+
+Date/time:
+2026-06-02 23:09 +08:00.
+
+Selected phase:
+Finance Foundation.
+
+Blueprint file read:
+`docs/Plan/Mizaan_Product_Blueprint.md`.
+
+Blueprint updated:
+Yes. Finance, Finance Model, Product Map, and Phase J status were updated to reflect the implemented foundation while keeping Finance overall [PARTIAL].
+
+Validation before work:
+`npm run typecheck`, `npm run lint`, `npm test`, and `npm run build` passed before implementation. Baseline tests were 15 files and 150 tests.
+
+Red-flag scans:
+Scans for localStorage, cloud/auth/bank/payment provider terms, fake readiness phrases, TODO/mock/fake/placeholder/any, console/debugger, external runtime URLs/fonts, privacy/encryption/lock language, and tax/accounting/ledger/receipt terms were run before implementation. No runtime cloud/auth/bank/payment provider integration, fake finance engine, fake privacy implementation, source console/debugger, or external runtime URL/font was found.
+
+Browser QA before work:
+The in-app Browser tool timed out, so isolated Chrome DevTools fallback was used without clearing user storage. Routes `/`, `/blueprint`, `/finance`, `/people`, `/projects`, `/graph`, `/search`, `/documents`, `/settings`, `/templates`, `/databases`, `/calendar`, `/trash`, `/page/note-principles`, `/page/project-mizaan`, and `/page/doc-architecture` loaded nonblank. Before screenshots were captured.
+
+Finance code inspection summary:
+`src/routes/finance.tsx` was a generic `SpacePage` wrapper. The provider already supported category `finance` and type `finance`, but there was no typed finance metadata helper, no typed transaction/budget/bill/subscription metadata, no finance detail metadata panel, no local totals, no finance-owned graph edges, and no finance-specific route list. Existing generic finance pages are preserved and normalized at read time.
+
+Implementation summary:
+The phase added typed finance helpers, provider-backed finance records, a dedicated Finance route/list, a finance right-panel metadata UI, local transaction totals from real records only, graph/search/template integration, command-palette creation, seed metadata defaults, and tests. The implementation keeps private/sensitive flags as metadata only and does not claim encryption, app lock, hidden search/graph behavior, banking, tax, or accounting readiness.
+
+Feature blocks:
+[ IMPLEMENTED] Finance module foundation - provider-backed local finance route/list and finance page metadata UI.
+[ IMPLEMENTED] Finance metadata model - tested normalization for kind, transaction type, status, payment method, currency, amount, dates, relation IDs, privacy summary, graph targets, and totals.
+[ IMPLEMENTED] Finance record creation - real provider-backed records for expenses, income, bills, subscriptions, budgets, reimbursements, and generic finance records.
+[ IMPLEMENTED] Finance route/list foundation - real records only, no fake bank rows or fake accounting metrics.
+[ IMPLEMENTED] Finance detail metadata UI - title, kind, status, amount, currency, dates, category, account/wallet labels, counterparties, payment method, recurring note, relation IDs, notes, and metadata-only privacy flags persist through provider updates.
+[ IMPLEMENTED] Finance graph integration - finance records create metadata edges to documents, projects, tasks, people, and calendar records.
+[ IMPLEMENTED] Finance search integration - finance metadata is indexed through the existing local metadata search path.
+[ IMPLEMENTED] Finance template integration - finance templates and command-palette creation produce normalized provider-backed metadata.
+[ IMPLEMENTED] Local summary totals - totals use real finance transaction records only and mark mixed currencies instead of converting.
+[ NOT IMPLEMENTED] Bank sync/import, online payment APIs, receipt OCR, tax filing, accounting-grade ledgers, double-entry bookkeeping, automated budgets, reminders/native notifications, encrypted private finance, app/privacy lock, mobile receipt capture, AI finance advice, SQLite/native storage, Tauri, native filesystem, and portable vault folders.
+
+What was deliberately not implemented:
+Plaid/open banking, Stripe, PayPal, Wise, crypto/investment/brokerage integrations, CSV import/export, receipt OCR, automatic receipt extraction, tax filing, accounting systems, double-entry ledgers, recurring payment automation, bill reminders, native notifications, real privacy/app lock, hidden-from-search behavior, hidden-from-graph behavior, encryption, mobile capture, cloud sync, auth, backend, telemetry, SQLite, Tauri, native filesystem, and portable vault folders were excluded because this phase is a truthful local-first browser/localStorage foundation.
+
+Files changed:
+Source files include finance helper module/tests, Finance route, Finance metadata panel, page workspace/right-panel integration, graph model, search tests, template metadata, command palette, vault seed metadata, and product map.
+Docs/screenshots include the product blueprint, this append-only plan entry, the phase report, DOCX work log entry, and Finance screenshots.
+
+Tests added/updated:
+Finance helper tests, graph model finance relation tests, search metadata test, and page-workspace finance template metadata test.
+
+Screenshots:
+`docs/screenshots/20260602-2242-finance-before-home.png`
+`docs/screenshots/20260602-2242-finance-before-finance.png`
+`docs/screenshots/20260602-2242-finance-before-graph.png`
+Post-implementation screenshots are recorded in `docs/Phases/phase-finance-foundation.md`.
+
+Validation after work:
+Targeted finance/graph/search/template tests passed, `npm run typecheck` passed, and `npm run lint` passed with the existing 10 Fast Refresh warnings before this append. Final validation and final push evidence are recorded in `docs/Phases/phase-finance-foundation.md`.
+
+Browser QA after work:
+Post-implementation browser QA is recorded in `docs/Phases/phase-finance-foundation.md`, including finance create/edit/refresh/search/graph proof and route sweep.
+
+Remaining limitations:
+Still browser/localStorage prototype only. Finance is partial. No bank sync/import, payment API, receipt OCR, tax/accounting system, double-entry ledger, automated budget engine, recurring payment engine, reminder engine, native notifications, encrypted private finance, real app lock/privacy lock, hidden-from-search behavior, hidden-from-graph behavior, mobile receipt capture, CSV import/export, SQLite, Tauri, native filesystem, or portable vault folders.
+
+Spaghetti cleanup:
+Finance parsing moved into a tested helper module, route-only metadata parsing was avoided, direct localStorage writes were not added, fake finance/bank/tax/accounting controls were avoided, and graph relations are metadata-id based rather than inferred from titles or amounts. (spaghetti code cleared)
+
+Next recommended blueprint phase:
+Trackers/goals foundation, because Finance now supplies real local money records and relation targets while trackers/goals remain the next generic page-like modules without typed local engines.

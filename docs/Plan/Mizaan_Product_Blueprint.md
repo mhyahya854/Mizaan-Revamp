@@ -70,14 +70,15 @@ Current module truth:
 
 - Home: [PARTIAL] - route exists, shows recent local items, vault health, quick capture, and template actions.
 - Sidebar: [PARTIAL] - core navigation, pinned pages, page tree, system tools, pin/unpin, duplicate, trash, and child creation exist.
-- Search: [PARTIAL] - provider-backed title, summary, status, category, type, tag, property, metadata, and block search exist with filters, including project/task metadata; saved searches and native indexes do not.
+- Search: [PARTIAL] - provider-backed title, summary, status, category, type, tag, property, metadata, and block search exist with filters, including project/task, people/interaction, and finance metadata; saved searches and native indexes do not.
 - Databases/Tables: [PARTIAL] - basic provider-backed table model, row/column/cell editing, stats, empty states, validation helper, and tests exist; full database engine does not.
 - Calendar: [PARTIAL] - local calendar module, event model helpers, views, CRUD flow, and tests exist; recurrence, reminders, ICS, native notifications, and sync do not.
 - Documents: [PARTIAL] - metadata-only document records now have typed helpers, provider-backed creation, route/list UI, detail metadata editing, template defaults, metadata search coverage, relation-id normalization helpers, tests, and browser QA. Real filesystem import, preview, OCR, thumbnails, duplicate detection, SQLite/native storage, and vault-file attachment remain not implemented.
 - Projects: [PARTIAL] - typed project metadata helper, provider-backed project record creation, dedicated projects route/list, project detail metadata panel, linked task summary, project/task templates, metadata search, and project/task graph edges are implemented for the browser prototype. Full project management, kanban, timeline/Gantt, milestones, dependencies, reminders, calendar scheduling, dashboards, SQLite/native storage, and team/collaboration remain not implemented.
 - Tasks: [PARTIAL] - typed task metadata helper, provider-backed task record creation, project-linked task creation/editing, task detail metadata panel, metadata search, template defaults, and graph edges are implemented for the browser prototype. There is no dedicated `/tasks` route, task database, recurring task engine, reminder engine, native notification path, dependency engine, mobile capture, or calendar-linked scheduling.
-- Graph: [PARTIAL] - graph model/helper, provider-backed global graph foundation, relation/document metadata/parent hierarchy edge extraction, orphan summaries, filters, direct local focus, and open-node actions are implemented for the browser prototype; backlink index, wiki links, manual canvas, saved layouts, clustering, export, and semantic/local-AI graph do not.
-- Templates: [PARTIAL] - implemented templates create provider-backed pages, including project and task record defaults; full template editor and template management do not.
+- Finance: [PARTIAL] - typed local finance metadata helper, provider-backed finance record creation, dedicated Finance route/list, finance detail metadata panel, amount/currency/date/status normalization, local summary totals, metadata search, graph edges, template defaults, and command-palette creation are implemented for the browser prototype. Bank sync/import, receipt OCR, tax/accounting systems, automated budgets, reminders, native notifications, SQLite/native storage, and encrypted private finance remain not implemented.
+- Graph: [PARTIAL] - graph model/helper, provider-backed global graph foundation, relation/document/project/task/people/interaction/finance metadata edge extraction, parent hierarchy edges, orphan summaries, filters, direct local focus, and open-node actions are implemented for the browser prototype; backlink index, wiki links, manual canvas, saved layouts, clustering, export, and semantic/local-AI graph do not.
+- Templates: [PARTIAL] - implemented templates create provider-backed pages, including project, task, people, interaction, document, and finance record defaults; full template editor and template management do not.
 - Vault: [PARTIAL] - provider and health UI state prototype truth; portable folders, SQLite, Tauri filesystem, lock file, markdown mirrors, backup/restore engine, and repair center do not.
 - Trash: [PARTIAL] - soft trash/restore provider paths exist; retention policy, permanent deletion flow, audit history, and native recovery do not.
 - Settings: [PARTIAL] - read-only prototype facts and theme controls; broad settings system does not.
@@ -179,7 +180,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Pages | Projects | [PARTIAL] | Dedicated route/list and project detail metadata panel exist | Typed project metadata in item metadata | localStorage prototype | Helper/search/graph/template tests and browser QA | No kanban, timeline/Gantt, milestones, dependencies, reminders, native storage, or dashboards | People/CRM foundation |
 | Pages | Tasks | [PARTIAL] | Project-linked task section and task metadata panel exist; no `/tasks` route | Typed task metadata in item metadata | localStorage prototype | Helper/search/graph/template tests and browser QA | No dedicated task route, task database, recurrence, reminders, notifications, dependencies, or calendar scheduling | People/CRM foundation |
 | Pages | People | [PARTIAL] | Dedicated provider-backed route/list, person detail metadata panel, and interaction foundation exist | Typed person and interaction metadata in `MizaanItem.metadata` | localStorage prototype | Person/interaction helper tests, graph/search/template tests, and browser QA | No contact import/sync, encryption/app lock, hidden search/graph privacy, analytics, mobile capture, or full CRM timeline | Finance foundation |
-| Pages | Finance | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No ledger/model validation | Finance foundation |
+| Pages | Finance | [PARTIAL] | Dedicated provider-backed route/list and finance detail metadata panel exist | Typed finance metadata in `MizaanItem.metadata` | localStorage prototype | Finance helper, graph, search, template tests, and browser QA | No bank sync/import, receipt OCR, tax/accounting, automated budgets, reminders, native storage, or encrypted private finance | Trackers/goals foundation |
 | Pages | Trackers | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No tracker engine | Trackers/goals foundation |
 | Pages | Goals | [BLUEPRINT ONLY] | Not visible as working module | Not modeled | None | None | No route/model | Goals foundation |
 | Pages | Custom pages | [PARTIAL] | Page workspace exists | Item/block model | localStorage prototype | Page workspace tests | No full schema/versioning | Editor and metadata hardening |
@@ -490,20 +491,20 @@ the UI must show its status.
 - Purpose: local finance records, budgets, and planning.
 - User mental model: local records without bank connections.
 - Current status: [PARTIAL]
-- UI now: finance route and finance template.
-- Implemented now: generic finance pages.
-- Not implemented yet: ledger schema, receipt links, budget views, calculations, imports.
-- Data model: generic item/properties.
+- UI now: dedicated Finance route/list, working create actions for expenses, income, bills, subscriptions, budgets, and reimbursements, finance record cards, local summary stats, metadata search field, and finance detail metadata panel in `/page/$id`.
+- Implemented now: typed finance metadata helper, provider-backed finance record inputs, amount/currency/date/status normalization, transaction/budget/bill/subscription/reimbursement/general kinds, local transaction totals from real provider records, metadata-only private/sensitive flags with honest warnings, normalized relation IDs for documents/projects/tasks/people/calendar records, finance graph edge extraction, search metadata coverage, template defaults, command-palette create action, and seed metadata defaults.
+- Not implemented yet: bank sync/import, open banking, payment APIs, Plaid/Stripe/PayPal/Wise integrations, CSV import/export, receipt OCR or automatic extraction, tax filing, accounting-grade ledgers, double-entry bookkeeping, automated budgets, recurring payment engine, bill reminders, native notifications, encrypted private finance, app/privacy lock, mobile receipt capture, AI finance advice, SQLite/native storage, and portable vault folders.
+- Data model: `category: "finance"` and `type: "finance"` provider items with typed finance metadata in `MizaanItem.metadata`.
 - Routes: `/finance`, `/page/$id`
-- Main components: `SpacePage`, `PageWorkspace`.
-- Empty states: no finance pages.
-- Error states: generic page errors.
-- Actions: create finance record.
+- Main components: Finance route, `FinanceMetadataPanel`, `PageWorkspace`.
+- Empty states: no real finance records.
+- Error states: generic page errors and inline invalid amount metadata state.
+- Actions: create expense, income, bill, subscription, budget, reimbursement, and finance template records.
 - Disabled/future actions: no bank sync, payment APIs, or online connections.
-- Tests required: finance model helper later.
-- Screenshots required: finance list and detail.
-- Done criteria: local records and validation verified.
-- Future phases: Finance foundation.
+- Tests required: finance helper tests, graph relation tests, search metadata tests, template metadata tests, and browser QA for create/edit/refresh/search/graph.
+- Screenshots required: finance route, created record, metadata panel, summary/search proof, and graph proof.
+- Done criteria: [IMPLEMENTED FOR FOUNDATION] local finance records persist with typed metadata and honest limitation copy; overall Finance remains partial until native storage, imports/exports, privacy enforcement, and richer reporting are implemented.
+- Future phases: Trackers/goals foundation; later finance expansions after import/export, privacy, and native storage phases.
 
 ### 6.11 Trackers
 
@@ -1105,13 +1106,13 @@ Mizaan-specific differentiation:
 
 ### Finance Model
 
-- Current status: [NOT STARTED]
-- Proposed fields: record type, amount, currency, date, category, linked documents.
-- Storage now: generic item/properties.
+- Current status: [PARTIAL]
+- Implemented fields now: finance title, finance kind, transaction type, finance status, amount, amount-invalid flag, currency, transaction date, due date, category, subcategory, account label, wallet label, merchant, payee, payer, payment method, recurring flag, recurring note, notes, private/sensitive metadata flags, no-bank-sync/no-accounting-grade booleans, linked document/project/task/person/calendar ids, and tags.
+- Storage now: provider-backed `finance/finance` items with typed finance metadata in `MizaanItem.metadata` and summary properties mirrored for route/detail display.
 - Storage later: SQLite finance table plus mirror.
-- Validation rules: numeric/date normalization, no bank sync.
-- Migration notes: preserve finance pages.
-- Test requirements: finance helper tests.
+- Validation rules: numeric amount normalization, invalid amount tracking, ISO date string normalization, enum fallback for kind/type/status/payment method, 3-letter currency normalization, duplicate/invalid relation id removal, and no bank sync/accounting-grade claims.
+- Migration notes: preserve existing generic finance pages and normalize them at read time; do not clear browser localStorage or force seed resets.
+- Test requirements: finance helper tests, graph relation tests, search metadata tests, template metadata tests, and browser QA exist for this foundation.
 
 ### Tracker Model
 
@@ -1319,14 +1320,14 @@ Mizaan-specific differentiation:
 - Goal: local finance records with validation and document links.
 - Why now: receipts/invoices connect to documents.
 - Preconditions: document and relation helpers.
-- Implementation tasks: finance metadata helper, route/list/detail UI.
-- Files likely touched: finance route, helpers/tests.
-- Tests required: amount/date/category normalization.
-- Browser QA required: create/edit finance record.
-- Screenshots required: finance route/detail.
-- Documentation required: blueprint and reports.
-- Done criteria: local finance records persist.
-- What not to implement: bank sync, online payment APIs.
+- Implementation tasks: [IMPLEMENTED FOR FOUNDATION] finance metadata helper, provider-backed finance records, Finance route/list, finance detail metadata UI, local summary totals, graph/search/template integration, command-palette creation, tests, browser QA, screenshots, and docs.
+- Files touched: finance helper/tests, Finance route, finance metadata panel, page workspace/right panel, graph/search/template tests, vault seed metadata, command palette, product map, blueprint/docs/screenshots.
+- Tests required: [IMPLEMENTED] amount/date/currency/status/payment-method normalization, invalid amount tracking, relation ID normalization, provider-compatible inputs, real-record totals, graph edges, search metadata, and template defaults.
+- Browser QA required: [IMPLEMENTED] create/edit finance record, metadata panel edit, refresh persistence, search proof, graph proof, route sweep, and screenshots.
+- Screenshots required: [IMPLEMENTED] finance route, new finance transaction, metadata panel, summary/search proof, graph proof, and route sweep proof.
+- Documentation required: [IMPLEMENTED] blueprint, phase report, old master Markdown append, and DOCX work log entry.
+- Done criteria: [IMPLEMENTED FOR FOUNDATION] local finance records persist with typed metadata and honest no-bank/no-accounting limitations; overall Finance remains partial.
+- What not to implement: bank sync/import, online payment APIs, receipt OCR, tax/accounting systems, automated budgets, recurring payment engines, reminders/native notifications, real privacy/encryption, native storage, or cloud/mobile integrations.
 - Next phase: Trackers/goals foundation.
 
 ### Phase K - Trackers/goals foundation

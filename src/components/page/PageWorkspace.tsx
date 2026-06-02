@@ -40,6 +40,11 @@ import {
   normalizeInteractionMetadataForItem,
   updateInteractionMetadata,
 } from "@/lib/people/interaction-record";
+import {
+  isFinanceRecordItem,
+  normalizeFinanceMetadataForItem,
+  updateFinanceMetadata,
+} from "@/lib/finance/finance-record";
 
 export function PageWorkspace({ itemId }: { itemId: string }) {
   const provider = useVaultProvider();
@@ -104,6 +109,16 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
         title: nextTitle,
         metadata: updateInteractionMetadata(normalizeInteractionMetadataForItem(model.item), {
           interactionTitle: nextTitle,
+        }),
+      });
+      return;
+    }
+
+    if (isFinanceRecordItem(model.item)) {
+      provider.updateItem(model.item.id, {
+        title: nextTitle,
+        metadata: updateFinanceMetadata(normalizeFinanceMetadataForItem(model.item), {
+          financeTitle: nextTitle,
         }),
       });
       return;

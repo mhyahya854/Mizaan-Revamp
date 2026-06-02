@@ -310,6 +310,20 @@ describe("unified sidebar pages and spaces model", () => {
     expect(page.metadata.itemRole).toBe("space");
   });
 
+  it("creates finance templates with normalized provider-backed metadata", () => {
+    const provider = createProvider();
+    const page = createPageFromTemplate(provider, "finance-record");
+
+    expect(page.category).toBe("finance");
+    expect(page.type).toBe("finance");
+    expect(page.metadata.financeTitle).toBe("Finance Record - New Entry");
+    expect(page.metadata.financeKind).toBe("transaction");
+    expect(page.metadata.transactionType).toBe("expense");
+    expect(page.metadata.financeStatus).toBe("draft");
+    expect(page.metadata.bankSynced).toBe(false);
+    expect(page.metadata.accountingGrade).toBe(false);
+  });
+
   it("categorizes pinned items into pinnedTree and unpinned items into pagesTree", () => {
     const provider = createProvider();
     const space1 = provider.createItem({
