@@ -45,6 +45,7 @@ const CATEGORY_ICON: Record<string, string> = {
   notes: "N",
   documents: "D",
   projects: "P",
+  tasks: "T",
   people: "U",
   finance: "$",
   calendar: "C",

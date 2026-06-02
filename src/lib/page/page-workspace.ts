@@ -19,6 +19,8 @@ import {
   createDefaultDocumentMetadata,
   updateDocumentMetadata,
 } from "../documents/document-record";
+import { createDefaultProjectMetadata, updateProjectMetadata } from "../projects/project-record";
+import { createDefaultTaskMetadata, updateTaskMetadata } from "../tasks/task-record";
 import { createDefaultTableData, serializeTableData } from "../table/simple-table";
 
 interface Breadcrumb {
@@ -90,6 +92,7 @@ const SPACE_LABELS: Record<ItemCategory, string> = {
   notes: "Notes",
   documents: "Documents",
   projects: "Projects",
+  tasks: "Tasks",
   people: "People",
   finance: "Finance",
   calendar: "Calendar",
@@ -102,6 +105,7 @@ const SPACE_HREFS: Record<ItemCategory, string> = {
   notes: "/notes",
   documents: "/documents",
   projects: "/projects",
+  tasks: "/projects",
   people: "/people",
   finance: "/finance",
   calendar: "/calendar",
@@ -114,6 +118,7 @@ const SPACE_ICONS: Record<ItemCategory, string> = {
   notes: "N",
   documents: "D",
   projects: "P",
+  tasks: "T",
   people: "U",
   finance: "$",
   calendar: "C",
@@ -321,14 +326,20 @@ const TEMPLATES: TemplateDefinition[] = [
   },
   {
     id: "project-plan",
-    name: "Project Plan",
+    name: "General Project",
     icon: "P",
     category: "projects",
     type: "project",
     title: "Project Plan - Untitled",
     summary: "Goal, scope, milestones, risks, and linked notes.",
     tags: ["project"],
-    properties: { status: "Planning", progress: 0 },
+    properties: { status: "Planning", priority: "None", deadline: "", area: "" },
+    metadata: createDefaultProjectMetadata({
+      projectTitle: "Project Plan - Untitled",
+      projectStatus: "planning",
+      projectPriority: "none",
+      projectDescription: "Goal, scope, milestones, risks, and linked notes.",
+    }),
     blocks: [
       { type: "heading1", content: "Goal" },
       { type: "paragraph", content: "" },
@@ -336,6 +347,111 @@ const TEMPLATES: TemplateDefinition[] = [
       { type: "todo", content: "Define first milestone", checked: false },
       { type: "heading2", content: "Risks" },
       { type: "bullet", content: "" },
+    ],
+  },
+  {
+    id: "study-project",
+    name: "Study Project",
+    icon: "P",
+    category: "projects",
+    type: "project",
+    title: "Study Project - Untitled",
+    summary: "Course, exam, assignment, or learning project.",
+    tags: ["project", "study"],
+    properties: { status: "Planning", priority: "Medium", deadline: "", area: "Study" },
+    metadata: createDefaultProjectMetadata({
+      projectTitle: "Study Project - Untitled",
+      projectStatus: "planning",
+      projectPriority: "medium",
+      projectArea: "Study",
+      projectDescription: "Course, exam, assignment, or learning project.",
+    }),
+    blocks: [
+      { type: "heading1", content: "Outcome" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Study notes" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Review checklist" },
+      {
+        type: "todo",
+        content: "Create first linked task record from the project panel",
+        checked: false,
+      },
+    ],
+  },
+  {
+    id: "research-project",
+    name: "Research Project",
+    icon: "P",
+    category: "projects",
+    type: "project",
+    title: "Research Project - Untitled",
+    summary: "Research question, sources, notes, and writing checkpoints.",
+    tags: ["project", "research"],
+    properties: { status: "Planning", priority: "Medium", deadline: "", area: "Research" },
+    metadata: createDefaultProjectMetadata({
+      projectTitle: "Research Project - Untitled",
+      projectStatus: "planning",
+      projectPriority: "medium",
+      projectArea: "Research",
+      projectDescription: "Research question, sources, notes, and writing checkpoints.",
+    }),
+    blocks: [
+      { type: "heading1", content: "Research question" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Sources" },
+      { type: "bullet", content: "" },
+      { type: "heading2", content: "Open questions" },
+      { type: "bullet", content: "" },
+    ],
+  },
+  {
+    id: "personal-project",
+    name: "Personal Project",
+    icon: "P",
+    category: "projects",
+    type: "project",
+    title: "Personal Project - Untitled",
+    summary: "Local personal project with notes and next actions.",
+    tags: ["project", "personal"],
+    properties: { status: "Planning", priority: "None", deadline: "", area: "Personal" },
+    metadata: createDefaultProjectMetadata({
+      projectTitle: "Personal Project - Untitled",
+      projectStatus: "planning",
+      projectPriority: "none",
+      projectArea: "Personal",
+      projectDescription: "Local personal project with notes and next actions.",
+    }),
+    blocks: [
+      { type: "heading1", content: "Why this matters" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Notes" },
+      { type: "paragraph", content: "" },
+    ],
+  },
+  {
+    id: "task-record",
+    name: "Task Record",
+    icon: "T",
+    category: "tasks",
+    type: "task",
+    title: "Task - Untitled",
+    summary: "Provider-backed task record.",
+    tags: ["task"],
+    properties: { status: "Todo", priority: "None", dueDate: "", projectId: "" },
+    metadata: createDefaultTaskMetadata({
+      taskTitle: "Task - Untitled",
+      taskStatus: "todo",
+      taskPriority: "none",
+    }),
+    blocks: [
+      { type: "heading1", content: "Task notes" },
+      { type: "paragraph", content: "" },
+      {
+        type: "callout",
+        content:
+          "This is a real task record. Recurrence, reminders, scheduling, and native notifications are future phases.",
+      },
     ],
   },
   {
@@ -741,18 +857,7 @@ export function createPageFromTemplate(
   const category = template.universal ? (options.category ?? template.category) : template.category;
   const type = template.universal ? typeForCategory(category) : template.type;
   const title = options.title ?? template.title;
-  const metadata =
-    category === "documents" && type === "document"
-      ? updateDocumentMetadata(
-          {
-            documentTitle: title,
-            tags: template.tags,
-            ...(template.metadata ?? {}),
-            templateId: template.id,
-          },
-          { documentTitle: title },
-        )
-      : { ...(template.metadata ?? {}), templateId: template.id };
+  const metadata = createTemplateMetadata(template, category, type, title);
   const page = provider.createItem({
     title,
     category,
@@ -789,6 +894,33 @@ export function createPageFromTemplate(
   }
 
   return page;
+}
+
+function createTemplateMetadata(
+  template: TemplateDefinition,
+  category: ItemCategory,
+  type: ItemType,
+  title: string,
+) {
+  const base = {
+    tags: template.tags,
+    ...(template.metadata ?? {}),
+    templateId: template.id,
+  };
+
+  if (category === "documents" && type === "document") {
+    return updateDocumentMetadata({ documentTitle: title, ...base }, { documentTitle: title });
+  }
+
+  if (category === "projects" && type === "project") {
+    return updateProjectMetadata({ projectTitle: title, ...base }, { projectTitle: title });
+  }
+
+  if (category === "tasks" && type === "task") {
+    return updateTaskMetadata({ taskTitle: title, ...base }, { taskTitle: title });
+  }
+
+  return base;
 }
 
 function normalizeItem(item: MizaanItem | undefined, requestedId: string): MizaanItem {
@@ -859,6 +991,7 @@ function typeForCategory(category: ItemCategory): ItemType {
     notes: "note",
     documents: "document",
     projects: "project",
+    tasks: "task",
     people: "person",
     finance: "finance",
     calendar: "calendar",

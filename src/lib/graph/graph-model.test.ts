@@ -71,6 +71,7 @@ describe("graph model", () => {
     ["documents", "document", "document"],
     ["notes", "note", "note"],
     ["projects", "project", "project"],
+    ["tasks", "task", "task"],
     ["people", "person", "person"],
     ["finance", "finance", "finance"],
     ["calendar", "calendar", "calendar"],
@@ -236,5 +237,102 @@ describe("graph model", () => {
       sourceField: "parentId",
       bidirectional: false,
     });
+  });
+
+  it("creates project-task edges from project linkedTaskIds", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("project-1", {
+          category: "projects",
+          type: "project",
+          metadata: { linkedTaskIds: ["task-1"] },
+        }),
+        item("task-1", { category: "tasks", type: "task" }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "project-1->task-1:task-link",
+        sourceId: "project-1",
+        targetId: "task-1",
+        type: "task-link",
+        sourceField: "linkedTaskIds",
+        label: "Linked task",
+      }),
+    );
+  });
+
+  it("creates task-project edges from taskProjectId", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("project-1", { category: "projects", type: "project" }),
+        item("task-1", {
+          category: "tasks",
+          type: "task",
+          metadata: { taskProjectId: "project-1" },
+        }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "task-1->project-1:project-link",
+        sourceId: "task-1",
+        targetId: "project-1",
+        type: "project-link",
+        sourceField: "taskProjectId",
+        label: "Project",
+      }),
+    );
+  });
+
+  it("creates project-document edges from project linkedDocumentIds", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("project-1", {
+          category: "projects",
+          type: "project",
+          metadata: { linkedDocumentIds: ["doc-1"] },
+        }),
+        item("doc-1", { category: "documents", type: "document" }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "project-1->doc-1:document-link",
+        sourceId: "project-1",
+        targetId: "doc-1",
+        type: "document-link",
+        sourceField: "linkedDocumentIds",
+      }),
+    );
+  });
+
+  it("dedupes duplicate project/task relation IDs and ignores invalid targets", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("project-1", {
+          category: "projects",
+          type: "project",
+          metadata: { linkedTaskIds: ["task-1", "task-1", "bad id", "missing-task"] },
+        }),
+        item("task-1", {
+          category: "tasks",
+          type: "task",
+          metadata: { taskProjectId: "project-1", linkedDocumentIds: ["missing-doc"] },
+        }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges.map((edge) => edge.id).sort()).toEqual([
+      "project-1->task-1:task-link",
+      "task-1->project-1:project-link",
+    ]);
   });
 });

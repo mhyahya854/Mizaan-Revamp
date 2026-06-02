@@ -1,4 +1,14 @@
 import { normalizeDocumentMetadataForItem } from "../documents/document-record";
+import {
+  getProjectGraphRelationTargets,
+  isProjectRecordItem,
+  normalizeProjectMetadataForItem,
+} from "../projects/project-record";
+import {
+  getTaskGraphRelationTargets,
+  isTaskRecordItem,
+  normalizeTaskMetadataForItem,
+} from "../tasks/task-record";
 import type { ItemCategory, ItemType, MizaanItem, MizaanRelation } from "../vault/types";
 
 export type GraphNodeType =
@@ -23,8 +33,11 @@ export type GraphEdgeType =
   | "outgoing-link"
   | "document-link"
   | "project-link"
+  | "task-link"
   | "person-link"
   | "finance-link"
+  | "calendar-link"
+  | "goal-link"
   | "parent-child"
   | "template-created"
   | "page-link"
@@ -94,6 +107,7 @@ const GRAPH_NODE_BY_TYPE: Partial<Record<ItemType, GraphNodeType>> = {
   person: "person",
   finance: "finance",
   calendar: "calendar",
+  task: "task",
   tracker: "tracker",
   database: "database",
   "database-row": "database",
@@ -107,6 +121,7 @@ const GRAPH_NODE_BY_CATEGORY: Partial<Record<ItemCategory, GraphNodeType>> = {
   people: "person",
   finance: "finance",
   calendar: "calendar",
+  tasks: "task",
   trackers: "tracker",
   databases: "database",
   templates: "template",
@@ -237,6 +252,42 @@ function buildEdges(
           },
         });
       }
+    }
+  }
+
+  for (const projectItem of items.filter(isProjectRecordItem)) {
+    const metadata = normalizeProjectMetadataForItem(projectItem);
+    for (const target of getProjectGraphRelationTargets(metadata)) {
+      addEdge({
+        sourceId: projectItem.id,
+        targetId: target.targetId,
+        type: target.edgeType,
+        label: target.label,
+        strength: 1,
+        sourceField: target.sourceField,
+        bidirectional: false,
+        metadata: {
+          relationSource: "project-metadata",
+        },
+      });
+    }
+  }
+
+  for (const taskItem of items.filter(isTaskRecordItem)) {
+    const metadata = normalizeTaskMetadataForItem(taskItem);
+    for (const target of getTaskGraphRelationTargets(metadata)) {
+      addEdge({
+        sourceId: taskItem.id,
+        targetId: target.targetId,
+        type: target.edgeType,
+        label: target.label,
+        strength: 1,
+        sourceField: target.sourceField,
+        bidirectional: false,
+        metadata: {
+          relationSource: "task-metadata",
+        },
+      });
     }
   }
 

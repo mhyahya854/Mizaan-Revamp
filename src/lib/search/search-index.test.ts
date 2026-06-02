@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import type { MizaanBlock, MizaanItem, VaultSnapshot } from "../vault/types";
+import { createProjectRecordInput } from "../projects/project-record";
+import { createTaskRecordInput } from "../tasks/task-record";
 import { buildSearchResults, highlightMatches } from "./search-index";
 
 function item(
@@ -165,5 +167,46 @@ describe("search index", () => {
       { text: "design", match: true },
       { text: " principles", match: false },
     ]);
+  });
+
+  it("finds project and task metadata through existing metadata indexing", () => {
+    const projectInput = createProjectRecordInput({
+      title: "Research Sprint",
+      status: "active",
+      priority: "urgent",
+      area: "University",
+    });
+    const taskInput = createTaskRecordInput({
+      title: "Literature Matrix",
+      status: "blocked",
+      priority: "medium",
+      dueDate: "2026-06-30",
+      projectId: "project-1",
+    });
+    const data = snapshot([
+      item({
+        id: "project-1",
+        title: projectInput.title,
+        category: projectInput.category,
+        type: projectInput.type,
+        status: projectInput.status,
+        metadata: projectInput.metadata,
+      }),
+      item({
+        id: "task-1",
+        title: taskInput.title,
+        category: taskInput.category,
+        type: taskInput.type,
+        status: taskInput.status,
+        metadata: taskInput.metadata,
+      }),
+    ]);
+
+    expect(
+      buildSearchResults(data, { query: "University" }).map((result) => result.item.id),
+    ).toEqual(["project-1"]);
+    expect(
+      buildSearchResults(data, { query: "2026-06-30" }).map((result) => result.item.id),
+    ).toEqual(["task-1"]);
   });
 });

@@ -105,9 +105,22 @@ export const productModules: ProductModule[] = [
     category: "workspace",
     status: "partial",
     route: "/projects",
-    summary: "Project pages and templates for local work planning.",
-    currentTruth: "Generic project pages exist; task engine and milestones are future.",
-    nextPhase: "Projects/tasks foundation.",
+    summary: "Provider-backed project records with linked local task records.",
+    currentTruth:
+      "Project metadata, creation, route/list UI, linked tasks, search metadata, graph edges, and templates are implemented for the browser prototype. Kanban, timelines, recurrence, reminders, and native scheduling are future.",
+    nextPhase: "People foundation, then richer project views after relation targets mature.",
+  },
+  {
+    id: "tasks",
+    label: "Tasks",
+    category: "workspace",
+    status: "partial",
+    summary: "Provider-backed task records linked to projects in the current local prototype.",
+    currentTruth:
+      "Task metadata, provider-backed creation, project-linked editing, task page metadata, search metadata, graph edges, and templates exist. No dedicated task route, recurrence engine, reminders, native notifications, or calendar scheduling exists.",
+    futureReason:
+      "A dedicated task workspace should wait until project, people, finance, and calendar relations are stronger.",
+    nextPhase: "Route-level task workspace later.",
   },
   {
     id: "people",

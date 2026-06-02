@@ -21415,3 +21415,105 @@ No embedding, OCR, semantic, cloud, or AI graph code was added.]
 
 [Next required work:
 Future local AI architecture only.]
+
+## Append-Only Projects and Tasks Foundation Implementation - 2026-06-02 13:05 +08:00
+
+Date/time:
+2026-06-02 13:05 +08:00
+
+Selected phase:
+Projects and Tasks Foundation.
+
+Blueprint file read:
+`docs/Plan/Mizaan_Product_Blueprint.md`
+
+Blueprint updated:
+Yes. Projects and Tasks remain [PARTIAL] overall, while the scoped project/task metadata models, provider-backed records, route/detail foundation, metadata search, graph relation extraction, and templates are recorded as implemented where tested/QA verified.
+
+Validation before work:
+`npm run typecheck` passed.
+`npm run lint` passed with 0 errors and 10 existing Fast Refresh warnings.
+`npm test` passed with 11 files and 87 tests.
+`npm run build` passed with existing Vite/TanStack warnings.
+
+Red-flag scans before work:
+Allowed localStorage references were limited to prototype provider/theme/session/right-panel/vault/test paths.
+No runtime cloud/auth/OAuth/Firebase/Supabase/Clerk/backend integration was found.
+No source `console.log` or `debugger` matches were found.
+No runtime external font/resource URLs were found in `src`.
+
+Browser QA before work:
+Chrome DevTools fallback was used because the in-app Browser MCP was unavailable.
+Routes checked: `/`, `/blueprint`, `/projects`, `/search`, `/graph`, `/documents`, `/settings`, `/templates`, `/databases`, `/calendar`, `/trash`, and `/page/note-principles`.
+No blank screen or route crash was observed.
+
+Project/task code inspection summary:
+`/projects` was a generic `SpacePage` surface.
+No dedicated task route existed.
+The provider already supported item creation/update and relation records.
+Document metadata helper/panel patterns were the safest local precedent.
+Search already indexed item metadata recursively.
+Graph could safely accept project/task metadata edges if relation ids were normalized and missing targets were ignored.
+
+Implementation summary:
+Added typed project and task metadata helpers, provider-compatible record inputs, project/task templates, provider vocabulary for task items, dedicated Projects route/list, project detail metadata panel, linked-task creation/list/editing, task metadata panel, title synchronization, graph metadata edges, search metadata tests, and browser QA proof.
+
+What was implemented:
+- [IMPLEMENTED] Projects module foundation: dedicated `/projects` route lists real provider-backed project records.
+- [IMPLEMENTED] Project metadata model: status, priority, area, start date, deadline, description, notes, and relation id arrays are normalized and tested.
+- [IMPLEMENTED] Project record creation: creates real provider-backed `projects/project` items.
+- [IMPLEMENTED] Projects route/list foundation: shows real project records, status, priority, deadline, task count, relation counts, templates, and honest empty/future states.
+- [IMPLEMENTED] Project detail metadata UI: right panel edits project title/status/priority/area/deadline/description/notes and persists via provider update.
+- [PARTIAL] Tasks system: task records are real and editable, but there is no dedicated `/tasks` route or full task workspace.
+- [IMPLEMENTED] Task metadata model: status, priority, due date, project id, relation ids, notes, done/overdue helpers, and provider-compatible input are normalized and tested.
+- [IMPLEMENTED] Task record creation: linked tasks are real `tasks/task` provider items.
+- [IMPLEMENTED] Project-task relation foundation: project `linkedTaskIds` and task `taskProjectId` are stored as normalized metadata.
+- [IMPLEMENTED] Project/task graph integration: graph shows project-task and task-project metadata edges from real ids.
+- [IMPLEMENTED] Project/task search integration: search indexes project/task metadata through the existing metadata search path.
+- [IMPLEMENTED] Project/task template integration: project and task templates create normalized provider-backed metadata defaults.
+- [NOT IMPLEMENTED] Kanban boards.
+- [NOT IMPLEMENTED] Timeline/Gantt.
+- [NOT IMPLEMENTED] Recurring tasks.
+- [NOT IMPLEMENTED] Reminders/native notifications.
+- [NOT IMPLEMENTED] Calendar-linked task scheduling.
+
+What was deliberately not implemented:
+Tauri, SQLite, native filesystem, portable vault folders, encryption/app lock, native notifications, cloud sync, OAuth/auth, backend, telemetry, AI planning, team/collaboration, mobile task capture, dependency engine, budget automation, recurring tasks, reminders, kanban, timeline/Gantt, and calendar scheduling.
+
+Files changed:
+Source files include project/task helpers, Projects route, project metadata panel, page workspace/right-panel/template integration, graph model, search tests, provider vocabulary, command palette, product map, and supporting route/component updates.
+Docs include Product Blueprint, this append-only master Markdown, phase report, DOCX work log, and screenshots.
+
+Tests added/updated:
+Project helper tests, task helper tests, graph relation tests, search metadata tests, and page workspace/template tests.
+
+Screenshots:
+`docs/screenshots/20260602-0245-projects-before-home.png`
+`docs/screenshots/20260602-0245-projects-before-projects.png`
+`docs/screenshots/20260602-0245-projects-before-graph.png`
+`docs/screenshots/20260602-1248-projects-foundation-route.png`
+`docs/screenshots/20260602-1248-projects-foundation-new-project.png`
+`docs/screenshots/20260602-1248-projects-foundation-project-metadata.png`
+`docs/screenshots/20260602-1248-projects-foundation-task-section.png`
+`docs/screenshots/20260602-1248-projects-foundation-proof.png`
+`docs/screenshots/20260602-1248-projects-foundation-graph-if-implemented.png`
+
+Validation after work:
+Targeted tests passed: 5 files and 75 tests.
+Full validation before documentation passed: typecheck, lint, 13-file/120-test suite, and build.
+Final validation is recorded in `docs/Phases/phase-projects-tasks-foundation.md`.
+
+Browser QA after work:
+Created a real project, edited metadata, created a linked task, edited task title/status/priority/due date, refreshed the project page, verified persistence, searched project metadata, verified graph project/task edges, and swept required routes for nonblank rendering.
+Chrome reported no error/warn console messages. Generic form-field issue notices about missing `id`/`name` attributes were observed and recorded as non-runtime-error browser issues.
+
+Remaining limitations:
+Still browser/localStorage prototype only.
+No dedicated `/tasks` route.
+No kanban, timeline/Gantt, recurring task engine, reminder engine, native notifications, calendar scheduling, dependency graph, project budget automation, AI planning, team/collaboration, mobile task capture, SQLite, Tauri, native filesystem, portable vault folders, or encryption.
+
+Spaghetti cleanup:
+Project/task normalization moved into helper modules, route-only metadata parsing was avoided, real provider records replaced fake rows, search reused the existing metadata path, and graph relations are metadata-id based rather than inferred from titles. (spaghetti code cleared)
+
+Next recommended blueprint phase:
+People/CRM foundation, because projects/tasks now have safe `linkedPersonIds` relation fields but People still needs a typed local profile model before project ownership/contact context can be honest.

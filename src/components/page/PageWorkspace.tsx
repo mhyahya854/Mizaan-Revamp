@@ -20,6 +20,16 @@ import {
   normalizeDocumentMetadataForItem,
   updateDocumentMetadata,
 } from "@/lib/documents/document-record";
+import {
+  isProjectRecordItem,
+  normalizeProjectMetadataForItem,
+  updateProjectMetadata,
+} from "@/lib/projects/project-record";
+import {
+  isTaskRecordItem,
+  normalizeTaskMetadataForItem,
+  updateTaskMetadata,
+} from "@/lib/tasks/task-record";
 
 export function PageWorkspace({ itemId }: { itemId: string }) {
   const provider = useVaultProvider();
@@ -44,6 +54,26 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
         title: nextTitle,
         metadata: updateDocumentMetadata(normalizeDocumentMetadataForItem(model.item), {
           documentTitle: nextTitle,
+        }),
+      });
+      return;
+    }
+
+    if (isProjectRecordItem(model.item)) {
+      provider.updateItem(model.item.id, {
+        title: nextTitle,
+        metadata: updateProjectMetadata(normalizeProjectMetadataForItem(model.item), {
+          projectTitle: nextTitle,
+        }),
+      });
+      return;
+    }
+
+    if (isTaskRecordItem(model.item)) {
+      provider.updateItem(model.item.id, {
+        title: nextTitle,
+        metadata: updateTaskMetadata(normalizeTaskMetadataForItem(model.item), {
+          taskTitle: nextTitle,
         }),
       });
       return;

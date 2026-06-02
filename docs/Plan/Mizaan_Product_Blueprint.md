@@ -70,12 +70,14 @@ Current module truth:
 
 - Home: [PARTIAL] - route exists, shows recent local items, vault health, quick capture, and template actions.
 - Sidebar: [PARTIAL] - core navigation, pinned pages, page tree, system tools, pin/unpin, duplicate, trash, and child creation exist.
-- Search: [PARTIAL] - provider-backed title, summary, status, category, type, tag, property, metadata, and block search exist with filters; saved searches and native indexes do not.
+- Search: [PARTIAL] - provider-backed title, summary, status, category, type, tag, property, metadata, and block search exist with filters, including project/task metadata; saved searches and native indexes do not.
 - Databases/Tables: [PARTIAL] - basic provider-backed table model, row/column/cell editing, stats, empty states, validation helper, and tests exist; full database engine does not.
 - Calendar: [PARTIAL] - local calendar module, event model helpers, views, CRUD flow, and tests exist; recurrence, reminders, ICS, native notifications, and sync do not.
 - Documents: [PARTIAL] - metadata-only document records now have typed helpers, provider-backed creation, route/list UI, detail metadata editing, template defaults, metadata search coverage, relation-id normalization helpers, tests, and browser QA. Real filesystem import, preview, OCR, thumbnails, duplicate detection, SQLite/native storage, and vault-file attachment remain not implemented.
+- Projects: [PARTIAL] - typed project metadata helper, provider-backed project record creation, dedicated projects route/list, project detail metadata panel, linked task summary, project/task templates, metadata search, and project/task graph edges are implemented for the browser prototype. Full project management, kanban, timeline/Gantt, milestones, dependencies, reminders, calendar scheduling, dashboards, SQLite/native storage, and team/collaboration remain not implemented.
+- Tasks: [PARTIAL] - typed task metadata helper, provider-backed task record creation, project-linked task creation/editing, task detail metadata panel, metadata search, template defaults, and graph edges are implemented for the browser prototype. There is no dedicated `/tasks` route, task database, recurring task engine, reminder engine, native notification path, dependency engine, mobile capture, or calendar-linked scheduling.
 - Graph: [PARTIAL] - graph model/helper, provider-backed global graph foundation, relation/document metadata/parent hierarchy edge extraction, orphan summaries, filters, direct local focus, and open-node actions are implemented for the browser prototype; backlink index, wiki links, manual canvas, saved layouts, clustering, export, and semantic/local-AI graph do not.
-- Templates: [PARTIAL] - implemented templates create provider-backed pages; full template editor and template management do not.
+- Templates: [PARTIAL] - implemented templates create provider-backed pages, including project and task record defaults; full template editor and template management do not.
 - Vault: [PARTIAL] - provider and health UI state prototype truth; portable folders, SQLite, Tauri filesystem, lock file, markdown mirrors, backup/restore engine, and repair center do not.
 - Trash: [PARTIAL] - soft trash/restore provider paths exist; retention policy, permanent deletion flow, audit history, and native recovery do not.
 - Settings: [PARTIAL] - read-only prototype facts and theme controls; broad settings system does not.
@@ -124,7 +126,8 @@ Current module truth:
 
 - Notes - note pages and writing spaces.
 - Documents - metadata records now, future native file records later.
-- Projects - project pages and task foundations.
+- Projects - provider-backed project pages and linked task foundations.
+- Tasks - provider-backed task records linked to projects; a route-level task workspace remains future.
 - People - local personal profiles and relationship context.
 - Finance - local financial records without bank sync.
 - Trackers - habit/progress tracking pages.
@@ -173,7 +176,8 @@ show future modules, but it must label them honestly and avoid fake controls.
 | System | Settings | [PARTIAL] | Route exists | Theme/session/provider facts | localStorage prototype | Theme tests exist | Mostly read-only | Settings hardening |
 | Pages | Notes | [PARTIAL] | Route/space exists | Item/block model | localStorage prototype | Page workspace tests | Rich text incomplete | Editor hardening |
 | Pages | Documents | [PARTIAL] | Metadata-only records route and detail panel exist | Typed document metadata in item metadata | localStorage prototype | Helper tests and browser QA | Real import/preview/OCR/native storage missing | Native document import later |
-| Pages | Projects | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No task engine | Projects/tasks foundation |
+| Pages | Projects | [PARTIAL] | Dedicated route/list and project detail metadata panel exist | Typed project metadata in item metadata | localStorage prototype | Helper/search/graph/template tests and browser QA | No kanban, timeline/Gantt, milestones, dependencies, reminders, native storage, or dashboards | People/CRM foundation |
+| Pages | Tasks | [PARTIAL] | Project-linked task section and task metadata panel exist; no `/tasks` route | Typed task metadata in item metadata | localStorage prototype | Helper/search/graph/template tests and browser QA | No dedicated task route, task database, recurrence, reminders, notifications, dependencies, or calendar scheduling | People/CRM foundation |
 | Pages | People | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No contact schema | People foundation |
 | Pages | Finance | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No ledger/model validation | Finance foundation |
 | Pages | Trackers | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No tracker engine | Trackers/goals foundation |
@@ -187,7 +191,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Editor | Blocks | [PARTIAL] | Basic block editor | Block records | localStorage prototype | Limited | Limited block types | Editor foundation |
 | Editor | Slash commands | [PARTIAL] | Implemented command menu | Block definitions | localStorage prototype | Limited | No custom commands | Editor foundation |
 | Editor | Tables | [PARTIAL] | Simple table block exists | Table helper | localStorage prototype | Unit tests | No import/export/formulas | Database/table expansion |
-| Editor | Todos | [PARTIAL] | Todo blocks exist | checked flag | localStorage prototype | Limited | No task rollups | Projects/tasks foundation |
+| Editor | Todos | [PARTIAL] | Todo blocks exist | checked flag | localStorage prototype | Limited | Todo blocks are separate from provider-backed task records | Editor/task bridge later |
 | Editor | Headings | [PARTIAL] | Heading blocks exist | Block type | localStorage prototype | Limited | No outline nav | Editor foundation |
 | Editor | Callouts | [PARTIAL] | Callout blocks exist | Block type | localStorage prototype | Limited | Basic only | Editor foundation |
 | Editor | Code blocks | [PARTIAL] | Code block type exists | Block type | localStorage prototype | Limited | No syntax highlighting | Editor foundation |
@@ -234,7 +238,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Calendar | Timed | [PARTIAL] | Basic field | Calendar helper | localStorage prototype | Tests | Needs more UI | Calendar completion |
 | Calendar | Recurrence | [NOT STARTED] | Not visible as working | Not modeled | None | None | Requires recurrence rules | Later calendar phase |
 | Calendar | Reminders | [FUTURE NATIVE] | Not visible | Not modeled | None | None | Needs native notifications | Native Windows readiness |
-| Calendar | Task links | [PARTIAL] | Relation model can link | Relations | localStorage prototype | Limited | No task engine | Projects/tasks foundation |
+| Calendar | Task links | [PARTIAL] | Metadata relations can reference calendar ids | Relations/task metadata | localStorage prototype | Helper tests | No calendar-linked scheduling, reminders, recurrence, or native notifications | Later calendar/task scheduling phase |
 | Calendar | ICS | [NOT STARTED] | Not visible | Not modeled | None | None | Needs import/export | Import/export manager |
 | Graph | Global graph foundation | [IMPLEMENTED] | Route renders real nodes, edges, summaries, filters, orphan state, and node open actions | Provider items, provider relations, document metadata arrays, parentId hierarchy | localStorage prototype | Graph helper tests and browser QA | No backlink index/wiki-link parser/manual layout engine | Graph search/canvas later |
 | Graph | Local automatic graph foundation | [PARTIAL] | Direct selected-node focus panel exists | Graph helper direct-neighbor model | localStorage prototype | Graph helper tests and browser QA | No second-degree expansion, wiki-link parsing, or saved layouts | Local graph expansion |
@@ -426,20 +430,40 @@ the UI must show its status.
 - Purpose: long-running threads of work and tasks.
 - User mental model: a project page with milestones, tasks, and relations.
 - Current status: [PARTIAL]
-- UI now: generic project space and templates.
-- Implemented now: project pages and generic blocks.
-- Not implemented yet: task model, milestones, statuses, project dashboard, timeline.
-- Data model: generic item and blocks.
+- UI now: dedicated `/projects` list backed by real project records, project cards with status/priority/deadline/task/relation counts, and a project metadata panel in the page right panel.
+- Implemented now: typed project metadata helper, provider-backed project record creation, project status/priority/deadline/area/description/notes editing, linked task count, linked document/person/finance counts, project templates, metadata search, and project/task graph edge extraction.
+- Not implemented yet: full project dashboard, milestones, kanban boards, timeline/Gantt, dependency graph, project budget automation, calendar-linked task scheduling, recurring tasks, reminders, native notifications, AI planning, team/collaboration, mobile task capture, SQLite/native storage, and portable vault storage.
+- Data model: provider-backed `MizaanItem` with `category: "projects"`, `type: "project"`, and normalized project metadata in `item.metadata`.
 - Routes: `/projects`, `/page/$id`
-- Main components: `SpacePage`, `PageWorkspace`.
-- Empty states: no project pages.
+- Main components: dedicated projects route, `ProjectMetadataPanel`, `PageWorkspace`, `PageRightPanel`, and project helper modules.
+- Empty states: no project records yet, with a real New project action.
 - Error states: generic page errors.
-- Actions: create project page.
-- Disabled/future actions: no fake task automations.
-- Tests required: project record helper once introduced.
-- Screenshots required: project list and detail.
-- Done criteria: task foundation and project metadata verified.
-- Future phases: projects/tasks foundation.
+- Actions: create provider-backed project record, edit project metadata, open project detail/page, create linked task records from a project, and search project metadata.
+- Disabled/future actions: kanban, timeline/Gantt, recurring tasks, reminders, native notifications, dependency graph, AI planning, and calendar scheduling remain future-only and are not active controls.
+- Tests required: project record helper, project/task graph integration, project metadata search, and project template defaults are covered by unit tests; route/detail flows are covered by browser QA.
+- Screenshots required: project route, new project, metadata panel, task section, graph, and persistence proof are captured for this phase.
+- Done criteria: scoped foundation is implemented and verified for the browser/localStorage prototype; overall Projects remains partial until fuller planning views, scheduling, native storage, and dashboard work exist.
+- Future phases: People/CRM foundation next; later project phases should add views only after typed people/finance/calendar relations are stronger.
+
+### 6.8.1 Tasks
+
+- Purpose: actionable work records that can be linked to projects and later to calendar/reminder systems.
+- User mental model: a task is a local provider-backed item with status, priority, due date, and project relation.
+- Current status: [PARTIAL]
+- UI now: project-linked task creation/list/editing inside project detail metadata, plus a task metadata panel when opening a task page.
+- Implemented now: typed task metadata helper, provider-backed task record creation, status/priority/due date/notes editing, project relation, task template defaults, metadata search, graph edges, and project task counts.
+- Not implemented yet: dedicated `/tasks` route, task database/list route, kanban, recurring tasks, reminders, native notifications, calendar scheduling, dependency engine, AI planning, team/collaboration, and mobile capture.
+- Data model: provider-backed `MizaanItem` with `category: "tasks"`, `type: "task"`, and normalized task metadata in `item.metadata`.
+- Routes: `/page/$id` for task record pages; no dedicated task route exists yet.
+- Main components: `ProjectMetadataPanel`, `TaskMetadataPanel`, task helper module, and graph/search/template integration.
+- Empty states: projects show an honest empty linked-task state with a real New task action.
+- Error states: generic page errors.
+- Actions: create linked task, edit task title/status/priority/due date/notes, mark done through status, open task page, and search task metadata.
+- Disabled/future actions: recurrence, reminder scheduling, native notifications, calendar scheduling, dependencies, AI planning, and mobile capture.
+- Tests required: task metadata helper, task search metadata, task graph relations, and task template defaults are covered by unit tests; linked task creation/edit/refresh is covered by browser QA.
+- Screenshots required: task section and persistence proof are captured for this phase.
+- Done criteria: scoped task foundation is implemented and verified in the browser/localStorage prototype; overall Tasks remains partial until route-level task management and scheduling/reminder systems exist.
+- Future phases: route-level task workspace later, after People/CRM and Finance foundations improve relation targets.
 
 ### 6.9 People
 
@@ -1068,13 +1092,14 @@ Mizaan-specific differentiation:
 
 ### Project/Task Model
 
-- Current status: [NOT STARTED]
-- Proposed fields: project status, milestones, task records, due dates, links.
-- Storage now: generic items/blocks.
+- Current status: [PARTIAL]
+- Implemented fields now: project title, status, priority, area, start date, deadline, description, notes, linked task/document/person/finance/calendar/goal ids; task title, status, priority, start date, due date, completed-at, project id, linked page/document/person/finance/calendar ids, and notes.
+- Proposed fields later: milestones, dependencies, saved views, kanban columns, timeline/Gantt data, reminder schedules, recurring rules, calendar scheduling metadata, and native notification metadata.
+- Storage now: provider-backed `MizaanItem.metadata` in the browser/localStorage prototype.
 - Storage later: SQLite project/task tables plus mirror.
-- Validation rules: no fake task rollups.
-- Migration notes: preserve current project pages.
-- Test requirements: project/task helper and UI tests.
+- Validation rules: normalize invalid enums, trim strings, preserve unknown safe metadata, dedupe relation ids, remove invalid ids, and never invent task rollups from fake data.
+- Migration notes: preserve existing project pages and task records; generic project pages must remain openable during later migration.
+- Test requirements: project/task helper tests, graph relation tests, search metadata tests, and template metadata tests exist for this foundation. Route/detail UI is verified by browser QA.
 
 ### Finance Model
 
@@ -1262,13 +1287,13 @@ Mizaan-specific differentiation:
 - Goal: add task/project metadata foundation.
 - Why now: projects need structured work tracking.
 - Preconditions: relation and template foundations.
-- Implementation tasks: project/task helpers, route/list/detail UI.
-- Files likely touched: projects route, helpers/tests, page panel.
-- Tests required: task normalization and persistence.
-- Browser QA required: create/edit project/task.
-- Screenshots required: project/task views.
-- Documentation required: blueprint and reports.
-- Done criteria: tasks are real provider-backed records.
+- Implementation tasks: [IMPLEMENTED] project/task helpers, route/list/detail UI, provider-backed project and task records, project-task metadata relations, graph/search/template integration, browser QA, screenshots, phase report, master append, and DOCX log.
+- Files touched: project/task helpers/tests, projects route, page workspace/template creation, right-panel metadata panels, graph/search tests, provider vocabulary, blueprint/docs/screenshots.
+- Tests required: [IMPLEMENTED] task/project normalization, record creation, relation id handling, graph edge extraction, search metadata, and template defaults.
+- Browser QA required: [IMPLEMENTED] create/edit project/task, refresh persistence, search proof, graph proof, route sweep, and screenshots.
+- Screenshots required: [IMPLEMENTED] project route, new project, project metadata, task section, graph, and persistence proof.
+- Documentation required: [IMPLEMENTED] blueprint, phase report, old master Markdown append, and DOCX work log entry.
+- Done criteria: [IMPLEMENTED FOR FOUNDATION] tasks are real provider-backed records linked to projects; overall project/task systems remain partial.
 - What not to implement: complex scheduling/automation.
 - Next phase: People/CRM foundation.
 

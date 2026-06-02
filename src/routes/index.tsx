@@ -306,6 +306,7 @@ function labelFor(category: ItemCategory) {
     notes: "Notes",
     documents: "Documents",
     projects: "Projects",
+    tasks: "Tasks",
     people: "People",
     finance: "Finance",
     calendar: "Calendar",

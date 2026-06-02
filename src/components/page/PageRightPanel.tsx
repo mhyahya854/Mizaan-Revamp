@@ -3,8 +3,14 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { DocumentMetadataPanel } from "@/components/documents/DocumentMetadataPanel";
+import {
+  ProjectMetadataPanel,
+  TaskMetadataPanel,
+} from "@/components/projects/ProjectMetadataPanel";
 import { PageLinkedContext } from "./PageLinkedContext";
 import { isDocumentRecordItem } from "@/lib/documents/document-record";
+import { isProjectRecordItem } from "@/lib/projects/project-record";
+import { isTaskRecordItem } from "@/lib/tasks/task-record";
 import type { PageWorkspaceModel } from "@/lib/page/page-workspace";
 import type { MizaanItem, VaultProvider } from "@/lib/vault/types";
 
@@ -60,7 +66,7 @@ export function PageRightPanel({
       </div>
 
       <div className="space-y-5 p-4">
-        {tab === "page-data" && <PageDataPanel model={model} provider={provider} />}
+        {tab === "page-data" && <PageDataPanel model={model} provider={provider} items={items} />}
         {tab === "relations" && (
           <RelationsTab model={model} provider={provider} eligibleTargets={eligibleTargets} />
         )}
@@ -136,9 +142,11 @@ function MetadataRow({ label, value }: { label: string; value: string | React.Re
 function PageDataPanel({
   model,
   provider,
+  items,
 }: {
   model: PageWorkspaceModel;
   provider: VaultProvider;
+  items: MizaanItem[];
 }) {
   const hasTags = model.item.tags && model.item.tags.length > 0;
   const providerInfo = provider.getProviderInfo();
@@ -147,6 +155,12 @@ function PageDataPanel({
     <div className="space-y-4">
       {isDocumentRecordItem(model.item) && (
         <DocumentMetadataPanel item={model.item} provider={provider} />
+      )}
+      {isProjectRecordItem(model.item) && (
+        <ProjectMetadataPanel item={model.item} provider={provider} items={items} />
+      )}
+      {isTaskRecordItem(model.item) && (
+        <TaskMetadataPanel item={model.item} provider={provider} items={items} />
       )}
       {/* 1. Basic */}
       <CollapsibleSection title="Basic" isOpenDefault={true}>
