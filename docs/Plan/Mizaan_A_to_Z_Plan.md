@@ -21859,3 +21859,32 @@ Screenshots:
 
 Next phase:
 Calendar completion or Template expansion, chosen only after final validation and browser QA evidence.
+
+## Append-Only Workflow Acceleration and Agent Run System - 2026-06-04
+
+Why this exists:
+Future Mizaan phases were repeating repo checks, PRD/Blueprint reading, validation, red-flag scans, browser QA, screenshots, documentation updates, DOCX updates, commits, pushes, parity proof, and closeout reporting. This phase keeps those quality gates but standardizes them with reusable documentation and scripts.
+
+Docs created:
+`docs/AGENT_RUNBOOK.md`, `docs/PHASE_TEMPLATE.md`, `docs/PHASE_CLOSEOUT_TEMPLATE.md`, `docs/QA_CHECKLIST.md`, `docs/RED_FLAG_SCAN_RULES.md`, `docs/NEXT_PHASE_QUEUE.md`, and `docs/FAST_PHASE_PROMPT_TEMPLATE.md`.
+
+Scripts created:
+`scripts/mizaan-preflight.ps1`, `scripts/mizaan-verify-fast.ps1`, `scripts/mizaan-verify-full.ps1`, `scripts/mizaan-red-scan.ps1`, `scripts/mizaan-browser-qa.ps1`, and `scripts/mizaan-phase-closeout.ps1`.
+
+Package shortcuts added:
+`npm run mizaan:preflight`, `npm run mizaan:verify:fast`, `npm run mizaan:verify:full`, `npm run mizaan:red-scan`, and `npm run mizaan:browser-qa`.
+
+Validation results during implementation:
+`npm run mizaan:preflight` passed with the expected in-progress dirty-worktree warning. `npm run mizaan:red-scan` passed blocking checks after a PowerShell interpolation fix. `npm run mizaan:verify:fast` passed. `npm run mizaan:verify:full` passed with 0 lint errors, the known 10 Fast Refresh warnings, 21 test files and 231 tests passing, and the existing Vite/TanStack build warnings. `scripts/mizaan-phase-closeout.ps1` passed a dry run with validation skipped.
+
+Browser QA:
+The browser QA helper was adjusted to use a dedicated local dev server on port `4199` instead of reusing an unrelated existing server on port `4173`. The successful run checked `/`, `/settings`, `/vault`, `/import-export`, `/repair`, `/finance`, `/people`, `/projects`, `/trackers`, `/goals`, `/graph`, `/search`, `/templates`, and `/calendar` with HTTP 200 responses and captured isolated Chrome/Edge screenshots under `docs/screenshots` using timestamp `20260604-053732`. Console capture is not implemented in the helper's current HTTP/headless screenshot mode.
+
+What remains manual:
+Human review, product judgment, overclaim review, DOCX visual render when `soffice` is unavailable, and any deep browser console inspection remain manual. The scripts are workflow helpers, not product infrastructure.
+
+Current product truth:
+Mizaan remains browser/localStorage-only. This phase did not implement Tauri, SQLite, portable vault folders, native filesystem access, mobile, encryption, app lock, cloud, auth, backend, or sync.
+
+Next recommended phase:
+Calendar Completion and Hardening using the new workflow system.

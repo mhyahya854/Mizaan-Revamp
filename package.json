@@ -11,7 +11,12 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "mizaan:preflight": "powershell -ExecutionPolicy Bypass -File scripts/mizaan-preflight.ps1",
+    "mizaan:verify:fast": "powershell -ExecutionPolicy Bypass -File scripts/mizaan-verify-fast.ps1",
+    "mizaan:verify:full": "powershell -ExecutionPolicy Bypass -File scripts/mizaan-verify-full.ps1",
+    "mizaan:red-scan": "powershell -ExecutionPolicy Bypass -File scripts/mizaan-red-scan.ps1",
+    "mizaan:browser-qa": "powershell -ExecutionPolicy Bypass -File scripts/mizaan-browser-qa.ps1"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

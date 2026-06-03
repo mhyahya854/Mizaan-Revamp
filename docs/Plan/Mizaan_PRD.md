@@ -537,22 +537,68 @@ A feature fails if:
 - Browser automation can time out.
 - Download/file-picker automation is unreliable; archive helper tests and visible UI evidence are safer proof.
 
-## 18. Future Prompt Rules
+## 18. Workflow Acceleration and Agent Run System
+
+Mizaan now has reusable engineering workflow helpers for future phases. These helpers standardize repeated gates; they do not replace human review, code inspection, product judgment, or honest final reporting.
+
+Core runbook and templates:
+
+- `docs/AGENT_RUNBOOK.md`
+- `docs/PHASE_TEMPLATE.md`
+- `docs/PHASE_CLOSEOUT_TEMPLATE.md`
+- `docs/QA_CHECKLIST.md`
+- `docs/RED_FLAG_SCAN_RULES.md`
+- `docs/NEXT_PHASE_QUEUE.md`
+- `docs/FAST_PHASE_PROMPT_TEMPLATE.md`
+
+Package commands:
+
+- `npm run mizaan:preflight` checks repo path, branch, remote, parity, required files, and worktree state.
+- `npm run mizaan:verify:fast` runs typecheck, optional targeted tests, and critical red-flag scans.
+- `npm run mizaan:verify:full` runs typecheck, lint, tests, build, diff check, and full red-flag scans.
+- `npm run mizaan:red-scan` runs categorized scans for localStorage, cloud/auth, fake readiness, console/debugger, runtime URLs/fonts, privacy/encryption/app-lock language, and import/export truthfulness.
+- `npm run mizaan:browser-qa` starts a local dev server when needed, checks key routes by HTTP, captures isolated headless screenshots when Chrome or Edge is available, and writes a local QA summary under `docs/logs`.
+
+Validation tiers:
+
+- Preflight: branch, remote, parity, required files, and worktree status.
+- Fast verify: typecheck plus critical source-policy scans.
+- Full verify: typecheck, lint, full tests, build, diff check, and full scans.
+- Browser QA: route reachability plus screenshot proof when local tooling supports it.
+
+Speed strategy:
+
+- Future prompts can reference this PRD, the runbook, and templates instead of restating every gate.
+- Standard scripts reduce repeated manual commands.
+- The red-scan script keeps policy checks consistent across phases.
+- The browser-QA script creates repeatable route and screenshot evidence without clearing localStorage.
+- The phase-closeout helper supports dry-run review and safe push workflows, but final commits still require judgment.
+
+Limitations:
+
+- These scripts are workflow helpers, not product features.
+- They do not implement native storage, SQLite, Tauri, portable vault folders, encryption, app lock, mobile, cloud, auth, backend, or sync.
+- Browser QA still depends on local dev tooling and available Chrome/Edge headless support.
+- DOCX visual render still depends on an available document renderer.
+- Script success does not prove a feature is complete unless the PRD, tests, UI, provider persistence, docs, and browser QA criteria also pass.
+
+## 19. Future Prompt Rules
 
 Future Codex prompts should follow this template:
 
-1. Verify repo: branch, remote, fetch, parity, clean tracked state, required files.
+1. Verify repo with `npm run mizaan:preflight`.
 2. Read this PRD, Product Blueprint, latest phase report, and relevant source/tests.
-3. Run baseline validation before edits.
-4. Inspect current code and choose the bounded phase from evidence.
-5. Write failing tests first for new helper behavior.
-6. Implement only the bounded phase.
-7. Update this PRD if current status changes.
-8. Update the Product Blueprint.
-9. Append the old master Markdown only.
-10. Update DOCX work log or create fallback.
-11. Create/update phase report.
-12. Run browser QA and capture screenshots if possible.
-13. Run final typecheck, lint, tests, build, diff check, and red-flag scans.
-14. Commit, push, verify parity, and report final HEAD.
-15. Provide an honest final report with limitations and next recommended phase.
+3. Create/update the phase report before implementation.
+4. Run baseline validation before edits when the phase changes product behavior.
+5. Inspect current code and choose the bounded phase from evidence.
+6. Write failing tests first for new helper behavior when practical.
+7. Implement only the bounded phase.
+8. Run `npm run mizaan:verify:fast` during implementation.
+9. Update this PRD if current status changes.
+10. Update the Product Blueprint.
+11. Append the old master Markdown only.
+12. Update DOCX work log or create fallback.
+13. Run `npm run mizaan:verify:full`.
+14. Run `npm run mizaan:browser-qa` for UI-facing work and capture screenshots if possible.
+15. Commit, push, verify parity, and report final HEAD.
+16. Provide an honest final report with limitations and next recommended phase.

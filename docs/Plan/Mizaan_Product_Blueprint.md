@@ -8,6 +8,7 @@ Date: 2026-06-01
 - The PRD is the product requirements and success criteria document.
 - This Product Blueprint remains the implementation architecture and phase map.
 - Future implementation phases must read the PRD before making product or status changes.
+- Agent runbook exists at `docs/AGENT_RUNBOOK.md`; future phases should use the runbook, phase templates, QA checklist, and Mizaan npm helper scripts before implementation and closeout.
 
 THIS IS A BLUEPRINT DOCUMENT.
 IT IS NOT A CLAIM THAT ALL FEATURES ARE IMPLEMENTED.
@@ -100,10 +101,22 @@ Current module truth:
 - Browser-prototype archive/export/restore: [IMPLEMENTED] - JSON archive helpers, validation, restore preview, safe merge, explicit-confirmation replace guard, round-trip/corruption tests, and Settings/Vault UI exist for current provider/localStorage data only.
 - Full native backup/export/restore: [NOT STARTED] - no native filesystem backup, SQLite backup, encrypted backup, portable vault backup, markdown mirror backup, or final import/export manager exists.
 - Encryption/app lock/private pages: [NOT STARTED]
+- Workflow acceleration and agent run system: [IMPLEMENTED] - runbook docs, phase templates, QA checklist, red-flag scan rules, next-phase queue, fast prompt template, PowerShell helper scripts, package shortcuts, and browser QA helper exist. These are engineering workflow helpers only; they do not change product storage or implement native infrastructure.
 
 ---
 
-## 3. Product Laws
+## 3. Workflow Acceleration Status
+
+- Agent run system: [IMPLEMENTED] - `docs/AGENT_RUNBOOK.md`, phase templates, closeout template, QA checklist, red-scan rules, next-phase queue, and fast prompt template exist.
+- QA automation status: [PARTIAL] - package shortcuts run preflight, fast verification, full verification, red scans, and route/screenshot browser QA. Human review, product judgment, DOCX visual render, and console inspection may still require manual work.
+- Phase template status: [IMPLEMENTED] - future phases can start from `docs/PHASE_TEMPLATE.md` and close with `docs/PHASE_CLOSEOUT_TEMPLATE.md`.
+- Red-scan script status: [IMPLEMENTED] - `scripts/mizaan-red-scan.ps1` runs categorized checks and fails on blocking source debug/fake-readiness/runtime URL issues.
+- Browser QA script status: [PARTIAL] - `scripts/mizaan-browser-qa.ps1` starts a local dev server when needed, checks key routes by HTTP, captures isolated Chrome/Edge screenshots when available, and writes local logs under `docs/logs`; it does not capture browser console errors in its current HTTP/headless screenshot mode.
+- Future phase acceleration status: [IMPLEMENTED] - package scripts let future prompts call standardized commands instead of restating every gate. The scripts are workflow helpers, not final native infrastructure.
+
+---
+
+## 4. Product Laws
 
 1. Local-first by default.
 2. No cloud dependency.
@@ -123,7 +136,7 @@ Current module truth:
 
 ---
 
-## 4. Information Architecture
+## 5. Information Architecture
 
 ### Core Modules
 
@@ -172,7 +185,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 
 ---
 
-## 5. Feature Status Matrix
+## 6. Feature Status Matrix
 
 | Area | Feature | Status | User-visible UI status | Data model status | Persistence status | Test status | Current limitation | Next implementation batch |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -293,7 +306,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 
 ---
 
-## 6. Module Blueprints
+## 7. Module Blueprints
 
 Each module below defines what should exist, what exists now, and what counts as
 done. The current app may show a module card before the module is complete, but
@@ -801,7 +814,7 @@ the UI must show its status.
 
 ---
 
-## 7. UI Blueprint
+## 8. UI Blueprint
 
 Sidebar structure:
 
@@ -957,7 +970,7 @@ Mizaan-specific differentiation:
 
 ---
 
-## 8. Route Map
+## 9. Route Map
 
 | Route | Purpose | Current status | UI expectation | Data source | Actions | Future actions | Done criteria | Test requirements |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -981,7 +994,7 @@ Mizaan-specific differentiation:
 
 ---
 
-## 9. Data Model Blueprint
+## 10. Data Model Blueprint
 
 ### MizaanItem
 
@@ -1189,7 +1202,7 @@ Mizaan-specific differentiation:
 
 ---
 
-## 10. Implementation Phase Roadmap
+## 11. Implementation Phase Roadmap
 
 ### Phase A - Blueprint and UI baseline
 
@@ -1570,7 +1583,7 @@ Mizaan-specific differentiation:
 
 ---
 
-## 11. Testing Standard
+## 12. Testing Standard
 
 Required evidence before a feature can be marked [IMPLEMENTED]:
 
@@ -1615,7 +1628,7 @@ later architecture phase.
 
 ---
 
-## 12. Prompting Standard For Future Runs
+## 13. Prompting Standard For Future Runs
 
 Future prompts should name the exact phase from this roadmap.
 
