@@ -64,7 +64,15 @@ describe("productModules", () => {
   });
 
   it("keeps system tools grouped as system modules", () => {
-    const systemIds = ["templates", "vault", "trash", "settings"];
+    const systemIds = [
+      "templates",
+      "vault",
+      "imports",
+      "exports",
+      "repair-center",
+      "trash",
+      "settings",
+    ];
 
     systemIds.forEach((id) => {
       expect(productModules.find((module) => module.id === id)?.category).toBe("system");
@@ -80,7 +88,23 @@ describe("productModules", () => {
     expect(backups?.status).toBe("partial");
     expect(backups?.currentTruth).toContain("provider/localStorage archive JSON");
     expect(backups?.futureReason).toContain("Native backups");
+    expect(exportsModule?.route).toBe("/import-export");
     expect(exportsModule?.currentTruth).toContain("Browser archive JSON export exists");
+  });
+
+  it("reports import/export and repair manager routes without native claims", () => {
+    const imports = productModules.find((module) => module.id === "imports");
+    const repair = productModules.find((module) => module.id === "repair-center");
+
+    expect(imports?.status).toBe("partial");
+    expect(imports?.route).toBe("/import-export");
+    expect(imports?.currentTruth).toContain("browser archive JSON only");
+    expect(imports?.currentTruth).toContain("not implemented");
+
+    expect(repair?.status).toBe("partial");
+    expect(repair?.route).toBe("/repair");
+    expect(repair?.currentTruth).toContain("metadata-reference checks");
+    expect(repair?.currentTruth).toContain("not implemented");
   });
 
   it("reports trackers and goals as bounded local foundations", () => {

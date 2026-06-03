@@ -21805,3 +21805,57 @@ DOCX closure:
 
 Phase B final status:
 Started after Phase A passed. Completed as a bounded browser/localStorage foundation. Trackers and Goals remain partial local foundations, not final engines.
+
+## Append-Only PRD Created - 2026-06-04
+
+PRD path:
+`docs/Plan/Mizaan_PRD.md`
+
+Why it was created:
+Mizaan needed one clean Markdown PRD that consolidates product laws, current implementation truth, module requirements, success criteria, QA gates, failure criteria, roadmap, open risks, and future prompt rules before the next repair/recovery or import/export implementation phase.
+
+What it contains:
+The PRD includes executive summary, product laws, current implementation truth, target UX, scope, module requirements, data model requirements, persistence and recovery requirements, import/export manager requirements, security/privacy requirements, UI requirements, QA/testing standards, definition of done, success criteria, failure criteria, roadmap, open risks, and future prompt rules.
+
+Relationship between PRD, Product Blueprint, and old master Markdown:
+The PRD is the product requirements and success criteria document. `docs/Plan/Mizaan_Product_Blueprint.md` remains the implementation architecture and phase map. This old master Markdown remains historical source context and an append-only implementation ledger.
+
+Current product truth:
+Mizaan remains a browser/localStorage prototype using provider-backed items, blocks, relations, and typed metadata. Browser archive export, validation, restore preview, safe merge, and guarded replace exist for current provider data only. Tauri, SQLite, native filesystem, portable vault folders, native backup, encryption, app lock, mobile, cloud, auth, backend, and remote sync remain not implemented.
+
+Next implementation phase:
+Repair/Recovery Center Foundation and Import/Export Manager Foundation, bounded to browser-prototype management around the existing archive and restore helpers.
+
+Success criteria for future prompts:
+Future prompts must verify repo health, read the PRD and Blueprint, run validation before implementation, inspect current code, write tests before behavior changes, implement one bounded phase, update PRD/Blueprint/master Markdown/DOCX/phase report, perform browser QA where UI changes, capture screenshots where possible, commit, push, verify parity, and report limitations honestly.
+
+## Append-Only Repair Recovery Import Export Manager Implementation - 2026-06-04
+
+PRD path:
+`docs/Plan/Mizaan_PRD.md`
+
+Implementation summary:
+Created bounded browser-prototype foundations for the Import/Export Manager and Repair/Recovery Center after the PRD gate passed.
+
+Implemented:
+`/import-export` route, `/repair` route, sidebar/top-bar/command-palette navigation, product-map status updates, vault health summary helpers, archive manager state helpers, archive metadata round-trip coverage for trackers/goals, route-tree generation, and real shared archive controls for export, paste/load JSON, validate, preview restore, safe merge, and guarded replace.
+
+Not implemented:
+Native filesystem import, folder import, markdown export, CSV export, PDF export, real document/file import, migration rollback, repair logs, automatic repair actions, SQLite backup, portable vault backup, encrypted backup, app lock, Tauri commands, mobile, cloud, auth, backend, or remote sync.
+
+Validation:
+Targeted helper/product-map tests passed. Full tests passed with 21 files and 231 tests. Typecheck passed. Lint passed with 0 errors and the known 10 Fast Refresh warnings. Build passed with existing chunk-size/TanStack warnings.
+
+Browser QA:
+Performed through local preview at `http://127.0.0.1:4198/` using the available Chrome extension browser backend. Routes checked: `/`, `/settings`, `/vault`, `/import-export`, `/repair`, `/finance`, `/people`, `/projects`, `/trackers`, `/goals`, `/graph`, and `/search`. The Import/Export flow checked export, validation, restore preview, blocked invalid JSON, and guarded replace remaining disabled without `REPLACE`. The Repair flow checked visible health checks and category counts. Browser console errors reported: none.
+
+Screenshots:
+`docs/screenshots/20260604-0056-prd-created.png`
+`docs/screenshots/20260604-0056-import-export-manager.png`
+`docs/screenshots/20260604-0056-repair-recovery-center.png`
+`docs/screenshots/20260604-0056-archive-validation.png`
+`docs/screenshots/20260604-0056-restore-preview.png`
+`docs/screenshots/20260604-0056-proof.png`
+
+Next phase:
+Calendar completion or Template expansion, chosen only after final validation and browser QA evidence.

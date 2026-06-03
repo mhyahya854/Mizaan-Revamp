@@ -18,6 +18,8 @@ const labels: Record<string, string> = {
   "/graph": "Graph",
   "/page": "Page",
   "/vault": "Vault",
+  "/import-export": "Import / Export",
+  "/repair": "Repair / Recovery",
   "/trash": "Trash",
   "/settings": "Settings",
 };

@@ -2,6 +2,13 @@
 
 Date: 2026-06-01
 
+## PRD Reference
+
+- PRD exists at `docs/Plan/Mizaan_PRD.md`.
+- The PRD is the product requirements and success criteria document.
+- This Product Blueprint remains the implementation architecture and phase map.
+- Future implementation phases must read the PRD before making product or status changes.
+
 THIS IS A BLUEPRINT DOCUMENT.
 IT IS NOT A CLAIM THAT ALL FEATURES ARE IMPLEMENTED.
 EACH FEATURE HAS A STATUS.
@@ -142,15 +149,16 @@ Current module truth:
 
 - Templates - creation sources, not ordinary documents.
 - Vault - provider/storage health and future vault infrastructure.
+- Import/Export Manager - browser archive JSON manager for current provider data.
+- Repair Center - browser prototype health checks and recovery guidance.
 - Trash - recovery infrastructure.
 - Settings - app behavior and status controls.
 
 ### Blueprint-Only Or Future System Tools
 
-- Imports - future import manager.
-- Exports - future export manager.
+- Imports - browser archive JSON import manager exists; broader native/file imports remain future.
+- Exports - browser archive JSON export manager exists; markdown/CSV/PDF/native exports remain future.
 - Backups - future backup and restore manager.
-- Repair Center - future data repair/recovery UI.
 - Migration Center - future schema/provider migration UI.
 - Privacy/Lock Center - future app lock, private pages, and encryption UX.
 - Plugin Manager - future and explicitly not started.
@@ -262,10 +270,10 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Vault/storage | Restore preview | [IMPLEMENTED] | Restore preview reports create/update/remove/block-change counts before mutation | Restore plan model | localStorage prototype archive only | Archive/provider tests and browser QA | Preview does not solve final native migrations | Migration center later |
 | Vault/storage | Restore merge | [IMPLEMENTED] | Apply Merge is available after valid preview | Merge restore plan | localStorage prototype provider | Archive/provider tests and browser QA | Browser prototype only; no cross-provider conflict policy | Migration/repair later |
 | Vault/storage | Restore replace | [PARTIAL] | Replace requires explicit confirmation text before apply | Replace restore plan and confirmation flag | localStorage prototype provider | Archive/provider tests | No native rollback/history; guarded browser replace only | Repair/recovery center later |
-| Vault/storage | Export manager | [NOT STARTED] | Not working as dedicated route | Not modeled beyond browser archive helper | None beyond current archive JSON | Archive helper tests only | No selected-data/export-format manager | Import/export manager |
-| Vault/storage | Import manager | [NOT STARTED] | Not working as dedicated route | Not modeled beyond archive parse/preview | None beyond current archive JSON | Archive helper tests only | No mapping/import route | Import/export manager |
+| Vault/storage | Export manager | [PARTIAL] | `/import-export` route exposes browser archive export and future-only format limitations | Browser archive helper plus manager state helpers | localStorage prototype archive only | Archive/helper/product-map tests and browser QA | No selected-data, markdown, CSV, PDF, native, SQLite, encrypted, or portable-vault export | Future readable export formats |
+| Vault/storage | Import manager | [PARTIAL] | `/import-export` route exposes paste/load JSON, validate, preview, safe merge, and guarded replace | Archive parse/preview plus manager state helpers | localStorage prototype archive only | Archive/helper/product-map tests and browser QA | No native file, folder, markdown, CSV, PDF, document, SQLite, encrypted, or portable-vault import | Future native import design |
 | Vault/storage | Markdown mirrors | [FUTURE NATIVE] | Not working | Not modeled | None | None | Needs file vault writer | Markdown mirrors |
-| Vault/storage | Repair/recovery | [NOT STARTED] | Not working | Not modeled | None | None | Needs audit/repair helpers | Repair/recovery center |
+| Vault/storage | Repair/recovery | [PARTIAL] | `/repair` route exposes health checks, issue list, suggestions, and archive recovery controls | Vault health summary and archive restore plan | Read-only health checks plus localStorage prototype archive restore | Vault health/helper/product-map tests and browser QA | No automatic repair, migration rollback, native recovery, SQLite repair, encrypted recovery, or logs | Repair rule expansion later |
 | Vault/storage | Migration | [NOT STARTED] | Not working | Not modeled | None | None | Needs migration manifests | Migration center |
 | Security | Privacy mode | [NOT STARTED] | Not working | Not modeled | None | None | Requires privacy model | Privacy/lock UX |
 | Security | Private pages | [NOT STARTED] | Not working | Not modeled | None | None | Requires privacy model | Privacy/lock UX |
@@ -633,43 +641,43 @@ the UI must show its status.
 
 ### 6.17 Imports
 
-- Purpose: future safe import manager for JSON, Markdown, CSV, and documents.
+- Purpose: safe import manager for the current browser archive JSON flow, with future Markdown, CSV, and document imports clearly blocked.
 - User mental model: preview before importing, never destructive by surprise.
-- Current status: [BLUEPRINT ONLY]
-- UI now: product-map future status only.
-- Implemented now: none.
-- Not implemented yet: route, validation, preview, mappings, error states.
-- Data model: import manifest.
-- Routes: future `/imports`.
-- Main components: future import manager.
-- Empty states: future unsupported state.
-- Error states: invalid import preview.
-- Actions: future import preview and commit.
-- Disabled/future actions: all import actions are future.
-- Tests required: import validation and restore safety.
-- Screenshots required: import preview and failure states.
-- Done criteria: no destructive import without confirmation.
-- Future phases: Import/export manager.
+- Current status: [PARTIAL]
+- UI now: `/import-export` route with supported browser archive features, future-only unsupported features, and archive controls.
+- Implemented now: browser archive JSON paste/load, validation, restore preview, safe merge, guarded replace, and error messaging for invalid JSON, wrong app, unsupported version, corrupt/duplicate records, and empty archives.
+- Not implemented yet: native file import, folder import, document import, markdown/CSV/PDF import, import mappings, SQLite import, encrypted backup import, portable vault import.
+- Data model: browser archive validation state, restore preview state, and future feature descriptors; broader import manifest remains future.
+- Routes: `/import-export`.
+- Main components: `VaultArchivePanel`, archive manager helpers, and import/export route.
+- Empty states: no archive text loaded and future-only feature list.
+- Error states: invalid JSON, wrong app archive, unsupported newer archive, missing/corrupt records, duplicate IDs, restore blocked.
+- Actions: validate archive, preview restore, apply merge after preview, apply replace after preview and exact confirmation.
+- Disabled/future actions: native/file/folder/markdown/CSV/PDF/SQLite/encrypted/portable imports remain future-only copy, not working controls.
+- Tests required: import/export manager helper tests and archive restore safety tests.
+- Screenshots required: import/export manager, archive validation, restore preview.
+- Done criteria: browser archive manager works without fake native import and no destructive import occurs without preview and confirmation.
+- Future phases: native import and readable-format import design after storage architecture.
 
 ### 6.18 Exports
 
-- Purpose: future local export manager.
-- User mental model: export selected data into readable formats. Browser archive export is a separate prototype vault-safety flow, not the final export manager.
+- Purpose: browser archive JSON export manager foundation plus future local export planning.
+- User mental model: export the current browser prototype archive now; readable selected-data formats are future.
 - Current status: [PARTIAL]
-- UI now: Settings/Vault expose browser-prototype JSON archive export; product-map route-level export manager remains future.
-- Implemented now: versioned browser archive JSON export for current provider/localStorage items, blocks, relations, trash/template summaries, settings placeholder, metadata, checksums, and warnings.
-- Not implemented yet: dedicated export route, selected-data export manifest, Markdown/PDF/DOCX exports, CSV export manager, graph export, native filesystem output, or final portable vault export.
-- Data model: browser archive helper now; export manifest remains future.
-- Routes: future `/exports`.
-- Main components: future export manager.
-- Empty states: future.
-- Error states: export failure state.
-- Actions: browser archive JSON export now; future export preview/execute later.
+- UI now: Settings, Vault, and `/import-export` expose browser-prototype JSON archive export with prototype-only warnings.
+- Implemented now: versioned browser archive JSON export for current provider/localStorage items, blocks, relations, trash/template summaries, settings placeholder, metadata, checksums, warnings, and manager route status.
+- Not implemented yet: selected-data export manifest, Markdown/PDF/DOCX exports, CSV export manager, graph export, native filesystem output, or final portable vault export.
+- Data model: browser archive helper now; selected-data export manifest remains future.
+- Routes: `/import-export`.
+- Main components: `VaultArchivePanel`, archive manager helpers, and import/export route.
+- Empty states: no archive text loaded.
+- Error states: archive validation errors and restore-blocked states.
+- Actions: browser archive JSON export now; future readable export preview/execute later.
 - Disabled/future actions: non-archive exports remain future.
 - Tests required: archive export validation now, future file output tests later.
 - Screenshots required: browser archive export UI now, export manager UI later.
 - Done criteria: [IMPLEMENTED FOR BROWSER ARCHIVE] current provider archive JSON is generated and validated; full export manager remains future.
-- Future phases: Import/export manager.
+- Future phases: readable export formats after archive policy matures.
 
 ### 6.19 Backups
 
@@ -693,23 +701,23 @@ the UI must show its status.
 
 ### 6.20 Repair Center
 
-- Purpose: future detection and repair of malformed data.
-- User mental model: inspect issues and approve repairs.
-- Current status: [BLUEPRINT ONLY]
-- UI now: product-map future status only.
-- Implemented now: helper-level validation exists for some database data only.
-- Not implemented yet: route, issue registry, repair previews, repair logs.
-- Data model: repair report.
-- Routes: future `/repair`.
-- Main components: future repair center.
-- Empty states: no issues.
-- Error states: failed repair with rollback instructions.
-- Actions: future inspect and repair.
-- Disabled/future actions: all repair actions are future.
-- Tests required: repair helpers and UI safety tests.
-- Screenshots required: issue list and clean state.
-- Done criteria: repairs are previewable and non-destructive.
-- Future phases: Repair/recovery center.
+- Purpose: detect malformed browser prototype data and guide safe archive recovery.
+- User mental model: inspect issues, validate archives, preview recovery, and avoid destructive action by surprise.
+- Current status: [PARTIAL]
+- UI now: `/repair` route with health score, provider counts, category counts, duplicate IDs, orphan blocks/relations, invalid metadata references, issue/suggestion list, and archive controls.
+- Implemented now: vault health summary helpers, duplicate ID detection, orphan detection, invalid metadata-reference detection, browser archive validation, restore preview, safe merge, guarded replace, and current limitations.
+- Not implemented yet: automatic repair, repair previews for non-archive mutations, migration rollback, repair logs, native filesystem recovery, SQLite repair, encrypted recovery, or mirror rebuild.
+- Data model: vault health summary and browser archive restore plan; full repair report/log remains future.
+- Routes: `/repair`.
+- Main components: repair route, vault health helpers, and `VaultArchivePanel`.
+- Empty states: no local vault items stored yet; no detected issues.
+- Error states: validation/preview failure states; data unchanged.
+- Actions: inspect health, validate archive, preview restore, merge after preview, replace after explicit confirmation.
+- Disabled/future actions: automatic repair, native recovery, SQLite repair, encrypted recovery, rollback, and log export remain future.
+- Tests required: vault health tests, archive manager tests, restore preview safety tests, and route QA.
+- Screenshots required: repair/recovery center, archive validation, restore preview.
+- Done criteria: health checks are real and restore actions stay previewed and confirmation-gated.
+- Future phases: repair rule expansion after storage architecture.
 
 ### 6.21 Privacy/Lock Center
 
@@ -960,15 +968,14 @@ Mizaan-specific differentiation:
 | `/calendar` | Calendar module | [PARTIAL] | Views and event editor | Calendar item records | Event CRUD | Recurrence/reminders/ICS | Local event persistence | Calendar tests and QA |
 | `/documents` | Document records | [PARTIAL] | Metadata-only records | Document items | New document record after next phase | Import/preview/OCR | Honest metadata records | Document tests and QA |
 | `/templates` | Template sources | [PARTIAL] | Create provider items | Static templates | Create from template | Template editor | Templates create real items | Template tests |
-| `/vault` | Vault health | [PARTIAL] | Storage truth | Provider info/health | Open settings | Folder picker, backup | No native overclaim | Provider tests and QA |
+| `/vault` | Vault health | [PARTIAL] | Storage truth | Provider info/health | Archive controls, open settings | Folder picker, native backup | No native overclaim | Provider tests and QA |
 | `/trash` | Trash/recovery | [PARTIAL] | Deleted items | Provider items | Restore | Permanent delete policy | Safe restore | Provider tests |
 | `/settings` | Settings/status | [PARTIAL] | Theme/prototype facts | Theme/local/provider state | Theme changes | Vault config/privacy | Safe preferences persist | Theme tests and QA |
 | `/page/$id` | Page workspace | [PARTIAL] | Page editor/detail | Provider item/blocks | Edit title/blocks, archive, subpages | Version history/export/native files | Persisted edits | Page workspace tests and QA |
 | `/blueprint` | Product map | [PARTIAL] | Honest product/module statuses | Product-map constants | Open live routes | Future modules stay disabled/status-only | Statuses match blueprint | Product-map tests and QA |
-| `/imports` | Import manager | [BLUEPRINT ONLY] | Future-only | Import manifest | None now | Preview/import | No destructive import | Future tests |
-| `/exports` | Export manager | [BLUEPRINT ONLY] | Future-only | Export manifest | None now | Export selected data | Verified exports | Future tests |
+| `/import-export` | Import/export manager | [PARTIAL] | Browser archive manager | Archive helpers/provider snapshot | Export JSON, load/paste JSON, validate, preview, merge, guarded replace | Native/file/markdown/CSV/PDF exports and imports | No fake native import/export | Archive manager tests and QA |
 | `/backups` | Backup manager | [BLUEPRINT ONLY] | Future-only | Backup manifest | None now | Backup/restore | Restore preview | Future tests |
-| `/repair` | Repair center | [BLUEPRINT ONLY] | Future-only | Repair report | None now | Preview repairs | Non-destructive repairs | Future tests |
+| `/repair` | Repair center | [PARTIAL] | Health checks and recovery controls | Vault health summary/provider snapshot | Inspect issues, validate archive, preview restore, merge, guarded replace | Automatic repair, rollback, native recovery | Non-destructive checks and guarded recovery | Vault health tests and QA |
 | `/privacy` | Privacy/lock center | [BLUEPRINT ONLY] | Future-only | Privacy metadata | None now | Lock/private/encrypt | No leaks | Future tests |
 | `/local-ai` | Local AI center | [FUTURE LOCAL AI] | Future-only | Local AI metadata | None now | Local OCR/similarity | No cloud calls | Future tests |
 

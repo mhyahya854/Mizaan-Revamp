@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
+  Archive,
   ArrowRight,
   Briefcase,
   Calendar,
@@ -17,6 +18,7 @@ import {
   Settings,
   Target,
   Users,
+  Wrench,
 } from "lucide-react";
 
 import { createPageFromTemplate } from "@/lib/page/page-workspace";
@@ -205,6 +207,22 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       title: "Open Vault",
       sub: "Prototype vault status and health",
       run: () => navigate({ to: "/vault" }),
+    },
+    {
+      id: "go-import-export",
+      group: "Go to",
+      icon: Archive,
+      title: "Open Import / Export",
+      sub: "Browser JSON archive manager",
+      run: () => navigate({ to: "/import-export" }),
+    },
+    {
+      id: "go-repair",
+      group: "Go to",
+      icon: Wrench,
+      title: "Open Repair / Recovery",
+      sub: "Vault health checks and restore preview",
+      run: () => navigate({ to: "/repair" }),
     },
     {
       id: "go-settings",

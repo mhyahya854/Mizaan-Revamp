@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   Briefcase,
   Calendar,
+  Archive,
   ChevronRight,
   ChevronsLeft,
   Command,
@@ -25,6 +26,7 @@ import {
   Trash2,
   Users,
   Wallet,
+  Wrench,
 } from "lucide-react";
 
 import { useVaultSnapshot, useVaultProvider } from "@/lib/vault/use-vault";
@@ -54,6 +56,8 @@ type NavTo =
   | "/templates"
   | "/graph"
   | "/vault"
+  | "/import-export"
+  | "/repair"
   | "/trash"
   | "/settings";
 
@@ -74,6 +78,8 @@ const systemTools: NavItem[] = [
   { label: "Product Map", to: "/blueprint", icon: FileText },
   { label: "Templates", to: "/templates", icon: LayoutTemplate },
   { label: "Vault", to: "/vault", icon: HardDrive },
+  { label: "Import / Export", to: "/import-export", icon: Archive },
+  { label: "Repair", to: "/repair", icon: Wrench },
   { label: "Trash", to: "/trash", icon: Trash2 },
   { label: "Settings", to: "/settings", icon: Settings },
 ];

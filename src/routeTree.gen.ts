@@ -15,8 +15,10 @@ import { Route as TrackersRouteImport } from './routes/trackers'
 import { Route as TemplatesRouteImport } from './routes/templates'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as RepairRouteImport } from './routes/repair'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as PeopleRouteImport } from './routes/people'
+import { Route as ImportExportRouteImport } from './routes/import-export'
 import { Route as GraphRouteImport } from './routes/graph'
 import { Route as GoalsRouteImport } from './routes/goals'
 import { Route as FinanceRouteImport } from './routes/finance'
@@ -59,6 +61,11 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RepairRoute = RepairRouteImport.update({
+  id: '/repair',
+  path: '/repair',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
@@ -67,6 +74,11 @@ const ProjectsRoute = ProjectsRouteImport.update({
 const PeopleRoute = PeopleRouteImport.update({
   id: '/people',
   path: '/people',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImportExportRoute = ImportExportRouteImport.update({
+  id: '/import-export',
+  path: '/import-export',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GraphRoute = GraphRouteImport.update({
@@ -134,8 +146,10 @@ export interface FileRoutesByFullPath {
   '/finance': typeof FinanceRoute
   '/goals': typeof GoalsRoute
   '/graph': typeof GraphRoute
+  '/import-export': typeof ImportExportRoute
   '/people': typeof PeopleRoute
   '/projects': typeof ProjectsRoute
+  '/repair': typeof RepairRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/templates': typeof TemplatesRoute
@@ -155,8 +169,10 @@ export interface FileRoutesByTo {
   '/finance': typeof FinanceRoute
   '/goals': typeof GoalsRoute
   '/graph': typeof GraphRoute
+  '/import-export': typeof ImportExportRoute
   '/people': typeof PeopleRoute
   '/projects': typeof ProjectsRoute
+  '/repair': typeof RepairRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/templates': typeof TemplatesRoute
@@ -177,8 +193,10 @@ export interface FileRoutesById {
   '/finance': typeof FinanceRoute
   '/goals': typeof GoalsRoute
   '/graph': typeof GraphRoute
+  '/import-export': typeof ImportExportRoute
   '/people': typeof PeopleRoute
   '/projects': typeof ProjectsRoute
+  '/repair': typeof RepairRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/templates': typeof TemplatesRoute
@@ -200,8 +218,10 @@ export interface FileRouteTypes {
     | '/finance'
     | '/goals'
     | '/graph'
+    | '/import-export'
     | '/people'
     | '/projects'
+    | '/repair'
     | '/search'
     | '/settings'
     | '/templates'
@@ -221,8 +241,10 @@ export interface FileRouteTypes {
     | '/finance'
     | '/goals'
     | '/graph'
+    | '/import-export'
     | '/people'
     | '/projects'
+    | '/repair'
     | '/search'
     | '/settings'
     | '/templates'
@@ -242,8 +264,10 @@ export interface FileRouteTypes {
     | '/finance'
     | '/goals'
     | '/graph'
+    | '/import-export'
     | '/people'
     | '/projects'
+    | '/repair'
     | '/search'
     | '/settings'
     | '/templates'
@@ -264,8 +288,10 @@ export interface RootRouteChildren {
   FinanceRoute: typeof FinanceRoute
   GoalsRoute: typeof GoalsRoute
   GraphRoute: typeof GraphRoute
+  ImportExportRoute: typeof ImportExportRoute
   PeopleRoute: typeof PeopleRoute
   ProjectsRoute: typeof ProjectsRoute
+  RepairRoute: typeof RepairRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
   TemplatesRoute: typeof TemplatesRoute
@@ -321,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/repair': {
+      id: '/repair'
+      path: '/repair'
+      fullPath: '/repair'
+      preLoaderRoute: typeof RepairRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects': {
       id: '/projects'
       path: '/projects'
@@ -333,6 +366,13 @@ declare module '@tanstack/react-router' {
       path: '/people'
       fullPath: '/people'
       preLoaderRoute: typeof PeopleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/import-export': {
+      id: '/import-export'
+      path: '/import-export'
+      fullPath: '/import-export'
+      preLoaderRoute: typeof ImportExportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/graph': {
@@ -424,8 +464,10 @@ const rootRouteChildren: RootRouteChildren = {
   FinanceRoute: FinanceRoute,
   GoalsRoute: GoalsRoute,
   GraphRoute: GraphRoute,
+  ImportExportRoute: ImportExportRoute,
   PeopleRoute: PeopleRoute,
   ProjectsRoute: ProjectsRoute,
+  RepairRoute: RepairRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
   TemplatesRoute: TemplatesRoute,

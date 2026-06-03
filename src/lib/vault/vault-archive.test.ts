@@ -24,6 +24,8 @@ import { createDefaultPersonMetadata } from "../people/person-record";
 import { createDefaultProjectMetadata } from "../projects/project-record";
 import { createDefaultTaskMetadata } from "../tasks/task-record";
 import { createDefaultDocumentMetadata } from "../documents/document-record";
+import { createDefaultTrackerMetadata } from "../trackers/tracker-record";
+import { createDefaultGoalMetadata } from "../goals/goal-record";
 import { buildGlobalGraph } from "../graph/graph-model";
 import { buildSearchResults } from "../search/search-index";
 import { LocalStorageVaultProvider, createMemoryStorage } from "./local-storage-vault-provider";
@@ -551,6 +553,78 @@ describe("vault archive helpers", () => {
     expect(totals.transactionCount).toBe(1);
     expect(totals.expenseTotal).toBe(123.45);
     expect(totals.pendingCount).toBe(1);
+  });
+
+  it("tracker and goal metadata survives archive round trip", () => {
+    const source = snapshot({
+      items: [
+        item("tracker-1", {
+          category: "trackers",
+          type: "tracker",
+          title: "Read daily",
+          metadata: createDefaultTrackerMetadata({
+            trackerTitle: "Read daily",
+            trackerType: "reading",
+            trackerStatus: "active",
+            frequency: "daily",
+            targetValue: 30,
+            currentValue: 12,
+            unit: "minutes",
+            linkedProjectIds: ["project-1"],
+            checkIns: [
+              {
+                id: "check-1",
+                date: "2026-06-03",
+                value: 12,
+                unit: "minutes",
+                note: "Read one chapter",
+                createdAt: "2026-06-03T05:00:00.000Z",
+              },
+            ],
+          }),
+        }),
+        item("goal-1", {
+          category: "goals",
+          type: "goal",
+          title: "Finish course",
+          metadata: createDefaultGoalMetadata({
+            goalTitle: "Finish course",
+            goalStatus: "active",
+            goalHorizon: "medium-term",
+            priority: "high",
+            linkedTrackerIds: ["tracker-1"],
+            progressValue: 45,
+            progressUnit: "%",
+          }),
+        }),
+      ],
+    });
+
+    const archive = createVaultArchive(source, { createdAt: now });
+    const restored = mergeVaultArchive(snapshot({ items: [], blocks: [], relations: [] }), archive);
+    const tracker = restored.snapshot?.items.find((entry) => entry.id === "tracker-1");
+    const goal = restored.snapshot?.items.find((entry) => entry.id === "goal-1");
+
+    expect(tracker?.metadata).toMatchObject({
+      trackerTitle: "Read daily",
+      trackerType: "reading",
+      trackerStatus: "active",
+      fakeStreaks: false,
+      checkIns: [
+        expect.objectContaining({
+          id: "check-1",
+          value: 12,
+          note: "Read one chapter",
+        }),
+      ],
+    });
+    expect(goal?.metadata).toMatchObject({
+      goalTitle: "Finish course",
+      goalStatus: "active",
+      goalHorizon: "medium-term",
+      linkedTrackerIds: ["tracker-1"],
+      fakeProgressHistory: false,
+    });
   });
 
   it("search and graph metadata remains present after round trip", () => {

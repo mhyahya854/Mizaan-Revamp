@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 interface VaultArchivePanelProps {
   provider: VaultProvider;
   snapshot: VaultSnapshot;
-  surface: "settings" | "vault";
+  surface: "settings" | "vault" | "import-export" | "repair";
 }
 
 export function VaultArchivePanel({ provider, snapshot, surface }: VaultArchivePanelProps) {
