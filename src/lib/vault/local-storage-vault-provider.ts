@@ -10,6 +10,7 @@ import type {
   MizaanBlock,
   MizaanItem,
   MizaanRelation,
+  RestoreSnapshotDataInput,
   UpdateBlockInput,
   UpdateItemInput,
   VaultHealth,
@@ -96,6 +97,24 @@ function emptyState(): ProviderState {
 
 function normalizeBlockType(type: BlockType) {
   return type;
+}
+
+function cloneProviderRecords<T>(records: T[]): T[] {
+  return JSON.parse(JSON.stringify(records)) as T[];
+}
+
+function mergeProviderRecords<T extends { id: string }>(current: T[], incoming: T[]): T[] {
+  const incomingById = new Map(incoming.map((entry) => [entry.id, entry]));
+  const merged = current.map(
+    (entry) => cloneProviderRecords([incomingById.get(entry.id) ?? entry])[0],
+  );
+  const currentIds = new Set(current.map((entry) => entry.id));
+
+  for (const entry of incoming) {
+    if (!currentIds.has(entry.id)) merged.push(cloneProviderRecords([entry])[0]);
+  }
+
+  return merged;
 }
 
 function createSeedState(now: string): ProviderState {
@@ -655,6 +674,31 @@ export class LocalStorageVaultProvider implements VaultProvider {
     state.relations = state.relations.filter((entry) => entry.id !== id);
     if (relation) this.touchItemInState(state, relation.sourceId);
     this.writeState(state);
+  }
+
+  restoreSnapshotData(input: RestoreSnapshotDataInput): VaultSnapshot {
+    if (input.mode === "replace" && input.confirmedReplace !== true) {
+      throw new Error("Replace snapshot restore requires explicit confirmation.");
+    }
+
+    const current = this.readState();
+    const next: ProviderState =
+      input.mode === "replace"
+        ? {
+            version: 1,
+            items: cloneProviderRecords(input.items),
+            blocks: cloneProviderRecords(input.blocks),
+            relations: cloneProviderRecords(input.relations),
+          }
+        : {
+            version: 1,
+            items: mergeProviderRecords(current.items, input.items),
+            blocks: mergeProviderRecords(current.blocks, input.blocks),
+            relations: mergeProviderRecords(current.relations, input.relations),
+          };
+
+    this.writeState(next);
+    return this.getSnapshot();
   }
 
   subscribe(listener: () => void) {

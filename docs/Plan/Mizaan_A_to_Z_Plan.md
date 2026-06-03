@@ -21670,3 +21670,69 @@ Finance parsing moved into a tested helper module, route-only metadata parsing w
 
 Next recommended blueprint phase:
 Trackers/goals foundation, because Finance now supplies real local money records and relation targets while trackers/goals remain the next generic page-like modules without typed local engines.
+
+## Append-Only Persistence Export Restore Hardening Implementation - 2026-06-03 14:16 +08:00
+
+Date/time:
+2026-06-03 14:16 +08:00.
+
+Selected phase:
+Persistence, Export, Restore, and Data-Hardening.
+
+Why this came before Trackers/Goals:
+Finance added the newest typed provider-backed metadata surface. Adding more product modules before export/restore hardening would increase the localStorage data surface without a tested archive round-trip, so this phase came first.
+
+Validation before work:
+`git status -sb`, branch, remote, fetch, parity, and required path checks passed. `main...origin/main` was `0 0`, tracked worktree was clean, and latest pre-work commit was `ff8c6d2 Implement finance foundation`. `npm run typecheck`, `npm run lint`, `npm test`, and `npm run build` passed before implementation.
+
+Code inspection summary:
+The provider stores versioned items, blocks, and relations under browser localStorage key `mizaan.prototype.vault.v1`. Settings and Vault showed provider facts but no archive controls. Finance, People, Projects, Tasks, Documents, and Graph store typed data in `MizaanItem.metadata` and relation IDs that needed round-trip preservation. Provider preview and restore semantics needed to stay preview-first and non-destructive.
+
+Implementation summary:
+Added a tested browser-prototype archive layer, provider restore helper, and Settings/Vault archive UI. Archive helpers create versioned Mizaan archives, validate JSON, reject corrupt/wrong-app/unsupported future archives, preserve unknown safe metadata, preview restore without mutation, merge safely, and guard replace behind explicit confirmation. UI supports export JSON, file/paste load, validation, restore preview, safe merge apply, and replace confirmation copy.
+
+Feature blocks:
+[ IMPLEMENTED] Browser prototype archive export for current provider/localStorage items, blocks, relations, trash/template summaries, metadata, warnings, counts, and checksums.
+[ IMPLEMENTED] Archive validation for version/app/source/items/counts and corruption cases.
+[ IMPLEMENTED] Restore preview that reports create/update/remove/block-change counts and does not mutate current data.
+[ IMPLEMENTED] Restore merge for current browser provider data.
+[ PARTIAL] Restore replace, guarded by explicit confirmation and tested, but no native rollback/history exists.
+[ IMPLEMENTED] Finance, People, Project/Task, Document, and Graph relation metadata round-trip tests.
+[ IMPLEMENTED] Settings and Vault browser archive panel with honest localStorage-only warnings.
+[ NOT IMPLEMENTED] Native filesystem backup, SQLite backup, encrypted backup, app lock, portable vault backup, Tauri, cloud sync, auth, backend, bank sync, mobile, or final migration rollback.
+
+What was deliberately not implemented:
+Native filesystem storage, portable vault folders, SQLite provider/backups, Tauri, encrypted backup, real app lock, cloud/auth/backend, Google/Drive/OAuth/Firebase/Supabase/Clerk, telemetry, bank sync, OCR, mobile, and final import/export manager routes were excluded. The archive is a browser/localStorage prototype safety layer only.
+
+Files changed:
+Source files include `src/lib/vault/vault-archive.ts`, `src/lib/vault/types.ts`, `src/lib/vault/local-storage-vault-provider.ts`, `src/components/vault/VaultArchivePanel.tsx`, `src/routes/settings.tsx`, and `src/routes/vault.tsx`.
+Test files include `src/lib/vault/vault-archive.test.ts` and `src/lib/vault/local-storage-vault-provider.test.ts`.
+Docs/screenshots include this append-only entry, the product blueprint, the phase report, the DOCX work log entry, and persistence screenshots.
+
+Tests added/updated:
+Archive helper tests and provider restore tests cover invalid JSON, wrong app, unsupported newer version, missing items, invalid IDs, duplicate IDs, corrupt archive no-wipe behavior, unknown safe metadata preservation, module metadata preservation, graph relation IDs, non-mutating preview, merge, guarded replace, empty archives, and export/parse/validate/restore/export count stability.
+
+Screenshots:
+`docs/screenshots/20260603-0427-persistence-before-settings.png`
+`docs/screenshots/20260603-0427-persistence-before-vault.png`
+`docs/screenshots/20260603-0427-persistence-before-finance.png`
+`docs/screenshots/20260603-1417-persistence-settings.png`
+`docs/screenshots/20260603-1417-persistence-vault.png`
+`docs/screenshots/20260603-1417-persistence-export.png`
+`docs/screenshots/20260603-1417-persistence-restore-preview.png`
+`docs/screenshots/20260603-1417-persistence-proof.png`
+
+Validation after work:
+Targeted archive/provider tests passed, `npm run typecheck` passed, `npm run lint` passed with the existing 10 Fast Refresh warnings, `npm test` passed with 17 files and 193 tests, and `npm run build` passed with existing Vite/TanStack warnings. Final validation and push evidence are recorded in `docs/Phases/phase-persistence-export-restore-hardening.md`.
+
+Browser QA after work:
+Preview ran on `http://127.0.0.1:4184`. `/settings` exported, validated, previewed, and safely merge-applied a browser archive without data loss. `/vault` exposed the same Browser Archive panel and continued to label native vault, SQLite, Tauri, markdown mirrors, and lock-file support as not implemented. Route sweep for Settings, Vault, Finance, People, Projects, Documents, Graph, Search, Templates, Databases, Calendar, Trash, and `/page/note-principles` loaded nonblank with no runtime console errors.
+
+Remaining limitations:
+Mizaan remains a browser/localStorage prototype. The archive is not lifetime storage and not a native vault backup. Native filesystem backup, SQLite backup, encrypted backup, portable vault backup, app lock, final migration rollback, and full import/export manager remain future.
+
+Phase B decision:
+Trackers + Goals Foundation was not started before Phase A final commit/push/parity. It may start only if final Phase A validation, docs, DOCX, push, parity, and clean worktree all pass.
+
+Next recommended blueprint phase:
+Trackers/goals foundation, only after Phase A final validation and push parity are clean.

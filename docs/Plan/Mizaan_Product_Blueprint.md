@@ -79,7 +79,7 @@ Current module truth:
 - Finance: [PARTIAL] - typed local finance metadata helper, provider-backed finance record creation, dedicated Finance route/list, finance detail metadata panel, amount/currency/date/status normalization, local summary totals, metadata search, graph edges, template defaults, and command-palette creation are implemented for the browser prototype. Bank sync/import, receipt OCR, tax/accounting systems, automated budgets, reminders, native notifications, SQLite/native storage, and encrypted private finance remain not implemented.
 - Graph: [PARTIAL] - graph model/helper, provider-backed global graph foundation, relation/document/project/task/people/interaction/finance metadata edge extraction, parent hierarchy edges, orphan summaries, filters, direct local focus, and open-node actions are implemented for the browser prototype; backlink index, wiki links, manual canvas, saved layouts, clustering, export, and semantic/local-AI graph do not.
 - Templates: [PARTIAL] - implemented templates create provider-backed pages, including project, task, people, interaction, document, and finance record defaults; full template editor and template management do not.
-- Vault: [PARTIAL] - provider and health UI state prototype truth; portable folders, SQLite, Tauri filesystem, lock file, markdown mirrors, backup/restore engine, and repair center do not.
+- Vault: [PARTIAL] - provider and health UI state prototype truth plus tested browser-prototype JSON archive export, validation, restore preview, safe merge apply, and guarded replace semantics. Portable folders, SQLite, Tauri filesystem, lock file, markdown mirrors, native backups, encrypted backups, and repair center do not exist.
 - Trash: [PARTIAL] - soft trash/restore provider paths exist; retention policy, permanent deletion flow, audit history, and native recovery do not.
 - Settings: [PARTIAL] - read-only prototype facts and theme controls; broad settings system does not.
 - Tauri: [NOT STARTED]
@@ -88,7 +88,8 @@ Current module truth:
 - Native filesystem: [NOT STARTED]
 - Mobile: [NOT STARTED]
 - Real document import/preview/OCR: [NOT STARTED]
-- Full backup/export/restore: [NOT STARTED]
+- Browser-prototype archive/export/restore: [IMPLEMENTED] - JSON archive helpers, validation, restore preview, safe merge, explicit-confirmation replace guard, round-trip/corruption tests, and Settings/Vault UI exist for current provider/localStorage data only.
+- Full native backup/export/restore: [NOT STARTED] - no native filesystem backup, SQLite backup, encrypted backup, portable vault backup, markdown mirror backup, or final import/export manager exists.
 - Encryption/app lock/private pages: [NOT STARTED]
 
 ---
@@ -172,7 +173,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Core | Graph | [PARTIAL] | Filterable route and local focus foundation | Provider items, relations, document metadata arrays, parentId hierarchy | localStorage prototype | Graph helper tests and browser QA | No backlink index/wiki links/manual canvas/export | Graph search/canvas later |
 | Core | Calendar | [PARTIAL] | Route exists | Calendar helper | localStorage prototype | Unit and browser QA exist | No recurrence/reminders/ICS | Calendar completion |
 | System | Templates | [PARTIAL] | Template picker and route exist | Template definitions | provider-backed creations | Page template tests exist | No template editor | Templates expansion |
-| System | Vault | [PARTIAL] | Route exists | Provider info/health | localStorage prototype | Provider tests exist | No portable folder/SQLite/native | Backup/export/restore hardening |
+| System | Vault | [PARTIAL] | Route exists with provider truth and browser archive controls | Provider info/health plus archive helper model | localStorage prototype | Provider and archive tests exist | No portable folder/SQLite/native/encrypted backup | Native readiness after archive hardening |
 | System | Trash | [PARTIAL] | Route exists | deletedAt records | localStorage prototype | Limited | No retention/permanent deletion policy | Repair/recovery center |
 | System | Settings | [PARTIAL] | Route exists | Theme/session/provider facts | localStorage prototype | Theme tests exist | Mostly read-only | Settings hardening |
 | Pages | Notes | [PARTIAL] | Route/space exists | Item/block model | localStorage prototype | Page workspace tests | Rich text incomplete | Editor hardening |
@@ -255,10 +256,12 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Vault/storage | SQLite provider | [FUTURE NATIVE] | Not working | Not modeled | None | None | Needs SQLite architecture | SQLite provider |
 | Vault/storage | File vault | [FUTURE NATIVE] | Not working | Not modeled | None | None | Needs Tauri filesystem | Portable vault folders |
 | Vault/storage | Lock file | [FUTURE NATIVE] | Not working | Not modeled | None | None | Needs filesystem | Portable vault folders |
-| Vault/storage | Backups | [NOT STARTED] | Not working | Not modeled | None | None | Needs backup manifest | Backup/export/restore hardening |
-| Vault/storage | Restore | [NOT STARTED] | Not working | Not modeled | None | None | Needs safe restore preview | Backup/export/restore hardening |
-| Vault/storage | Export | [NOT STARTED] | Not working | Not modeled | None | None | Needs export manager | Import/export manager |
-| Vault/storage | Import | [NOT STARTED] | Not working | Not modeled | None | None | Needs import manager | Import/export manager |
+| Vault/storage | Browser archive backup | [IMPLEMENTED] | Settings and Vault expose export/validate/preview/apply controls with prototype-only warnings | Versioned JSON archive with provider/source/counts/checksums/warnings | localStorage prototype archive only | Archive/provider round-trip tests and browser QA | Not native filesystem, SQLite, encrypted, or portable-vault backup | Native backup design later |
+| Vault/storage | Restore preview | [IMPLEMENTED] | Restore preview reports create/update/remove/block-change counts before mutation | Restore plan model | localStorage prototype archive only | Archive/provider tests and browser QA | Preview does not solve final native migrations | Migration center later |
+| Vault/storage | Restore merge | [IMPLEMENTED] | Apply Merge is available after valid preview | Merge restore plan | localStorage prototype provider | Archive/provider tests and browser QA | Browser prototype only; no cross-provider conflict policy | Migration/repair later |
+| Vault/storage | Restore replace | [PARTIAL] | Replace requires explicit confirmation text before apply | Replace restore plan and confirmation flag | localStorage prototype provider | Archive/provider tests | No native rollback/history; guarded browser replace only | Repair/recovery center later |
+| Vault/storage | Export manager | [NOT STARTED] | Not working as dedicated route | Not modeled beyond browser archive helper | None beyond current archive JSON | Archive helper tests only | No selected-data/export-format manager | Import/export manager |
+| Vault/storage | Import manager | [NOT STARTED] | Not working as dedicated route | Not modeled beyond archive parse/preview | None beyond current archive JSON | Archive helper tests only | No mapping/import route | Import/export manager |
 | Vault/storage | Markdown mirrors | [FUTURE NATIVE] | Not working | Not modeled | None | None | Needs file vault writer | Markdown mirrors |
 | Vault/storage | Repair/recovery | [NOT STARTED] | Not working | Not modeled | None | None | Needs audit/repair helpers | Repair/recovery center |
 | Vault/storage | Migration | [NOT STARTED] | Not working | Not modeled | None | None | Needs migration manifests | Migration center |
@@ -569,22 +572,22 @@ the UI must show its status.
 ### 6.14 Vault
 
 - Purpose: show storage truth and health.
-- User mental model: understand what is currently persisted and what is not.
+- User mental model: understand what is currently persisted, export a browser-prototype JSON archive, validate an archive, and preview restore before any mutation.
 - Current status: [PARTIAL]
-- UI now: provider info and health route.
-- Implemented now: provider info, health counts, prototype warnings.
-- Not implemented yet: portable folder, SQLite, lock file, markdown mirrors, native repair.
-- Data model: `VaultProviderInfo`, `VaultHealth`.
+- UI now: provider info, health route, and browser archive export/validate/preview/apply controls.
+- Implemented now: provider info, health counts, prototype warnings, versioned browser archive export, archive validation, restore preview, safe merge apply, and explicit-confirmation replace guard.
+- Not implemented yet: portable folder, SQLite, lock file, markdown mirrors, native repair, native filesystem backups, encrypted backups, final vault portability, and rollback history.
+- Data model: `VaultProviderInfo`, `VaultHealth`, browser archive model, and restore plan model.
 - Routes: `/vault`
-- Main components: vault route and provider.
+- Main components: vault route, provider, and `VaultArchivePanel`.
 - Empty states: no special empty state.
-- Error states: warnings.
-- Actions: open settings.
-- Disabled/future actions: no fake folder picker or backup buttons.
-- Tests required: provider tests and future storage tests.
-- Screenshots required: vault route.
-- Done criteria: native providers and recovery verified.
-- Future phases: backup/export/restore, native storage.
+- Error states: provider warnings and invalid archive validation states.
+- Actions: open settings, export JSON archive, validate archive JSON/file, preview restore, apply merge, and apply replace only after explicit confirmation.
+- Disabled/future actions: no fake folder picker, native backup, SQLite backup, encrypted backup, app lock, or portable vault claim.
+- Tests required: provider tests, archive validation tests, round-trip tests, and future storage tests.
+- Screenshots required: vault route and archive panel states.
+- Done criteria: [IMPLEMENTED FOR BROWSER ARCHIVE] current provider/localStorage data can be exported, validated, previewed, and restored safely in merge mode with guarded replace semantics; native providers and recovery remain future.
+- Future phases: native storage, repair/recovery, import/export manager.
 
 ### 6.15 Trash
 
@@ -611,19 +614,19 @@ the UI must show its status.
 - Purpose: expose app behavior and status controls.
 - User mental model: inspect current storage/settings, change safe preferences.
 - Current status: [PARTIAL]
-- UI now: route with theme controls and read-only provider facts.
-- Implemented now: theme state and prototype facts.
-- Not implemented yet: full settings model, vault configuration, privacy settings, keyboard settings.
-- Data model: theme/right-panel local state and provider info.
+- UI now: route with theme controls, read-only provider facts, and browser archive controls.
+- Implemented now: theme state, prototype facts, browser archive export/validation/restore-preview/merge UI, and guarded replace confirmation UI.
+- Not implemented yet: full settings model, native vault configuration, privacy settings, keyboard settings, native backup location, app lock, or encrypted backup settings.
+- Data model: theme/right-panel local state, provider info, and browser archive restore plan state.
 - Routes: `/settings`
 - Main components: settings route, theme hook.
 - Empty states: none.
-- Error states: provider warnings.
-- Actions: theme selection.
-- Disabled/future actions: no fake backup/native controls.
-- Tests required: theme tests and route QA.
-- Screenshots required: settings/sidebar.
-- Done criteria: settings persist and no dangerous controls.
+- Error states: provider warnings and archive validation/restore-blocked messages.
+- Actions: theme selection, browser archive export, archive validate, restore preview, safe merge apply, and guarded replace apply.
+- Disabled/future actions: no fake native backup, folder picker, SQLite backup, encrypted backup, app lock, or portable vault controls.
+- Tests required: theme tests, archive helper tests, provider restore tests, and route QA.
+- Screenshots required: settings/sidebar and browser archive states.
+- Done criteria: settings persist, browser archive flows are honest, and no dangerous controls are exposed without preview/confirmation.
 - Future phases: settings hardening and privacy/lock UX.
 
 ### 6.17 Imports
@@ -649,42 +652,42 @@ the UI must show its status.
 ### 6.18 Exports
 
 - Purpose: future local export manager.
-- User mental model: export selected data into readable formats.
-- Current status: [BLUEPRINT ONLY]
-- UI now: product-map future status only.
-- Implemented now: none.
-- Not implemented yet: route, export manifest, Markdown/PDF/DOCX/JSON exports.
-- Data model: export manifest.
+- User mental model: export selected data into readable formats. Browser archive export is a separate prototype vault-safety flow, not the final export manager.
+- Current status: [PARTIAL]
+- UI now: Settings/Vault expose browser-prototype JSON archive export; product-map route-level export manager remains future.
+- Implemented now: versioned browser archive JSON export for current provider/localStorage items, blocks, relations, trash/template summaries, settings placeholder, metadata, checksums, and warnings.
+- Not implemented yet: dedicated export route, selected-data export manifest, Markdown/PDF/DOCX exports, CSV export manager, graph export, native filesystem output, or final portable vault export.
+- Data model: browser archive helper now; export manifest remains future.
 - Routes: future `/exports`.
 - Main components: future export manager.
 - Empty states: future.
 - Error states: export failure state.
-- Actions: future export preview/execute.
-- Disabled/future actions: all export actions are future.
-- Tests required: export validation and file output tests.
-- Screenshots required: export UI.
-- Done criteria: exported files verified.
+- Actions: browser archive JSON export now; future export preview/execute later.
+- Disabled/future actions: non-archive exports remain future.
+- Tests required: archive export validation now, future file output tests later.
+- Screenshots required: browser archive export UI now, export manager UI later.
+- Done criteria: [IMPLEMENTED FOR BROWSER ARCHIVE] current provider archive JSON is generated and validated; full export manager remains future.
 - Future phases: Import/export manager.
 
 ### 6.19 Backups
 
 - Purpose: future backup and restore surface.
-- User mental model: protect the vault through previewable local backups.
-- Current status: [BLUEPRINT ONLY]
-- UI now: product-map future status only.
-- Implemented now: none.
-- Not implemented yet: backup manifest, restore preview, validation, native file output.
-- Data model: backup manifest.
+- User mental model: protect the current browser prototype through previewable JSON archives while understanding this is not final vault portability.
+- Current status: [PARTIAL]
+- UI now: Settings/Vault expose browser archive export, file/text load, validation, restore preview, safe merge, and guarded replace controls; dedicated backup route remains future.
+- Implemented now: browser archive manifest-like fields, archive validation, restore preview, safe merge restore, guarded replace restore, corruption rejection, wrong-app rejection, unsupported-newer-version rejection, and round-trip tests.
+- Not implemented yet: dedicated backup route, native backup manifest file, native file output, SQLite backup, encrypted backup, portable vault backup, backup history, rollback, scheduled backups, or native recovery center.
+- Data model: browser archive model now; full backup manifest remains future native.
 - Routes: future `/backups`.
 - Main components: future backup manager.
 - Empty states: no backups yet.
-- Error states: invalid backup restore state.
-- Actions: future backup/restore.
-- Disabled/future actions: all backup actions are future.
-- Tests required: backup validation and restore tests.
-- Screenshots required: backup route and restore preview.
-- Done criteria: safe backup and restore validated.
-- Future phases: Backup/export/restore hardening.
+- Error states: invalid JSON, wrong app archive, unsupported version, missing items, duplicate IDs, corrupt items, and restore-blocked messages.
+- Actions: browser archive export, validate, restore preview, safe merge apply, and guarded replace apply.
+- Disabled/future actions: native backup, SQLite backup, encrypted backup, portable folder backup, and real app lock remain future.
+- Tests required: [IMPLEMENTED FOR BROWSER ARCHIVE] archive validation, corruption rejection, preview non-mutation, merge, guarded replace, and round-trip tests.
+- Screenshots required: browser archive export and restore preview states now; backup route later.
+- Done criteria: [IMPLEMENTED FOR BROWSER ARCHIVE] safe browser archive backup and restore are validated; final native backups remain future.
+- Future phases: native backup design, repair/recovery center, migration center.
 
 ### 6.20 Repair Center
 
@@ -1146,13 +1149,14 @@ Mizaan-specific differentiation:
 
 ### Backup Manifest Model
 
-- Current status: [NOT STARTED]
-- Proposed fields: backup id, createdAt, app version, vault id, file list, checksums.
-- Storage now: none.
-- Storage later: backup manifest in vault/backups folder.
-- Validation rules: checksums and restore preview required.
-- Migration notes: old backups may need adapter.
-- Test requirements: backup/restore tests.
+- Current status: [PARTIAL]
+- Implemented browser archive fields now: archiveVersion, appName, createdAt, provider, source, schemaVersion, itemCount, blockCount, relationCount, items, blocks, relations, trash summary, templates summary, settings placeholder, metadata, checksums, warnings, and unsupportedFutureFields preservation.
+- Proposed final native backup fields: backup id, createdAt, app version, vault id, file list, checksums, provider id, storage mode, and native file pointers.
+- Storage now: browser/localStorage prototype archive JSON generated from current provider snapshots.
+- Storage later: backup manifest in vault/backups folder plus SQLite/native metadata.
+- Validation rules: archive version/app/source checks, item/block/relation count checks, duplicate item rejection, corrupt item rejection, unsupported newer archive rejection unless explicitly allowed, wrong-app rejection, and restore preview before mutation.
+- Migration notes: browser archive validation is implemented, but migration rollback and old-backup adapters remain future.
+- Test requirements: [IMPLEMENTED FOR BROWSER ARCHIVE] archive validation, corruption rejection, wrong-app rejection, unsupported-version rejection, non-mutating restore preview, merge, guarded replace, metadata preservation, and round-trip tests; native backup tests remain future.
 
 ### Migration Manifest Model
 
@@ -1260,15 +1264,15 @@ Mizaan-specific differentiation:
 - Goal: make browser-prototype JSON export/import safety real.
 - Why now: before broader data growth.
 - Preconditions: provider snapshot and validation helpers.
-- Implementation tasks: export JSON validation, restore preview, failed import state.
-- Files likely touched: vault/export helpers/routes.
-- Tests required: validation, restore preview, destructive confirmation.
-- Browser QA required: export/preview/failure.
-- Screenshots required: backup/export screens.
-- Documentation required: blueprint and reports.
-- Done criteria: no destructive restore without confirmation.
-- What not to implement: native filesystem backup.
-- Next phase: Templates expansion.
+- Implementation tasks: [IMPLEMENTED FOR BROWSER ARCHIVE] versioned archive helper, JSON parse/validation, restore preview, merge plan/apply, guarded replace plan/apply, provider restore helper, Settings/Vault archive panel, failure states, tests, browser QA, screenshots, and documentation.
+- Files touched: vault archive helper/tests, localStorage provider restore helper/tests, provider types, Settings route, Vault route, archive panel, blueprint/docs/screenshots.
+- Tests required: [IMPLEMENTED] validation, restore preview, destructive confirmation guard, corruption rejection, metadata preservation, provider non-clear preview behavior, and round-trip safety.
+- Browser QA required: [IMPLEMENTED] export, validation, restore preview, non-destructive merge apply, route sweep, console review, and screenshots.
+- Screenshots required: [IMPLEMENTED] settings, vault, export, restore preview, and proof.
+- Documentation required: [IMPLEMENTED] blueprint, phase report, old master Markdown append, and DOCX work log entry.
+- Done criteria: [IMPLEMENTED FOR BROWSER ARCHIVE] no destructive restore without preview and explicit confirmation, and current provider/localStorage data round-trips safely through tests.
+- What not to implement: native filesystem backup, SQLite backup, portable vault backup, encrypted backup, real app lock, cloud sync, auth, backend, or Tauri.
+- Next phase: Trackers/goals foundation only if Phase A final validation, commit, push, parity, and clean worktree all pass.
 
 ### Phase G - Templates expansion
 

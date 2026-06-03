@@ -192,9 +192,11 @@ export const productModules: ProductModule[] = [
     category: "system",
     status: "partial",
     route: "/vault",
-    summary: "Storage truth, provider identity, health counts, and prototype warnings.",
-    currentTruth: "The current provider is a browser localStorage prototype.",
-    nextPhase: "Backup/export/restore hardening.",
+    summary:
+      "Storage truth, provider identity, health counts, prototype warnings, and browser archive controls.",
+    currentTruth:
+      "The current provider is a browser localStorage prototype with JSON archive export, validation, restore preview, safe merge, and guarded replace semantics.",
+    nextPhase: "Native storage and repair/recovery after archive hardening.",
   },
   {
     id: "trash",
@@ -212,8 +214,9 @@ export const productModules: ProductModule[] = [
     category: "system",
     status: "partial",
     route: "/settings",
-    summary: "Prototype app facts and safe preference controls.",
-    currentTruth: "Theme controls and read-only storage facts exist.",
+    summary: "Prototype app facts, safe preference controls, and browser archive controls.",
+    currentTruth:
+      "Theme controls, read-only storage facts, archive export, archive validation, restore preview, safe merge, and guarded replace controls exist.",
     nextPhase: "Settings hardening.",
   },
   {
@@ -242,19 +245,23 @@ export const productModules: ProductModule[] = [
     category: "future-system",
     status: "blueprint-only",
     summary: "Future local export manager for readable formats and selected data.",
-    currentTruth: "No export manager route or export manifest exists.",
-    futureReason: "Export work needs scoped format and validation design.",
+    currentTruth:
+      "Browser archive JSON export exists in Settings/Vault, but no selected-data export manager route or export manifest exists.",
+    futureReason: "Non-archive export work needs scoped format and validation design.",
     nextPhase: "Import/export manager.",
   },
   {
     id: "backups",
     label: "Backups",
     category: "future-system",
-    status: "blueprint-only",
-    summary: "Future backup and restore manager with restore preview.",
-    currentTruth: "No backup engine or restore preview exists.",
-    futureReason: "Backups need manifest validation and safe restore rules.",
-    nextPhase: "Backup/export/restore hardening.",
+    status: "partial",
+    summary:
+      "Browser-prototype JSON archive backup and restore safety exists; full native backup manager remains future.",
+    currentTruth:
+      "Settings/Vault can export, validate, preview, safely merge, and guarded-replace current provider/localStorage archive JSON.",
+    futureReason:
+      "Native backups still need filesystem output, SQLite backup, encrypted backup, rollback history, and repair rules.",
+    nextPhase: "Native backup design after storage architecture.",
   },
   {
     id: "repair-center",

@@ -69,9 +69,10 @@ function BlueprintPage() {
               Current prototype truth
             </div>
             <p className="mt-1 max-w-2xl text-[12.5px] text-faint">
-              The app remains a browser localStorage prototype. Tauri, SQLite, portable vault
-              folders, native filesystem document import, mobile apps, OCR, encryption, and full
-              backup/restore are not implemented.
+              The app remains a browser localStorage prototype. Browser archive
+              export/validation/restore preview is implemented for current provider data only.
+              Tauri, SQLite, portable vault folders, native filesystem document import, mobile apps,
+              OCR, encryption, and full native backup/restore are not implemented.
             </p>
           </div>
           <a

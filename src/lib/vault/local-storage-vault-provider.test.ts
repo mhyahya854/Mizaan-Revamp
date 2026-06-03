@@ -76,4 +76,72 @@ describe("LocalStorageVaultProvider", () => {
     expect(provider.getItem(item.id)?.archivedAt).toBeUndefined();
     expect(provider.getItem(item.id)?.deletedAt).toBeUndefined();
   });
+
+  it("restores snapshot data by merge while preserving archive IDs", () => {
+    const provider = createProvider();
+    const existing = provider.createItem({ title: "Existing", category: "notes", type: "note" });
+
+    provider.restoreSnapshotData({
+      mode: "merge",
+      items: [
+        { ...existing, title: "Existing from archive" },
+        {
+          id: "archive-note",
+          type: "note",
+          category: "notes",
+          title: "Archive note",
+          icon: "N",
+          summary: "",
+          status: "Active",
+          tags: [],
+          createdAt: "2026-05-29T00:00:00.000Z",
+          updatedAt: "2026-05-29T00:00:00.000Z",
+          properties: {},
+          attachedFiles: [],
+          metadata: { custom: "kept" },
+        },
+      ],
+      blocks: [
+        {
+          id: "archive-block",
+          itemId: "archive-note",
+          type: "paragraph",
+          content: "Restored block",
+          order: 0,
+          createdAt: "2026-05-29T00:00:00.000Z",
+          updatedAt: "2026-05-29T00:00:00.000Z",
+        },
+      ],
+      relations: [],
+    });
+
+    expect(provider.getItem(existing.id)?.title).toBe("Existing from archive");
+    expect(provider.getItem("archive-note")?.metadata.custom).toBe("kept");
+    expect(provider.getBlocks("archive-note")[0]?.id).toBe("archive-block");
+  });
+
+  it("blocks replace snapshot restore until explicit confirmation is supplied", () => {
+    const provider = createProvider();
+    const existing = provider.createItem({ title: "Existing", category: "notes", type: "note" });
+
+    expect(() =>
+      provider.restoreSnapshotData({
+        mode: "replace",
+        items: [],
+        blocks: [],
+        relations: [],
+      }),
+    ).toThrow(/requires explicit confirmation/i);
+
+    provider.restoreSnapshotData({
+      mode: "replace",
+      confirmedReplace: true,
+      items: [],
+      blocks: [],
+      relations: [],
+    });
+
+    expect(provider.getItem(existing.id)).toBeUndefined();
+    expect(provider.getSnapshot().items).toHaveLength(0);
+  });
 });

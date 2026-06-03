@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AlertTriangle, Database, FolderOpen, HardDrive, ShieldCheck } from "lucide-react";
 
-import { useVaultLifecycleStatus } from "@/lib/vault/use-vault";
+import { VaultArchivePanel } from "@/components/vault/VaultArchivePanel";
+import { useVaultLifecycleStatus, useVaultProvider, useVaultSnapshot } from "@/lib/vault/use-vault";
 
 export const Route = createFileRoute("/vault")({
   head: () => ({ meta: [{ title: "Vault - Mizaan" }] }),
@@ -10,6 +11,8 @@ export const Route = createFileRoute("/vault")({
 
 function VaultPage() {
   const { session, providerInfo, health, recentVaults } = useVaultLifecycleStatus();
+  const provider = useVaultProvider();
+  const snapshot = useVaultSnapshot();
 
   return (
     <div className="mx-auto w-full max-w-[920px] px-6 pb-24 pt-12 md:px-10">
@@ -75,6 +78,10 @@ function VaultPage() {
           ))}
         </ul>
       </section>
+
+      <div className="mt-5">
+        <VaultArchivePanel provider={provider} snapshot={snapshot} surface="vault" />
+      </div>
 
       <section className="mt-5 rounded-md border hairline bg-surface p-4">
         <div className="flex items-center justify-between gap-3">

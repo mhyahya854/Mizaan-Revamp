@@ -70,4 +70,16 @@ describe("productModules", () => {
       expect(productModules.find((module) => module.id === id)?.category).toBe("system");
     });
   });
+
+  it("reports browser archive hardening without claiming native backups", () => {
+    const vault = productModules.find((module) => module.id === "vault");
+    const backups = productModules.find((module) => module.id === "backups");
+    const exportsModule = productModules.find((module) => module.id === "exports");
+
+    expect(vault?.currentTruth).toContain("JSON archive export");
+    expect(backups?.status).toBe("partial");
+    expect(backups?.currentTruth).toContain("provider/localStorage archive JSON");
+    expect(backups?.futureReason).toContain("Native backups");
+    expect(exportsModule?.currentTruth).toContain("Browser archive JSON export exists");
+  });
 });

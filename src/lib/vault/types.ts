@@ -134,6 +134,14 @@ export interface VaultSnapshot {
   health: VaultHealth;
 }
 
+export interface RestoreSnapshotDataInput {
+  mode: "merge" | "replace";
+  confirmedReplace?: boolean;
+  items: MizaanItem[];
+  blocks: MizaanBlock[];
+  relations: MizaanRelation[];
+}
+
 export interface ListItemsFilter {
   category?: ItemCategory;
   includeArchived?: boolean;
@@ -216,5 +224,6 @@ export interface VaultProvider {
   listRelations(filter?: ListRelationsFilter): MizaanRelation[];
   createRelation(input: CreateRelationInput): MizaanRelation;
   deleteRelation(id: string): void;
+  restoreSnapshotData(input: RestoreSnapshotDataInput): VaultSnapshot;
   subscribe(listener: () => void): () => void;
 }

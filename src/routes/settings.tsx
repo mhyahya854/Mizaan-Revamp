@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HardDrive, ShieldAlert } from "lucide-react";
 
-import { useVaultSnapshot } from "@/lib/vault/use-vault";
+import { VaultArchivePanel } from "@/components/vault/VaultArchivePanel";
+import { useVaultProvider, useVaultSnapshot } from "@/lib/vault/use-vault";
 import { cn } from "@/lib/utils";
 import { useTheme, Theme } from "@/hooks/use-theme";
 
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/settings")({
 
 function SettingsPage() {
   const snapshot = useVaultSnapshot();
+  const provider = useVaultProvider();
   const providerInfo = snapshot.providerInfo;
   const { theme, setTheme } = useTheme();
 
@@ -103,6 +105,8 @@ function SettingsPage() {
             </ul>
           </section>
         ))}
+
+        <VaultArchivePanel provider={provider} snapshot={snapshot} surface="settings" />
 
         <section>
           <h2 className="font-editorial text-[18px]">Unavailable until later phases</h2>
