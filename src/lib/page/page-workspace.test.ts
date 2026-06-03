@@ -5,6 +5,7 @@ import {
   createChildPage,
   createPageFromTemplate,
   getImplementedSlashCommands,
+  getImplementedTemplates,
 } from "./page-workspace";
 import {
   LocalStorageVaultProvider,
@@ -322,6 +323,39 @@ describe("unified sidebar pages and spaces model", () => {
     expect(page.metadata.financeStatus).toBe("draft");
     expect(page.metadata.bankSynced).toBe(false);
     expect(page.metadata.accountingGrade).toBe(false);
+  });
+
+  it("creates tracker and goal templates with normalized provider-backed metadata", () => {
+    const provider = createProvider();
+    const tracker = createPageFromTemplate(provider, "tracker");
+    const goal = createPageFromTemplate(provider, "goal");
+    const goalSpace = createPageFromTemplate(provider, "goals-space");
+
+    expect(tracker.category).toBe("trackers");
+    expect(tracker.type).toBe("tracker");
+    expect(tracker.metadata.trackerTitle).toBe(tracker.title);
+    expect(tracker.metadata.fakeStreaks).toBe(false);
+    expect(tracker.properties.streak).toBeUndefined();
+
+    expect(goal.category).toBe("goals");
+    expect(goal.type).toBe("goal");
+    expect(goal.metadata.goalTitle).toBe(goal.title);
+    expect(goal.metadata.fakeProgressHistory).toBe(false);
+
+    expect(goalSpace.title).toBe("Goals");
+    expect(goalSpace.category).toBe("goals");
+    expect(goalSpace.metadata.promotedAsSpace).toBe(true);
+    expect(goalSpace.metadata.itemRole).toBe("space");
+  });
+
+  it("exposes tracker and goal templates without fake streak/progress promises", () => {
+    const trackerTemplate = getImplementedTemplates().find((entry) => entry.id === "tracker");
+    const goalTemplate = getImplementedTemplates().find((entry) => entry.id === "goal");
+
+    expect(trackerTemplate?.properties.streak).toBeUndefined();
+    expect(trackerTemplate?.metadata?.fakeStreaks).toBe(false);
+    expect(goalTemplate?.metadata?.fakeProgressHistory).toBe(false);
+    expect(goalTemplate?.summary).toContain("metadata");
   });
 
   it("categorizes pinned items into pinnedTree and unpinned items into pagesTree", () => {

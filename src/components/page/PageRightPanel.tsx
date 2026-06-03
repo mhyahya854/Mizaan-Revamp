@@ -4,6 +4,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { DocumentMetadataPanel } from "@/components/documents/DocumentMetadataPanel";
 import { FinanceMetadataPanel } from "@/components/finance/FinanceMetadataPanel";
+import { GoalMetadataPanel } from "@/components/goals/GoalMetadataPanel";
 import {
   InteractionMetadataPanel,
   PeopleMetadataPanel,
@@ -12,13 +13,16 @@ import {
   ProjectMetadataPanel,
   TaskMetadataPanel,
 } from "@/components/projects/ProjectMetadataPanel";
+import { TrackerMetadataPanel } from "@/components/trackers/TrackerMetadataPanel";
 import { PageLinkedContext } from "./PageLinkedContext";
 import { isDocumentRecordItem } from "@/lib/documents/document-record";
 import { isFinanceRecordItem } from "@/lib/finance/finance-record";
+import { isGoalRecordItem } from "@/lib/goals/goal-record";
 import { isInteractionRecordItem } from "@/lib/people/interaction-record";
 import { isPersonRecordItem } from "@/lib/people/person-record";
 import { isProjectRecordItem } from "@/lib/projects/project-record";
 import { isTaskRecordItem } from "@/lib/tasks/task-record";
+import { isTrackerRecordItem } from "@/lib/trackers/tracker-record";
 import type { PageWorkspaceModel } from "@/lib/page/page-workspace";
 import type { MizaanItem, VaultProvider } from "@/lib/vault/types";
 
@@ -179,6 +183,10 @@ function PageDataPanel({
       {isFinanceRecordItem(model.item) && (
         <FinanceMetadataPanel item={model.item} provider={provider} />
       )}
+      {isTrackerRecordItem(model.item) && (
+        <TrackerMetadataPanel item={model.item} provider={provider} />
+      )}
+      {isGoalRecordItem(model.item) && <GoalMetadataPanel item={model.item} provider={provider} />}
       {/* 1. Basic */}
       <CollapsibleSection title="Basic" isOpenDefault={true}>
         <MetadataRow label="Type" value={model.properties.type} />

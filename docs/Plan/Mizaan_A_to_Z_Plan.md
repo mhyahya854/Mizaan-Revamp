@@ -21736,3 +21736,58 @@ Trackers + Goals Foundation was not started before Phase A final commit/push/par
 
 Next recommended blueprint phase:
 Trackers/goals foundation, only after Phase A final validation and push parity are clean.
+
+## Append-Only Trackers Goals Foundation Implementation - 2026-06-03 14:55 +08:00
+
+Selected phase:
+Trackers + Goals Foundation.
+
+Why this started after Persistence Export Restore Hardening:
+Persistence/export/restore hardening was completed, committed, pushed, and verified at parity before this phase started. The archive layer now round-trips current provider/localStorage metadata, so adding tracker and goal metadata did not expand the prototype data surface without tested export/restore safety.
+
+Validation before work:
+Phase B started from `main` at parity `0 0` after Phase A closure commit `e898150`. `npm run typecheck`, `npm run lint`, `npm test`, and `npm run build` passed before Phase B implementation. Lint had the same 10 known Fast Refresh warnings and 0 errors.
+
+Code inspection summary:
+`src/routes/trackers.tsx` was a generic `SpacePage`; no `src/routes/goals.tsx` existed. `ItemCategory` and `ItemType` lacked `goals` and `goal`. The provider seeded a generic tracker item with `properties.streak`, page templates had no Goals space/template, graph did not read tracker/goal metadata, search only had generic metadata coverage, and the page right panel lacked tracker/goal metadata panels.
+
+Implementation summary:
+[ IMPLEMENTED] Tracker metadata model - typed tracker title, type, status, frequency, target/current/unit fields, dates, relation IDs, real check-ins, tags, and metadata-only private/sensitive flags.
+[ IMPLEMENTED] Goal metadata model - typed goal title, status, horizon, target date, progress fields, priority, relation IDs including linked trackers, tags, and metadata-only private/sensitive flags.
+[ IMPLEMENTED] Provider-backed tracker records - dedicated `/trackers` route, create actions for habit/study/reading/productivity/finance/custom trackers, tracker cards, local stats, search field, and route empty state.
+[ IMPLEMENTED] Provider-backed goal records - dedicated `/goals` route, create actions for short-term/medium-term/long-term/lifetime/custom goals, goal cards, local stats, search field, and route empty state.
+[ IMPLEMENTED] Detail metadata UI - `TrackerMetadataPanel` and `GoalMetadataPanel` edit typed metadata from `/page/$id`. Tracker check-ins are real metadata entries, not fake streaks.
+[ IMPLEMENTED] Graph/search/template integration - tracker and goal metadata are searchable; graph helper creates tracker metadata edges and goal metadata edges including `tracker-link`; templates create normalized tracker/goal metadata.
+[ IMPLEMENTED] Provider vocabulary and seed hardening - `goals` and `goal` were added to provider types, a Goals space is seeded, the seeded tracker now has typed metadata, and legacy seeded `streak` is preserved as metadata instead of shown as a fake active streak property.
+
+What was deliberately not implemented:
+Fake streaks, fake progress history, tracker charts, goal charts, rollups, reminder engines, native notifications, AI coaching, wearable integrations, medical/health tracking claims, cloud sync, mobile capture, calendar scheduling, encrypted private tracking/goals, real privacy/app lock, hidden search/graph behavior, SQLite, Tauri, native filesystem storage, and portable vault folders.
+
+Files changed:
+Source files include tracker/goal helper modules, tracker/goal route files, tracker/goal metadata panels, page workspace templates, provider vocabulary/seed migration, right-panel integration, graph model, command palette, top bar, route tree, home labels, and product map.
+Tests include tracker helper tests, goal helper tests, graph model tracker/goal edge tests, search metadata tests, page-workspace template tests, and product-map tracker/goal status tests.
+Docs/screenshots include the product blueprint, this append-only plan entry, the phase report, the DOCX work log entry, and Trackers/Goals screenshots.
+
+Screenshots:
+`docs/screenshots/20260603-1451-trackers-route.png`
+`docs/screenshots/20260603-1451-tracker-metadata-checkin.png`
+`docs/screenshots/20260603-1451-goals-route.png`
+`docs/screenshots/20260603-1451-goal-metadata-progress.png`
+`docs/screenshots/20260603-1451-trackers-goals-search.png`
+`docs/screenshots/20260603-1451-trackers-goals-graph.png`
+`docs/screenshots/20260603-1451-trackers-goals-graph-metadata-edge.png`
+
+Validation after implementation:
+Focused tracker/goal/model tests passed with 6 files and 94 tests. `npm run typecheck` passed after TanStack route-tree regeneration. `npm run lint` passed with 0 errors and the existing 10 Fast Refresh warnings. `npm test` passed with 19 files and 220 tests. `npm run build` passed with existing Vite chunk-size and TanStack external-unused warnings. Final post-documentation validation is recorded in `docs/Phases/phase-trackers-goals-foundation.md`.
+
+Browser QA after work:
+Preview ran on `http://127.0.0.1:4196` in an isolated Chrome profile. `/trackers` loaded, created a Study tracker, opened the tracker page, showed `TrackerMetadataPanel`, and added a real check-in. `/goals` loaded, created a Long-term goal, opened the goal page, showed `GoalMetadataPanel`, and edited progress to `24 credits`. `/search` found the created tracker. `/graph` loaded tracker and goal nodes. A supplemental graph proof linked the created goal to the created tracker and showed rendered `tracker-link` and `goal-metadata` evidence. Route sweep for `/trackers`, `/goals`, `/finance`, `/people`, `/projects`, `/documents`, `/graph`, and `/search` loaded nonblank with 0 severe console messages.
+
+Remaining limitations:
+Mizaan remains a browser/localStorage prototype. Trackers and Goals are partial local foundations, not final engines. Private/sensitive flags remain metadata-only and do not encrypt, lock, hide from search, or hide from graph. Native storage, SQLite, Tauri, app lock/encryption, mobile, reminders, notifications, charts, automation, health integrations, and cloud sync remain future.
+
+Phase B status:
+Trackers + Goals Foundation was started and implemented after Phase A passed. It still requires final validation, DOCX update verification, commit, push, and parity proof before closure.
+
+Next recommended phase:
+Choose the next bounded phase only after this phase is committed, pushed, and parity is clean. Based on current evidence, the next safest follow-up is a repair/recovery or import/export manager foundation rather than a larger product module.

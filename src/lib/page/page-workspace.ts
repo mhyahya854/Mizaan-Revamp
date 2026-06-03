@@ -27,6 +27,8 @@ import {
   updateInteractionMetadata,
 } from "../people/interaction-record";
 import { createDefaultFinanceMetadata, updateFinanceMetadata } from "../finance/finance-record";
+import { createDefaultGoalMetadata, updateGoalMetadata } from "../goals/goal-record";
+import { createDefaultTrackerMetadata, updateTrackerMetadata } from "../trackers/tracker-record";
 import { createDefaultTableData, serializeTableData } from "../table/simple-table";
 
 interface Breadcrumb {
@@ -103,6 +105,7 @@ const SPACE_LABELS: Record<ItemCategory, string> = {
   finance: "Finance",
   calendar: "Calendar",
   trackers: "Trackers",
+  goals: "Goals",
   databases: "Databases",
   templates: "Templates",
 };
@@ -116,6 +119,7 @@ const SPACE_HREFS: Record<ItemCategory, string> = {
   finance: "/finance",
   calendar: "/calendar",
   trackers: "/trackers",
+  goals: "/goals",
   databases: "/databases",
   templates: "/templates",
 };
@@ -129,6 +133,7 @@ const SPACE_ICONS: Record<ItemCategory, string> = {
   finance: "$",
   calendar: "C",
   trackers: "T",
+  goals: "G",
   databases: "#",
   templates: "*",
 };
@@ -265,6 +270,31 @@ const TEMPLATES: TemplateDefinition[] = [
     blocks: [
       { type: "heading1", content: "Trackers Space" },
       { type: "paragraph", content: "Track habits, study time, exercises, and custom milestones." },
+    ],
+  },
+  {
+    id: "goals-space",
+    name: "Goals Space",
+    icon: "G",
+    category: "goals",
+    type: "goal",
+    title: "Goals",
+    summary: "Goal records that link projects, trackers, people, documents, and finance metadata.",
+    tags: [],
+    properties: { status: "Active" },
+    metadata: {
+      promotedAsSpace: true,
+      itemRole: "space",
+      spaceTemplateId: "goals-space",
+      sidebarPinned: true,
+    },
+    blocks: [
+      { type: "heading1", content: "Goals Space" },
+      {
+        type: "paragraph",
+        content:
+          "Keep provider-backed local goal records. Progress history, reminders, coaching, and notifications remain future work.",
+      },
     ],
   },
   {
@@ -810,14 +840,52 @@ const TEMPLATES: TemplateDefinition[] = [
     category: "trackers",
     type: "tracker",
     title: "Tracker - Untitled",
-    summary: "Local tracker page.",
+    summary: "Local tracker metadata record.",
     tags: ["tracker"],
-    properties: { status: "Active", streak: 0 },
+    properties: { status: "Not started", trackerType: "Habit", frequency: "Daily" },
+    metadata: createDefaultTrackerMetadata({
+      trackerTitle: "Tracker - Untitled",
+      trackerType: "habit",
+      trackerStatus: "not-started",
+      frequency: "daily",
+      tags: ["tracker"],
+    }),
     blocks: [
       { type: "heading1", content: "What this tracks" },
       { type: "paragraph", content: "" },
       { type: "heading2", content: "Check-ins" },
-      { type: "todo", content: "Add first check-in", checked: false },
+      {
+        type: "callout",
+        content:
+          "Check-ins are local metadata entries. Streaks, charts, reminders, and notifications are not implemented.",
+      },
+    ],
+  },
+  {
+    id: "goal",
+    name: "Goal",
+    icon: "G",
+    category: "goals",
+    type: "goal",
+    title: "Goal - Untitled",
+    summary: "Local goal metadata record.",
+    tags: ["goal"],
+    properties: { status: "Not started", horizon: "Short-term", priority: "None" },
+    metadata: createDefaultGoalMetadata({
+      goalTitle: "Goal - Untitled",
+      goalStatus: "not-started",
+      goalHorizon: "short-term",
+      tags: ["goal"],
+    }),
+    blocks: [
+      { type: "heading1", content: "Outcome" },
+      { type: "paragraph", content: "" },
+      { type: "heading2", content: "Progress notes" },
+      {
+        type: "callout",
+        content:
+          "This goal stores typed local metadata only. Progress history, coaching, reminders, and notifications are future phases.",
+      },
     ],
   },
   {
@@ -1064,6 +1132,14 @@ function createTemplateMetadata(
     return updateFinanceMetadata({ financeTitle: title, ...base }, { financeTitle: title });
   }
 
+  if (category === "trackers" && type === "tracker") {
+    return updateTrackerMetadata({ trackerTitle: title, ...base }, { trackerTitle: title });
+  }
+
+  if (category === "goals" && type === "goal") {
+    return updateGoalMetadata({ goalTitle: title, ...base }, { goalTitle: title });
+  }
+
   return base;
 }
 
@@ -1140,6 +1216,7 @@ function typeForCategory(category: ItemCategory): ItemType {
     finance: "finance",
     calendar: "calendar",
     trackers: "tracker",
+    goals: "goal",
     databases: "database",
     templates: "template",
   };

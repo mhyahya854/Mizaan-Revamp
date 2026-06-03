@@ -6,6 +6,7 @@ import {
   Calendar,
   Database,
   DollarSign,
+  Flag,
   FilePlus2,
   FileText,
   FolderOpen,
@@ -14,6 +15,7 @@ import {
   Network,
   Search,
   Settings,
+  Target,
   Users,
 } from "lucide-react";
 
@@ -86,6 +88,18 @@ const createActions: Array<{
     sub: "Create a local finance metadata record",
     icon: DollarSign,
     templateId: "finance-record",
+  },
+  {
+    title: "New tracker",
+    sub: "Create a local tracker metadata record",
+    icon: Target,
+    templateId: "tracker",
+  },
+  {
+    title: "New goal",
+    sub: "Create a local goal metadata record",
+    icon: Flag,
+    templateId: "goal",
   },
   {
     title: "New database",
@@ -167,6 +181,22 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       title: "Open Databases",
       sub: "Editable local database tables",
       run: () => navigate({ to: "/databases" }),
+    },
+    {
+      id: "go-trackers",
+      group: "Go to",
+      icon: Target,
+      title: "Open Trackers",
+      sub: "Local tracker metadata records",
+      run: () => navigate({ to: "/trackers" }),
+    },
+    {
+      id: "go-goals",
+      group: "Go to",
+      icon: Flag,
+      title: "Open Goals",
+      sub: "Local goal metadata records",
+      run: () => navigate({ to: "/goals" }),
     },
     {
       id: "go-vault",
@@ -304,7 +334,8 @@ function iconFor(category: ItemCategory) {
     people: Users,
     finance: DollarSign,
     calendar: Calendar,
-    trackers: FileText,
+    trackers: Target,
+    goals: Flag,
     databases: Database,
     templates: FilePlus2,
   };
@@ -321,6 +352,7 @@ function labelFor(category: ItemCategory) {
     finance: "Finance",
     calendar: "Calendar",
     trackers: "Trackers",
+    goals: "Goals",
     databases: "Databases",
     templates: "Templates",
   };

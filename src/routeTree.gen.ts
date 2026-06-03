@@ -18,6 +18,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as PeopleRouteImport } from './routes/people'
 import { Route as GraphRouteImport } from './routes/graph'
+import { Route as GoalsRouteImport } from './routes/goals'
 import { Route as FinanceRouteImport } from './routes/finance'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as DatabasesRouteImport } from './routes/databases'
@@ -73,6 +74,11 @@ const GraphRoute = GraphRouteImport.update({
   path: '/graph',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GoalsRoute = GoalsRouteImport.update({
+  id: '/goals',
+  path: '/goals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FinanceRoute = FinanceRouteImport.update({
   id: '/finance',
   path: '/finance',
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/databases': typeof DatabasesRoute
   '/documents': typeof DocumentsRoute
   '/finance': typeof FinanceRoute
+  '/goals': typeof GoalsRoute
   '/graph': typeof GraphRoute
   '/people': typeof PeopleRoute
   '/projects': typeof ProjectsRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/databases': typeof DatabasesRoute
   '/documents': typeof DocumentsRoute
   '/finance': typeof FinanceRoute
+  '/goals': typeof GoalsRoute
   '/graph': typeof GraphRoute
   '/people': typeof PeopleRoute
   '/projects': typeof ProjectsRoute
@@ -167,6 +175,7 @@ export interface FileRoutesById {
   '/databases': typeof DatabasesRoute
   '/documents': typeof DocumentsRoute
   '/finance': typeof FinanceRoute
+  '/goals': typeof GoalsRoute
   '/graph': typeof GraphRoute
   '/people': typeof PeopleRoute
   '/projects': typeof ProjectsRoute
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/databases'
     | '/documents'
     | '/finance'
+    | '/goals'
     | '/graph'
     | '/people'
     | '/projects'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/databases'
     | '/documents'
     | '/finance'
+    | '/goals'
     | '/graph'
     | '/people'
     | '/projects'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/databases'
     | '/documents'
     | '/finance'
+    | '/goals'
     | '/graph'
     | '/people'
     | '/projects'
@@ -250,6 +262,7 @@ export interface RootRouteChildren {
   DatabasesRoute: typeof DatabasesRoute
   DocumentsRoute: typeof DocumentsRoute
   FinanceRoute: typeof FinanceRoute
+  GoalsRoute: typeof GoalsRoute
   GraphRoute: typeof GraphRoute
   PeopleRoute: typeof PeopleRoute
   ProjectsRoute: typeof ProjectsRoute
@@ -329,6 +342,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GraphRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/goals': {
+      id: '/goals'
+      path: '/goals'
+      fullPath: '/goals'
+      preLoaderRoute: typeof GoalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/finance': {
       id: '/finance'
       path: '/finance'
@@ -402,6 +422,7 @@ const rootRouteChildren: RootRouteChildren = {
   DatabasesRoute: DatabasesRoute,
   DocumentsRoute: DocumentsRoute,
   FinanceRoute: FinanceRoute,
+  GoalsRoute: GoalsRoute,
   GraphRoute: GraphRoute,
   PeopleRoute: PeopleRoute,
   ProjectsRoute: ProjectsRoute,

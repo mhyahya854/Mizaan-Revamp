@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import type { MizaanBlock, MizaanItem, VaultSnapshot } from "../vault/types";
 import { createFinanceRecordInput } from "../finance/finance-record";
+import { createGoalRecordInput } from "../goals/goal-record";
 import { createInteractionRecordInput } from "../people/interaction-record";
 import { createPersonRecordInput } from "../people/person-record";
 import { createProjectRecordInput } from "../projects/project-record";
 import { createTaskRecordInput } from "../tasks/task-record";
+import { createTrackerRecordInput } from "../trackers/tracker-record";
 import { buildSearchResults, highlightMatches } from "./search-index";
 
 function item(
@@ -288,5 +290,53 @@ describe("search index", () => {
     expect(
       buildSearchResults(data, { query: "2026-06-02" }).map((result) => result.item.id),
     ).toEqual(["finance-1"]);
+  });
+
+  it("finds tracker and goal metadata through existing metadata indexing", () => {
+    const trackerInput = createTrackerRecordInput({
+      title: "Study minutes",
+      type: "study",
+      status: "active",
+      frequency: "weekly",
+      targetValue: "300",
+      unit: "minutes",
+      notes: "University revision tracker",
+    });
+    const goalInput = createGoalRecordInput({
+      title: "Finish degree",
+      status: "active",
+      horizon: "long-term",
+      targetDate: "2027-12-31",
+      progressValue: "24",
+      progressUnit: "credits",
+      priority: "high",
+      notes: "Graduation target",
+    });
+    const data = snapshot([
+      item({
+        id: "tracker-1",
+        title: trackerInput.title,
+        category: trackerInput.category,
+        type: trackerInput.type,
+        status: trackerInput.status,
+        metadata: trackerInput.metadata,
+      }),
+      item({
+        id: "goal-1",
+        title: goalInput.title,
+        category: goalInput.category,
+        type: goalInput.type,
+        status: goalInput.status,
+        metadata: goalInput.metadata,
+      }),
+    ]);
+
+    expect(
+      buildSearchResults(data, { query: "University revision" }).map((result) => result.item.id),
+    ).toEqual(["tracker-1"]);
+    expect(
+      buildSearchResults(data, { query: "2027-12-31" }).map((result) => result.item.id),
+    ).toEqual(["goal-1"]);
+    expect(buildSearchResults(data, { query: "credits" })[0]?.matchedFields).toContain("property");
   });
 });

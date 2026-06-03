@@ -77,8 +77,10 @@ Current module truth:
 - Projects: [PARTIAL] - typed project metadata helper, provider-backed project record creation, dedicated projects route/list, project detail metadata panel, linked task summary, project/task templates, metadata search, and project/task graph edges are implemented for the browser prototype. Full project management, kanban, timeline/Gantt, milestones, dependencies, reminders, calendar scheduling, dashboards, SQLite/native storage, and team/collaboration remain not implemented.
 - Tasks: [PARTIAL] - typed task metadata helper, provider-backed task record creation, project-linked task creation/editing, task detail metadata panel, metadata search, template defaults, and graph edges are implemented for the browser prototype. There is no dedicated `/tasks` route, task database, recurring task engine, reminder engine, native notification path, dependency engine, mobile capture, or calendar-linked scheduling.
 - Finance: [PARTIAL] - typed local finance metadata helper, provider-backed finance record creation, dedicated Finance route/list, finance detail metadata panel, amount/currency/date/status normalization, local summary totals, metadata search, graph edges, template defaults, and command-palette creation are implemented for the browser prototype. Bank sync/import, receipt OCR, tax/accounting systems, automated budgets, reminders, native notifications, SQLite/native storage, and encrypted private finance remain not implemented.
-- Graph: [PARTIAL] - graph model/helper, provider-backed global graph foundation, relation/document/project/task/people/interaction/finance metadata edge extraction, parent hierarchy edges, orphan summaries, filters, direct local focus, and open-node actions are implemented for the browser prototype; backlink index, wiki links, manual canvas, saved layouts, clustering, export, and semantic/local-AI graph do not.
-- Templates: [PARTIAL] - implemented templates create provider-backed pages, including project, task, people, interaction, document, and finance record defaults; full template editor and template management do not.
+- Trackers: [PARTIAL] - typed tracker metadata helper, provider-backed tracker record creation, dedicated Trackers route/list, tracker detail metadata panel, target/current/frequency/check-in fields, metadata search, graph edges, template defaults, command-palette creation, and non-destructive legacy seeded-streak preservation are implemented for the browser prototype. Fake streak engines, charts, rollups, reminders, native notifications, AI coaching, wearable imports, medical tracking claims, SQLite/native storage, and encrypted private tracking remain not implemented.
+- Goals: [PARTIAL] - typed goal metadata helper, provider-backed goal record creation, dedicated Goals route/list, goal detail metadata panel, target date/progress/priority fields, metadata search, graph edges including tracker links, template defaults, and command-palette creation are implemented for the browser prototype. Progress history, charts, reminders, native notifications, AI coaching, cloud sync, mobile capture, SQLite/native storage, and encrypted private goals remain not implemented.
+- Graph: [PARTIAL] - graph model/helper, provider-backed global graph foundation, relation/document/project/task/people/interaction/finance/tracker/goal metadata edge extraction, parent hierarchy edges, orphan summaries, filters, direct local focus, and open-node actions are implemented for the browser prototype; backlink index, wiki links, manual canvas, saved layouts, clustering, export, and semantic/local-AI graph do not.
+- Templates: [PARTIAL] - implemented templates create provider-backed pages, including project, task, people, interaction, document, finance, tracker, and goal record defaults; full template editor and template management do not.
 - Vault: [PARTIAL] - provider and health UI state prototype truth plus tested browser-prototype JSON archive export, validation, restore preview, safe merge apply, and guarded replace semantics. Portable folders, SQLite, Tauri filesystem, lock file, markdown mirrors, native backups, encrypted backups, and repair center do not exist.
 - Trash: [PARTIAL] - soft trash/restore provider paths exist; retention policy, permanent deletion flow, audit history, and native recovery do not.
 - Settings: [PARTIAL] - read-only prototype facts and theme controls; broad settings system does not.
@@ -132,8 +134,8 @@ Current module truth:
 - Tasks - provider-backed task records linked to projects; a route-level task workspace remains future.
 - People - local personal profiles and relationship context.
 - Finance - local financial records without bank sync.
-- Trackers - habit/progress tracking pages.
-- Goals - future goal system.
+- Trackers - provider-backed local tracker records.
+- Goals - provider-backed local goal records.
 - Custom pages/spaces - user-created page trees.
 
 ### System Tools
@@ -182,8 +184,8 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Pages | Tasks | [PARTIAL] | Project-linked task section and task metadata panel exist; no `/tasks` route | Typed task metadata in item metadata | localStorage prototype | Helper/search/graph/template tests and browser QA | No dedicated task route, task database, recurrence, reminders, notifications, dependencies, or calendar scheduling | People/CRM foundation |
 | Pages | People | [PARTIAL] | Dedicated provider-backed route/list, person detail metadata panel, and interaction foundation exist | Typed person and interaction metadata in `MizaanItem.metadata` | localStorage prototype | Person/interaction helper tests, graph/search/template tests, and browser QA | No contact import/sync, encryption/app lock, hidden search/graph privacy, analytics, mobile capture, or full CRM timeline | Finance foundation |
 | Pages | Finance | [PARTIAL] | Dedicated provider-backed route/list and finance detail metadata panel exist | Typed finance metadata in `MizaanItem.metadata` | localStorage prototype | Finance helper, graph, search, template tests, and browser QA | No bank sync/import, receipt OCR, tax/accounting, automated budgets, reminders, native storage, or encrypted private finance | Trackers/goals foundation |
-| Pages | Trackers | [PARTIAL] | Route/space exists | Generic item only | localStorage prototype | Limited | No tracker engine | Trackers/goals foundation |
-| Pages | Goals | [BLUEPRINT ONLY] | Not visible as working module | Not modeled | None | None | No route/model | Goals foundation |
+| Pages | Trackers | [PARTIAL] | Dedicated provider-backed route/list and tracker detail metadata panel exist | Typed tracker metadata in `MizaanItem.metadata` | localStorage prototype | Tracker helper, graph, search, template tests, and browser QA | No fake streak engine, charts, rollups, reminders, native notifications, wearable import, or medical tracking | Tracker views/history later |
+| Pages | Goals | [PARTIAL] | Dedicated provider-backed route/list and goal detail metadata panel exist | Typed goal metadata in `MizaanItem.metadata` | localStorage prototype | Goal helper, graph, search, template tests, and browser QA | No progress history, charts, reminders, native notifications, AI coaching, cloud sync, or mobile capture | Goal views/history later |
 | Pages | Custom pages | [PARTIAL] | Page workspace exists | Item/block model | localStorage prototype | Page workspace tests | No full schema/versioning | Editor and metadata hardening |
 | Pages | Page data panel | [PARTIAL] | Right panel exists | Workspace model | localStorage prototype | Limited | Many panes are informational only | Page data hardening |
 | Pages | Relations | [PARTIAL] | Relation panel exists | Relation records | localStorage prototype | Provider tests | No rich relation picker | Graph relation foundation |
@@ -512,42 +514,42 @@ the UI must show its status.
 ### 6.11 Trackers
 
 - Purpose: habits, study, exercise, custom progress.
-- User mental model: local tracker pages and future check-in records.
+- User mental model: local tracker records with typed metadata and real local check-ins, not a finished analytics/reminder engine.
 - Current status: [PARTIAL]
-- UI now: trackers route and template.
-- Implemented now: generic tracker pages.
-- Not implemented yet: tracker schema, check-ins, charts, rollups, goals integration.
-- Data model: generic item/properties/blocks.
+- UI now: dedicated Trackers route/list, provider-backed create actions, tracker record cards, search field, local summary stats, tracker templates, command-palette creation, and tracker detail metadata panel in `/page/$id`.
+- Implemented now: typed tracker metadata helper, provider-backed tracker record inputs, tracker type/status/frequency normalization, target/current/unit fields, real local check-ins when added, relation IDs for projects/tasks/people/documents/finance, metadata-only private/sensitive flags with honest warnings, tracker graph edge extraction, search metadata coverage, template defaults, command-palette create action, seed metadata defaults, and non-destructive legacy seeded-streak preservation.
+- Not implemented yet: fake streak engine, charts, rollups, automated progress history, reminder engine, native notifications, AI coaching, wearable imports, medical tracking claims, health-data integrations, mobile capture, SQLite/native storage, encrypted private trackers, app/privacy lock, hidden-from-search behavior, hidden-from-graph behavior, and portable vault folders.
+- Data model: `category: "trackers"` and `type: "tracker"` provider items with typed tracker metadata in `MizaanItem.metadata`.
 - Routes: `/trackers`, `/page/$id`
-- Main components: `SpacePage`, `PageWorkspace`.
-- Empty states: no tracker pages.
+- Main components: Trackers route, `TrackerMetadataPanel`, `PageWorkspace`.
+- Empty states: no tracker records yet, with a real New tracker action.
 - Error states: generic page errors.
-- Actions: create tracker page.
-- Disabled/future actions: no fake charts.
-- Tests required: tracker helper later.
-- Screenshots required: tracker list and detail.
-- Done criteria: check-in persistence and summaries verified.
-- Future phases: Trackers/goals foundation.
+- Actions: create habit, study, reading, productivity, finance, or custom tracker records; edit typed tracker metadata; add real local check-ins; search tracker metadata; open tracker detail pages.
+- Disabled/future actions: no fake streaks, charts, rollups, reminders, native notifications, AI coaching, wearable imports, health/medical claims, cloud sync, or mobile capture.
+- Tests required: [IMPLEMENTED] tracker helper tests, graph relation tests, search metadata test, template metadata tests, product map tests, and browser QA.
+- Screenshots required: [IMPLEMENTED] tracker route, created tracker, tracker metadata/check-in panel, search/graph proof, and route proof screenshots for this phase.
+- Done criteria: [IMPLEMENTED FOR FOUNDATION] provider-backed tracker records persist with typed metadata and real local check-ins; overall Trackers remains partial until analytics/history/reminder/native systems exist.
+- Future phases: tracker history/views after storage/index policy is stronger.
 
 ### 6.12 Goals
 
 - Purpose: outcome planning and goal tracking.
 - User mental model: goals connect to projects, trackers, and calendar.
-- Current status: [BLUEPRINT ONLY]
-- UI now: product-map status only.
-- Implemented now: none.
-- Not implemented yet: route, data model, templates, links, progress logic.
-- Data model: proposed goal item and goal metadata.
-- Routes: future `/goals`.
-- Main components: future goal route and helper.
-- Empty states: future.
-- Error states: future.
-- Actions: future create/edit goal.
-- Disabled/future actions: all goal actions are future.
-- Tests required: goal model and route tests.
-- Screenshots required: future goal list/detail.
-- Done criteria: persisted goals linked to projects/trackers/calendar.
-- Future phases: Trackers/goals foundation.
+- Current status: [PARTIAL]
+- UI now: dedicated Goals route/list, provider-backed create actions, goal record cards, search field, local summary stats, goal templates, command-palette creation, and goal detail metadata panel in `/page/$id`.
+- Implemented now: typed goal metadata helper, provider-backed goal record inputs, goal status/horizon/priority normalization, target date and progress fields, relation IDs for projects/tasks/trackers/people/documents/finance, metadata-only private/sensitive flags with honest warnings, goal graph edge extraction including tracker links, search metadata coverage, template defaults, and command-palette create action.
+- Not implemented yet: automated progress history, charts, reminders, native notifications, AI coaching, cloud sync, mobile capture, calendar scheduling, encrypted private goals, app/privacy lock, hidden-from-search behavior, hidden-from-graph behavior, SQLite/native storage, and portable vault folders.
+- Data model: `category: "goals"` and `type: "goal"` provider items with typed goal metadata in `MizaanItem.metadata`.
+- Routes: `/goals`, `/page/$id`.
+- Main components: Goals route, `GoalMetadataPanel`, `PageWorkspace`.
+- Empty states: no goal records yet, with a real New goal action.
+- Error states: generic page errors and inline invalid progress metadata state.
+- Actions: create short-term, medium-term, long-term, lifetime, or custom goal records; edit typed goal metadata; search goal metadata; open goal detail pages.
+- Disabled/future actions: no fake progress history, charts, reminders, native notifications, AI coaching, cloud sync, mobile capture, or native scheduling.
+- Tests required: [IMPLEMENTED] goal helper tests, graph relation tests, search metadata test, template metadata tests, product map tests, and browser QA.
+- Screenshots required: [IMPLEMENTED] goal route, created goal, goal metadata panel, search/graph proof, and route proof screenshots for this phase.
+- Done criteria: [IMPLEMENTED FOR FOUNDATION] provider-backed goal records persist with typed metadata and relation IDs; overall Goals remains partial until progress history, scheduling/reminders, native storage, and privacy enforcement exist.
+- Future phases: goal history/views after storage/index policy is stronger.
 
 ### 6.13 Templates
 

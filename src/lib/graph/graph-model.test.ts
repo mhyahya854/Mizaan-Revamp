@@ -6,6 +6,8 @@ import {
   getGraphNodeType,
   type GraphEdgeType,
 } from "./graph-model";
+import { createDefaultGoalMetadata } from "../goals/goal-record";
+import { createDefaultTrackerMetadata } from "../trackers/tracker-record";
 import type { ItemCategory, ItemType, MizaanItem, MizaanRelation } from "../vault/types";
 
 function item(
@@ -77,6 +79,7 @@ describe("graph model", () => {
     ["finance", "finance", "finance"],
     ["calendar", "calendar", "calendar"],
     ["trackers", "tracker", "tracker"],
+    ["goals", "goal", "goal"],
     ["databases", "database", "database"],
     ["templates", "template", "template"],
   ] satisfies Array<[ItemCategory, ItemType, ReturnType<typeof getGraphNodeType>]>)(
@@ -560,5 +563,114 @@ describe("graph model", () => {
     });
 
     expect(graph.edges.map((edge) => edge.id)).toEqual(["finance-1->doc-1:document-link"]);
+  });
+
+  it("creates tracker metadata edges to projects, tasks, people, documents, and finance records", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("tracker-1", {
+          category: "trackers",
+          type: "tracker",
+          metadata: createDefaultTrackerMetadata({
+            linkedProjectIds: ["project-1"],
+            linkedTaskIds: ["task-1"],
+            linkedPersonIds: ["person-1"],
+            linkedDocumentIds: ["doc-1"],
+            linkedFinanceIds: ["finance-1"],
+          }),
+        }),
+        item("project-1", { category: "projects", type: "project" }),
+        item("task-1", { category: "tasks", type: "task" }),
+        item("person-1", { category: "people", type: "person" }),
+        item("doc-1", { category: "documents", type: "document" }),
+        item("finance-1", { category: "finance", type: "finance" }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "tracker-1->project-1:project-link",
+        sourceId: "tracker-1",
+        targetId: "project-1",
+        type: "project-link",
+        sourceField: "linkedProjectIds",
+        metadata: expect.objectContaining({ relationSource: "tracker-metadata" }),
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "tracker-1->task-1:task-link",
+        sourceField: "linkedTaskIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "tracker-1->person-1:person-link",
+        sourceField: "linkedPersonIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "tracker-1->doc-1:document-link",
+        sourceField: "linkedDocumentIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "tracker-1->finance-1:finance-link",
+        sourceField: "linkedFinanceIds",
+      }),
+    );
+  });
+
+  it("creates goal metadata edges including tracker links", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("goal-1", {
+          category: "goals",
+          type: "goal",
+          metadata: createDefaultGoalMetadata({
+            linkedProjectIds: ["project-1"],
+            linkedTaskIds: ["task-1"],
+            linkedTrackerIds: ["tracker-1"],
+            linkedPersonIds: ["person-1"],
+            linkedDocumentIds: ["doc-1"],
+            linkedFinanceIds: ["finance-1"],
+          }),
+        }),
+        item("project-1", { category: "projects", type: "project" }),
+        item("task-1", { category: "tasks", type: "task" }),
+        item("tracker-1", { category: "trackers", type: "tracker" }),
+        item("person-1", { category: "people", type: "person" }),
+        item("doc-1", { category: "documents", type: "document" }),
+        item("finance-1", { category: "finance", type: "finance" }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.nodes.find((node) => node.id === "goal-1")?.type).toBe("goal");
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "goal-1->tracker-1:tracker-link",
+        sourceId: "goal-1",
+        targetId: "tracker-1",
+        type: "tracker-link",
+        sourceField: "linkedTrackerIds",
+        metadata: expect.objectContaining({ relationSource: "goal-metadata" }),
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "goal-1->project-1:project-link",
+        sourceField: "linkedProjectIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "goal-1->finance-1:finance-link",
+        sourceField: "linkedFinanceIds",
+      }),
+    );
   });
 });

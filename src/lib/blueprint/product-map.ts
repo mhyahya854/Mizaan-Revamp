@@ -152,19 +152,23 @@ export const productModules: ProductModule[] = [
     category: "workspace",
     status: "partial",
     route: "/trackers",
-    summary: "Habit and progress tracker pages using the current page workspace.",
-    currentTruth: "Generic tracker pages exist; check-in engine is future.",
-    nextPhase: "Trackers/goals foundation.",
+    summary:
+      "Provider-backed local tracker records with typed metadata, targets, frequency, check-ins, and relation IDs.",
+    currentTruth:
+      "Trackers route/list UI, typed tracker metadata, provider-backed creation, real local check-ins, search metadata, graph edges, templates, and detail metadata editing exist for the browser prototype. Streak engines, charts, reminders, native notifications, AI coaching, wearable imports, and medical tracking are future.",
+    nextPhase: "Tracker views and history after storage/index policy is stronger.",
   },
   {
     id: "goals",
     label: "Goals",
     category: "workspace",
-    status: "blueprint-only",
-    summary: "Future goal system linking projects, trackers, calendar, and notes.",
-    currentTruth: "No route or provider-backed goal model exists.",
-    futureReason: "Goal records need a typed model and route before actions can be shown.",
-    nextPhase: "Trackers/goals foundation.",
+    status: "partial",
+    route: "/goals",
+    summary:
+      "Provider-backed local goal records with typed metadata, progress fields, target dates, priorities, and relation IDs.",
+    currentTruth:
+      "Goals route/list UI, typed goal metadata, provider-backed creation, search metadata, graph edges including tracker links, templates, and detail metadata editing exist for the browser prototype. Progress history, charts, reminders, notifications, AI coaching, cloud sync, and mobile capture are future.",
+    nextPhase: "Goal views and progress history after storage/index policy is stronger.",
   },
   {
     id: "custom-pages",

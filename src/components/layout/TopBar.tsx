@@ -13,6 +13,7 @@ const labels: Record<string, string> = {
   "/finance": "Finance",
   "/calendar": "Calendar",
   "/trackers": "Trackers",
+  "/goals": "Goals",
   "/templates": "Templates",
   "/graph": "Graph",
   "/page": "Page",

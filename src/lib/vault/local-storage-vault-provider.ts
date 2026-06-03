@@ -19,6 +19,7 @@ import type {
   VaultSnapshot,
 } from "./types";
 import { createDefaultFinanceMetadata } from "../finance/finance-record";
+import { createDefaultTrackerMetadata } from "../trackers/tracker-record";
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -52,6 +53,7 @@ const CATEGORY_ICON: Record<string, string> = {
   finance: "$",
   calendar: "C",
   trackers: "T",
+  goals: "G",
   databases: "#",
   templates: "*",
 };
@@ -127,7 +129,7 @@ function createSeedState(now: string): ProviderState {
     seed.blocks.push({ ...input, createdAt: now, updatedAt: now });
   };
 
-  // Seed the 7 promoted space pages
+  // Seed the promoted space pages
   makeItem({
     id: "space-notes",
     type: "note",
@@ -243,6 +245,26 @@ function createSeedState(now: string): ProviderState {
       promotedAsSpace: true,
       itemRole: "space",
       spaceTemplateId: "trackers-space",
+      sidebarPinned: true,
+      sidebarOrder: 6,
+    },
+  });
+
+  makeItem({
+    id: "space-goals",
+    type: "goal",
+    category: "goals",
+    title: "Goals",
+    icon: "G",
+    summary: "Goal records that link projects, trackers, people, documents, and finance metadata.",
+    status: "Active",
+    tags: [],
+    properties: { status: "Active" },
+    attachedFiles: [],
+    metadata: {
+      promotedAsSpace: true,
+      itemRole: "space",
+      spaceTemplateId: "goals-space",
       sidebarPinned: true,
       sidebarOrder: 7,
     },
@@ -369,13 +391,28 @@ function createSeedState(now: string): ProviderState {
     category: "trackers",
     title: "Study Tracker",
     icon: "T",
-    summary: "Prototype tracker page.",
+    summary: "Local tracker metadata record.",
     status: "Active",
-    tags: ["study"],
+    tags: ["tracker", "study"],
     parentId: "space-trackers",
-    properties: { streak: 0 },
+    properties: {
+      trackerType: "Study",
+      status: "Active",
+      frequency: "Weekly",
+      targetValue: 300,
+      currentValue: null,
+      unit: "minutes",
+    },
     attachedFiles: [],
-    metadata: {},
+    metadata: createDefaultTrackerMetadata({
+      trackerTitle: "Study Tracker",
+      trackerType: "study",
+      trackerStatus: "active",
+      frequency: "weekly",
+      targetValue: 300,
+      unit: "minutes",
+      tags: ["tracker", "study"],
+    }),
   });
 
   [
@@ -794,6 +831,15 @@ export class LocalStorageVaultProvider implements VaultProvider {
         templateId: "trackers-space",
         type: "tracker",
       },
+      {
+        id: "space-goals",
+        category: "goals",
+        title: "Goals",
+        icon: "G",
+        order: 7,
+        templateId: "goals-space",
+        type: "goal",
+      },
     ];
 
     const legacyCalendarSpace = state.items.find(
@@ -836,6 +882,32 @@ export class LocalStorageVaultProvider implements VaultProvider {
           createdAt: timestamp,
           updatedAt: timestamp,
         });
+        didChange = true;
+      }
+    }
+
+    for (const item of state.items) {
+      if (
+        item.category === "trackers" &&
+        item.type === "tracker" &&
+        item.metadata?.promotedAsSpace !== true
+      ) {
+        const legacyStreak = item.properties?.streak;
+        item.metadata = createDefaultTrackerMetadata({
+          trackerTitle: item.title,
+          trackerStatus: item.status,
+          tags: item.tags,
+          ...item.metadata,
+          legacyStreakValue:
+            legacyStreak !== undefined && item.metadata.legacyStreakValue === undefined
+              ? legacyStreak
+              : item.metadata.legacyStreakValue,
+        });
+        if (legacyStreak !== undefined) {
+          const properties = { ...item.properties };
+          delete properties.streak;
+          item.properties = properties;
+        }
         didChange = true;
       }
     }

@@ -20,6 +20,7 @@ const DESCRIPTIONS: Record<ItemCategory, string> = {
   finance: "Local finance records without bank sync, payment APIs, or online connections.",
   calendar: "Local calendar/event records. Full calendar engine and reminders are later phases.",
   trackers: "Habit and progress tracker pages. Full tracker engine is later.",
+  goals: "Provider-backed local goal records. Reminders, coaching, and progress history are later.",
   databases: "Editable local table pages. Formulas, rollups, charts, and advanced views are later.",
   templates: "Page creation blueprints that create real local prototype items.",
 };
@@ -168,6 +169,7 @@ function singularLabel(category: ItemCategory) {
     finance: "finance record",
     calendar: "event",
     trackers: "tracker",
+    goals: "goal",
     databases: "database",
     templates: "template",
   };

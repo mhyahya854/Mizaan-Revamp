@@ -82,4 +82,21 @@ describe("productModules", () => {
     expect(backups?.futureReason).toContain("Native backups");
     expect(exportsModule?.currentTruth).toContain("Browser archive JSON export exists");
   });
+
+  it("reports trackers and goals as bounded local foundations", () => {
+    const trackers = productModules.find((module) => module.id === "trackers");
+    const goals = productModules.find((module) => module.id === "goals");
+
+    expect(trackers?.status).toBe("partial");
+    expect(trackers?.route).toBe("/trackers");
+    expect(trackers?.currentTruth).toContain("typed tracker metadata");
+    expect(trackers?.currentTruth).toContain("native notifications");
+    expect(trackers?.currentTruth).toContain("future");
+
+    expect(goals?.status).toBe("partial");
+    expect(goals?.route).toBe("/goals");
+    expect(goals?.currentTruth).toContain("typed goal metadata");
+    expect(goals?.currentTruth).toContain("cloud sync");
+    expect(goals?.currentTruth).toContain("future");
+  });
 });

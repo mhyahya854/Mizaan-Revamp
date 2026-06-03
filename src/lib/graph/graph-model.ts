@@ -5,6 +5,11 @@ import {
   normalizeFinanceMetadataForItem,
 } from "../finance/finance-record";
 import {
+  getGoalGraphTargets,
+  isGoalRecordItem,
+  normalizeGoalMetadataForItem,
+} from "../goals/goal-record";
+import {
   getInteractionGraphTargets,
   isInteractionRecordItem,
   normalizeInteractionMetadataForItem,
@@ -24,6 +29,11 @@ import {
   isTaskRecordItem,
   normalizeTaskMetadataForItem,
 } from "../tasks/task-record";
+import {
+  getTrackerGraphTargets,
+  isTrackerRecordItem,
+  normalizeTrackerMetadataForItem,
+} from "../trackers/tracker-record";
 import type { ItemCategory, ItemType, MizaanItem, MizaanRelation } from "../vault/types";
 
 export type GraphNodeType =
@@ -53,6 +63,7 @@ export type GraphEdgeType =
   | "person-link"
   | "finance-link"
   | "calendar-link"
+  | "tracker-link"
   | "goal-link"
   | "parent-child"
   | "template-created"
@@ -126,6 +137,7 @@ const GRAPH_NODE_BY_TYPE: Partial<Record<ItemType, GraphNodeType>> = {
   calendar: "calendar",
   task: "task",
   tracker: "tracker",
+  goal: "goal",
   database: "database",
   "database-row": "database",
   template: "template",
@@ -140,6 +152,7 @@ const GRAPH_NODE_BY_CATEGORY: Partial<Record<ItemCategory, GraphNodeType>> = {
   calendar: "calendar",
   tasks: "task",
   trackers: "tracker",
+  goals: "goal",
   databases: "database",
   templates: "template",
 };
@@ -357,6 +370,42 @@ function buildEdges(
         bidirectional: false,
         metadata: {
           relationSource: "finance-metadata",
+        },
+      });
+    }
+  }
+
+  for (const trackerItem of items.filter(isTrackerRecordItem)) {
+    const metadata = normalizeTrackerMetadataForItem(trackerItem);
+    for (const target of getTrackerGraphTargets(metadata)) {
+      addEdge({
+        sourceId: trackerItem.id,
+        targetId: target.targetId,
+        type: target.edgeType,
+        label: target.label,
+        strength: 1,
+        sourceField: target.sourceField,
+        bidirectional: false,
+        metadata: {
+          relationSource: "tracker-metadata",
+        },
+      });
+    }
+  }
+
+  for (const goalItem of items.filter(isGoalRecordItem)) {
+    const metadata = normalizeGoalMetadataForItem(goalItem);
+    for (const target of getGoalGraphTargets(metadata)) {
+      addEdge({
+        sourceId: goalItem.id,
+        targetId: target.targetId,
+        type: target.edgeType,
+        label: target.label,
+        strength: 1,
+        sourceField: target.sourceField,
+        bidirectional: false,
+        metadata: {
+          relationSource: "goal-metadata",
         },
       });
     }

@@ -7,6 +7,7 @@ export type ItemCategory =
   | "finance"
   | "calendar"
   | "trackers"
+  | "goals"
   | "databases"
   | "templates";
 
@@ -20,6 +21,7 @@ export type ItemType =
   | "finance"
   | "calendar"
   | "tracker"
+  | "goal"
   | "database"
   | "database-row"
   | "template";

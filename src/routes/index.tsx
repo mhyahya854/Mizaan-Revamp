@@ -311,6 +311,7 @@ function labelFor(category: ItemCategory) {
     finance: "Finance",
     calendar: "Calendar",
     trackers: "Trackers",
+    goals: "Goals",
     databases: "Databases",
     templates: "Templates",
   };
