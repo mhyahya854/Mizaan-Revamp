@@ -80,7 +80,7 @@ Current module truth:
 - Sidebar: [PARTIAL] - core navigation, pinned pages, page tree, system tools, pin/unpin, duplicate, trash, and child creation exist.
 - Search: [PARTIAL] - provider-backed title, summary, status, category, type, tag, property, metadata, and block search exist with filters, including project/task, people/interaction, and finance metadata; saved searches and native indexes do not.
 - Databases/Tables: [PARTIAL] - basic provider-backed table model, row/column/cell editing, stats, empty states, validation helper, and tests exist; full database engine does not.
-- Calendar: [PARTIAL] - local calendar module, event model helpers, views, CRUD flow, and tests exist; recurrence, reminders, ICS, native notifications, and sync do not.
+- Calendar: [PARTIAL / IMPLEMENTED FOUNDATION] - local calendar module, typed event metadata helper, views, CRUD flow, Calendar detail metadata panel, relation IDs, template/command-palette creation, search metadata, graph edges, and tests exist; recurrence, reminders, ICS, native notifications, encrypted private calendar, app lock, and sync do not.
 - Documents: [PARTIAL] - metadata-only document records now have typed helpers, provider-backed creation, route/list UI, detail metadata editing, template defaults, metadata search coverage, relation-id normalization helpers, tests, and browser QA. Real filesystem import, preview, OCR, thumbnails, duplicate detection, SQLite/native storage, and vault-file attachment remain not implemented.
 - Projects: [PARTIAL] - typed project metadata helper, provider-backed project record creation, dedicated projects route/list, project detail metadata panel, linked task summary, project/task templates, metadata search, and project/task graph edges are implemented for the browser prototype. Full project management, kanban, timeline/Gantt, milestones, dependencies, reminders, calendar scheduling, dashboards, SQLite/native storage, and team/collaboration remain not implemented.
 - Tasks: [PARTIAL] - typed task metadata helper, provider-backed task record creation, project-linked task creation/editing, task detail metadata panel, metadata search, template defaults, and graph edges are implemented for the browser prototype. There is no dedicated `/tasks` route, task database, recurring task engine, reminder engine, native notification path, dependency engine, mobile capture, or calendar-linked scheduling.
@@ -194,7 +194,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Core | Search | [PARTIAL] | Route exists | Search helper | localStorage prototype | Unit tests exist | No saved searches or extracted document text | Search metadata expansion |
 | Core | Databases | [PARTIAL] | Route and table page exist | Database metadata helper | localStorage prototype | Unit and browser QA exist | No filters/sorts/views/formulas/rollups | Database views and filters |
 | Core | Graph | [PARTIAL] | Filterable route and local focus foundation | Provider items, relations, document metadata arrays, parentId hierarchy | localStorage prototype | Graph helper tests and browser QA | No backlink index/wiki links/manual canvas/export | Graph search/canvas later |
-| Core | Calendar | [PARTIAL] | Route exists | Calendar helper | localStorage prototype | Unit and browser QA exist | No recurrence/reminders/ICS | Calendar completion |
+| Core | Calendar | [PARTIAL / IMPLEMENTED FOUNDATION] | Route exists with provider-backed events | Typed calendar event helper | localStorage prototype | Helper, graph, and search tests added; browser QA attempted | No recurrence/reminders/ICS/native notifications/sync | Template expansion or version history |
 | System | Templates | [PARTIAL] | Template picker and route exist | Template definitions | provider-backed creations | Page template tests exist | No template editor | Templates expansion |
 | System | Vault | [PARTIAL] | Route exists with provider truth and browser archive controls | Provider info/health plus archive helper model | localStorage prototype | Provider and archive tests exist | No portable folder/SQLite/native/encrypted backup | Native readiness after archive hardening |
 | System | Trash | [PARTIAL] | Route exists | deletedAt records | localStorage prototype | Limited | No retention/permanent deletion policy | Repair/recovery center |
@@ -254,13 +254,13 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Databases | Rollups | [NOT STARTED] | Not visible | Not modeled | None | None | Needs relations and formulas | Later database phase |
 | Databases | Formulas | [NOT STARTED] | Not visible | Not modeled | None | None | Needs expression engine | Later database phase |
 | Databases | CSV import/export | [NOT STARTED] | Not visible | Not modeled | None | None | Needs import/export manager | Import/export manager |
-| Calendar | Month | [PARTIAL] | Works | Calendar helper | localStorage prototype | Tests | Needs more QA | Calendar completion |
-| Calendar | Week | [PARTIAL] | Works | Calendar helper | localStorage prototype | Tests | Needs polish | Calendar completion |
-| Calendar | Day | [PARTIAL] | Works | Calendar helper | localStorage prototype | Tests | Needs polish | Calendar completion |
-| Calendar | Agenda | [PARTIAL] | Works | Calendar helper | localStorage prototype | Tests | Needs polish | Calendar completion |
-| Calendar | Event create/edit/delete | [PARTIAL] | Works in prototype | Calendar helper/item records | localStorage prototype | Tests and QA | No recurrence/reminders | Calendar completion |
-| Calendar | All-day | [PARTIAL] | Basic field | Calendar helper | localStorage prototype | Tests | Needs more UI | Calendar completion |
-| Calendar | Timed | [PARTIAL] | Basic field | Calendar helper | localStorage prototype | Tests | Needs more UI | Calendar completion |
+| Calendar | Month | [IMPLEMENTED FOUNDATION] | Works with provider-backed events | Calendar helper | localStorage prototype | Helper tests and browser QA screenshots | No final native calendar engine | Later scheduling/native phase |
+| Calendar | Week | [IMPLEMENTED FOUNDATION] | Shows provider-backed events | Calendar helper | localStorage prototype | Helper tests and browser QA screenshots | No drag/resize scheduling | Later scheduling/native phase |
+| Calendar | Day | [IMPLEMENTED FOUNDATION] | Shows provider-backed all-day/timed events | Calendar helper | localStorage prototype | Helper tests and browser QA screenshots | No drag/resize scheduling | Later scheduling/native phase |
+| Calendar | Agenda | [IMPLEMENTED FOUNDATION] | Shows provider-backed event list | Calendar helper | localStorage prototype | Helper tests and browser QA screenshots | No saved agenda filters | Later scheduling/native phase |
+| Calendar | Event create/edit/delete | [IMPLEMENTED FOUNDATION] | Create/edit works in prototype; move-to-trash exists | Typed Calendar helper/item records | localStorage prototype | Helper tests, full validation, and browser QA | No recurrence/reminders/native notifications; delete proof limited to existing move-to-trash behavior | Later scheduling phase |
+| Calendar | All-day | [IMPLEMENTED FOUNDATION] | Route edit toggles all-day state | Typed Calendar helper | localStorage prototype | Tests and browser QA | No recurrence rules | Later scheduling phase |
+| Calendar | Timed | [IMPLEMENTED FOUNDATION] | Route creation creates timed event defaults | Typed Calendar helper | localStorage prototype | Tests and browser QA | Native date/time automation was limited during browser QA; no drag/resize scheduling | Later scheduling phase |
 | Calendar | Recurrence | [NOT STARTED] | Not visible as working | Not modeled | None | None | Requires recurrence rules | Later calendar phase |
 | Calendar | Reminders | [FUTURE NATIVE] | Not visible | Not modeled | None | None | Needs native notifications | Native Windows readiness |
 | Calendar | Task links | [PARTIAL] | Metadata relations can reference calendar ids | Relations/task metadata | localStorage prototype | Helper tests | No calendar-linked scheduling, reminders, recurrence, or native notifications | Later calendar/task scheduling phase |
@@ -1098,13 +1098,13 @@ Mizaan-specific differentiation:
 
 ### Calendar Event Model
 
-- Current status: [PARTIAL]
-- Proposed fields: title, date, time, all-day flag, status, calendar type, notes.
-- Storage now: calendar item properties/metadata.
+- Current status: [IMPLEMENTED FOUNDATION]
+- Implemented fields now: event title, event type, event status, start/end date, start/end time, all-day flag, location, notes, linked project/task/person/document/finance ids, metadata-only private/sensitive flags, and explicit false flags for recurrence/reminder/native-notification engines.
+- Storage now: provider-backed calendar item properties/metadata in the browser/localStorage prototype.
 - Storage later: SQLite event table plus mirror.
-- Validation rules: valid dates/times and safe fallbacks.
+- Validation rules: normalize invalid enums, valid date/time strings, safe fallbacks, relation-id dedupe, metadata preservation, and explicit invalid-range detection.
 - Migration notes: existing calendar records must remain openable.
-- Test requirements: calendar event tests.
+- Test requirements: calendar event tests, legacy calendar-events compatibility tests, search metadata tests, graph edge tests, serial full test suite, and browser route QA.
 
 ### Person/Contact Model
 
@@ -1253,18 +1253,18 @@ Mizaan-specific differentiation:
 
 ### Phase D - Calendar completion
 
-- Goal: finish local calendar event behavior short of recurrence/reminders.
+- Goal: finish local calendar event foundation short of recurrence/reminders.
 - Why now: calendar is core and already partial.
 - Preconditions: stable provider/event helpers.
-- Implementation tasks: day/week polish, all-day/timed behavior, delete/archive, route QA.
-- Files likely touched: calendar helpers/tests and view.
-- Tests required: event model, date navigation, persistence.
-- Browser QA required: create/edit/delete/refresh.
-- Screenshots required: month/week/day/agenda.
-- Documentation required: blueprint and reports.
-- Done criteria: local event management is verified.
-- What not to implement: reminders, recurrence, ICS, sync.
-- Next phase: Database views and filters.
+- Implementation tasks: [IMPLEMENTED FOUNDATION] typed event model, day/week/month/agenda proof, all-day/timed behavior, status/type normalization, Calendar detail metadata panel, graph/search/template/command-palette integration, route QA, screenshots, docs, and serial validation hardening.
+- Files touched: calendar helpers/tests, Calendar view, Calendar metadata panel, graph/search/template/command-palette integrations, package test script, serial Vitest wrapper, PRD/Blueprint/master append/phase report/fallback work log.
+- Tests required: [IMPLEMENTED] event model, legacy calendar compatibility, graph edges, search metadata, full serial Vitest suite, typecheck, lint, build, red scans, and browser route QA.
+- Browser QA required: [PARTIAL BUT ACCEPTED WITH LIMITS] route sweep passed; create/edit/refresh/month/week/day/agenda passed; native date/time direct field entry, search-input proof, and graph-relation browser proof were limited by browser-control tooling and are covered by tests plus route-level QA.
+- Screenshots required: [IMPLEMENTED] route sweep plus Calendar new event, edited event, day/week/agenda, and persistence proof screenshots.
+- Documentation required: [IMPLEMENTED] PRD, Blueprint, append-only master Markdown, phase report, and fallback work log because the DOCX remains structurally unparsable.
+- Done criteria: [IMPLEMENTED FOUNDATION] local event management is verified for the browser/localStorage prototype; overall Calendar remains [PARTIAL] until recurrence, reminders, native notifications, sync, ICS, and privacy enforcement exist.
+- What not to implement: reminders, recurrence, ICS, Google Calendar sync, cloud sync, native notifications, encrypted private calendar, app lock, Tauri, SQLite, native filesystem, or portable vault folders.
+- Next phase: Template Expansion and Template QA.
 
 ### Phase E - Database views and filters
 

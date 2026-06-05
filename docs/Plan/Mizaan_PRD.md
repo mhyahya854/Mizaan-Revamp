@@ -44,7 +44,7 @@ There is no cloud/account dependency in the current product law or implementatio
 | Finance | Partial | Typed local finance records, route/list, detail panel, amount/currency/date/status normalization, summaries, templates, search, and graph edges exist. No bank sync/import, payment APIs, tax/accounting, OCR, or reminders. |
 | Persistence/export/restore hardening | Implemented for browser archive | JSON archive helpers, validation, restore preview, safe merge, explicit-confirmation replace, corruption tests, metadata round-trip, and Settings/Vault UI exist for current provider data. |
 | Trackers/goals | Partial | Typed tracker and goal metadata, routes, creation, check-ins/progress fields, detail panels, templates, search, and graph edges exist. No charts, fake streak engine, reminders, notifications, AI coaching, wearable import, or medical claims. |
-| Calendar | Partial | Core local calendar module, event helpers, views, CRUD, and tests exist. No recurrence, reminders, ICS import/export, native notifications, or sync. |
+| Calendar | Partial / implemented foundation | Core local calendar module, typed event metadata helper, provider-backed views/CRUD, Calendar detail metadata panel, relation IDs, template/command-palette creation, search metadata, graph edges, and tests exist. No recurrence, reminders, ICS import/export, native notifications, encrypted private calendar, app lock, or sync. |
 | Templates | Partial | Built-in templates create real provider-backed records for current modules. No template editor or template management system. |
 | Vault | Partial | Provider status, health counts, capability truth, and browser archive controls exist. No portable folder, SQLite, Tauri filesystem, lock file, markdown mirrors, native backup, or encrypted backup. |
 | Import/Export Manager | Partial | `/import-export` exists with browser archive JSON support, current capability truth, future-only unsupported formats, and the shared archive panel for export, paste/load, validate, preview, safe merge, and guarded replace. No native file/folder import or markdown/CSV/PDF export. |
@@ -240,15 +240,15 @@ Each module below must be implemented through provider-backed data, tested helpe
 
 - Purpose: local time module.
 - User stories: create local events, view by month/week/day/agenda, link future tasks/goals.
-- Current status: partial.
-- Required data model: calendar event metadata.
-- Required UI: calendar route and views.
+- Current status: implemented browser/localStorage foundation; overall Calendar remains partial.
+- Required data model: typed calendar event metadata with event type, status, dates, times, location, notes, relation IDs, and metadata-only private/sensitive flags.
+- Required UI: calendar route and views plus Calendar event metadata panel for page context.
 - Required persistence: provider-backed calendar items.
-- Required graph/search/template integration: search event metadata; graph links when relation IDs exist.
-- Success criteria: event CRUD persists and Calendar remains a core module.
-- Test criteria: calendar helper/view tests.
-- Browser QA criteria: create/edit/delete/refresh event.
-- Limitations: no recurrence, ICS, reminders, notifications, sync.
+- Required graph/search/template integration: search event metadata; graph links when relation IDs exist; templates and command palette create provider-backed Calendar event records.
+- Success criteria: event CRUD persists, Calendar remains a core module, typed metadata normalizes safely, and unsupported scheduling/reminder/sync features remain honest future work.
+- Test criteria: calendar helper/view tests, graph edge tests, search metadata tests, serial `npm test`, full validation, and red scans.
+- Browser QA criteria: route sweep, Calendar create/edit/refresh persistence, month/week/day/agenda visibility, screenshot proof, console inspection when tooling supports it, and honest limitation notes for any browser-control gaps.
+- Limitations: the route modal covers compact event creation/editing while richer relation/privacy/location metadata is handled on Calendar event pages; no recurrence, ICS, reminders, native notifications, Google Calendar sync, cloud sync, encrypted private calendar, or app lock.
 
 ### Templates
 
@@ -504,7 +504,7 @@ A feature fails if:
 
 1. Repair/Recovery Center Foundation - completed as a browser-prototype foundation.
 2. Import/Export Manager Foundation - completed as a browser archive manager foundation.
-3. Calendar completion.
+3. Calendar completion - completed as a browser/localStorage foundation; overall Calendar remains partial until scheduling/native/privacy systems exist.
 4. Template expansion.
 5. Version history.
 6. Privacy/app lock UX.
@@ -579,6 +579,7 @@ Limitations:
 - These scripts are workflow helpers, not product features.
 - They do not implement native storage, SQLite, Tauri, portable vault folders, encryption, app lock, mobile, cloud, auth, backend, or sync.
 - Browser QA still depends on local dev tooling and available Chrome/Edge headless support.
+- In-app browser control can still fail on some native inputs or clipboard-backed field fills; fall back to route-level helper evidence plus targeted tests when that happens and document the exact gap.
 - DOCX visual render still depends on an available document renderer.
 - Script success does not prove a feature is complete unless the PRD, tests, UI, provider persistence, docs, and browser QA criteria also pass.
 

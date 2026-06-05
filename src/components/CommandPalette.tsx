@@ -92,6 +92,12 @@ const createActions: Array<{
     templateId: "finance-record",
   },
   {
+    title: "New calendar event",
+    sub: "Create a provider-backed local calendar event",
+    icon: Calendar,
+    templateId: "calendar-event",
+  },
+  {
     title: "New tracker",
     sub: "Create a local tracker metadata record",
     icon: Target,

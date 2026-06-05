@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { MizaanBlock, MizaanItem, VaultSnapshot } from "../vault/types";
+import { createCalendarEventRecordInput } from "../calendar/calendar-event";
 import { createFinanceRecordInput } from "../finance/finance-record";
 import { createGoalRecordInput } from "../goals/goal-record";
 import { createInteractionRecordInput } from "../people/interaction-record";
@@ -290,6 +291,36 @@ describe("search index", () => {
     expect(
       buildSearchResults(data, { query: "2026-06-02" }).map((result) => result.item.id),
     ).toEqual(["finance-1"]);
+  });
+
+  it("finds calendar metadata through existing metadata indexing", () => {
+    const calendarInput = createCalendarEventRecordInput({
+      title: "Library finance review",
+      type: "finance",
+      status: "confirmed",
+      startDate: "2026-06-10",
+      startTime: "08:30",
+      location: "Campus library",
+      notes: "Bring budget document",
+    });
+    const data = snapshot([
+      item({
+        id: "calendar-1",
+        title: calendarInput.title,
+        category: calendarInput.category,
+        type: calendarInput.type,
+        status: calendarInput.status,
+        properties: calendarInput.properties,
+        metadata: calendarInput.metadata,
+      }),
+    ]);
+
+    expect(
+      buildSearchResults(data, { query: "Campus library" }).map((result) => result.item.id),
+    ).toEqual(["calendar-1"]);
+    expect(
+      buildSearchResults(data, { query: "2026-06-10" }).map((result) => result.item.id),
+    ).toEqual(["calendar-1"]);
   });
 
   it("finds tracker and goal metadata through existing metadata indexing", () => {

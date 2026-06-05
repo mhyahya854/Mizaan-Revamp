@@ -6,6 +6,7 @@ import {
   getGraphNodeType,
   type GraphEdgeType,
 } from "./graph-model";
+import { createDefaultCalendarEventMetadata } from "../calendar/calendar-event";
 import { createDefaultGoalMetadata } from "../goals/goal-record";
 import { createDefaultTrackerMetadata } from "../trackers/tracker-record";
 import type { ItemCategory, ItemType, MizaanItem, MizaanRelation } from "../vault/types";
@@ -543,6 +544,65 @@ describe("graph model", () => {
       expect.objectContaining({
         id: "finance-1->calendar-1:calendar-link",
         sourceField: "linkedCalendarEventIds",
+      }),
+    );
+  });
+
+  it("creates calendar metadata edges to projects, tasks, people, documents, and finance records", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("calendar-1", {
+          category: "calendar",
+          type: "calendar",
+          metadata: createDefaultCalendarEventMetadata({
+            linkedProjectIds: ["project-1"],
+            linkedTaskIds: ["task-1"],
+            linkedPersonIds: ["person-1"],
+            linkedDocumentIds: ["doc-1"],
+            linkedFinanceIds: ["finance-1"],
+          }),
+        }),
+        item("project-1", { category: "projects", type: "project" }),
+        item("task-1", { category: "tasks", type: "task" }),
+        item("person-1", { category: "people", type: "person" }),
+        item("doc-1", { category: "documents", type: "document" }),
+        item("finance-1", { category: "finance", type: "finance" }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "calendar-1->project-1:project-link",
+        sourceId: "calendar-1",
+        targetId: "project-1",
+        type: "project-link",
+        sourceField: "linkedProjectIds",
+        metadata: expect.objectContaining({ relationSource: "calendar-metadata" }),
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "calendar-1->task-1:task-link",
+        sourceField: "linkedTaskIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "calendar-1->person-1:person-link",
+        sourceField: "linkedPersonIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "calendar-1->doc-1:document-link",
+        sourceField: "linkedDocumentIds",
+      }),
+    );
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        id: "calendar-1->finance-1:finance-link",
+        sourceField: "linkedFinanceIds",
       }),
     );
   });

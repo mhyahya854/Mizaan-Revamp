@@ -9,7 +9,7 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "powershell -ExecutionPolicy Bypass -File scripts/run-vitest-serial.ps1",
     "lint": "eslint .",
     "format": "prettier --write .",
     "mizaan:preflight": "powershell -ExecutionPolicy Bypass -File scripts/mizaan-preflight.ps1",

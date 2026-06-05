@@ -10,6 +10,7 @@ import type {
   VaultProvider,
   VaultSnapshot,
 } from "../vault/types";
+import { createDefaultCalendarEventMetadata } from "../calendar/calendar-event";
 import {
   createDefaultDatabaseModel,
   normalizeDatabaseModel,
@@ -827,9 +828,19 @@ const TEMPLATES: TemplateDefinition[] = [
     title: "Event - Untitled",
     summary: "Local calendar event record.",
     tags: ["event"],
-    properties: { status: "Scheduled", date: "" },
+    properties: { status: "Planned", date: "", startDate: "", endDate: "", allDay: true },
+    metadata: createDefaultCalendarEventMetadata({
+      eventTitle: "Event - Untitled",
+      eventType: "event",
+      eventStatus: "planned",
+    }),
     blocks: [
       { type: "heading1", content: "Event notes" },
+      {
+        type: "callout",
+        content:
+          "This is a local calendar event record. Recurrence, reminders, native notifications, Google Calendar, ICS, and sync are not implemented.",
+      },
       { type: "paragraph", content: "" },
     ],
   },
@@ -1130,6 +1141,10 @@ function createTemplateMetadata(
 
   if (category === "finance" && type === "finance") {
     return updateFinanceMetadata({ financeTitle: title, ...base }, { financeTitle: title });
+  }
+
+  if (category === "calendar" && type === "calendar") {
+    return createDefaultCalendarEventMetadata({ eventTitle: title, ...base });
   }
 
   if (category === "trackers" && type === "tracker") {

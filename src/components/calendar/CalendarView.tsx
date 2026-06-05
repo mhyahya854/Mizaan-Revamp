@@ -29,8 +29,20 @@ import { useVaultProvider, useVaultSnapshot } from "@/lib/vault/use-vault";
 import type { MizaanItem } from "@/lib/vault/types";
 import { cn } from "@/lib/utils";
 
-const TAG_OPTIONS = ["review", "work", "personal", "finance", "other"];
-const STATUS_OPTIONS = ["Scheduled", "In progress", "Completed"];
+const TAG_OPTIONS = [
+  "event",
+  "task-deadline",
+  "project-milestone",
+  "bill-due",
+  "appointment",
+  "class",
+  "study",
+  "personal",
+  "finance",
+  "reminder-note",
+  "unknown",
+];
+const STATUS_OPTIONS = ["Planned", "Confirmed", "Tentative", "Completed", "Cancelled", "Archived"];
 const DAY_HOURS = Array.from({ length: 14 }, (_, index) => 7 + index);
 
 export function CalendarView() {
@@ -48,8 +60,8 @@ export function CalendarView() {
   const [formStartTime, setFormStartTime] = useState("09:00");
   const [formEndTime, setFormEndTime] = useState("10:00");
   const [formSummary, setFormSummary] = useState("");
-  const [formTag, setFormTag] = useState("other");
-  const [formStatus, setFormStatus] = useState("Scheduled");
+  const [formTag, setFormTag] = useState("event");
+  const [formStatus, setFormStatus] = useState("Planned");
   const [formAllDay, setFormAllDay] = useState(false);
 
   const events = useMemo(() => filterActiveCalendarEvents(snapshot.items), [snapshot.items]);
@@ -88,8 +100,8 @@ export function CalendarView() {
     setFormStartTime(startTime || "09:00");
     setFormEndTime(startTime ? nextHourLabel(startTime) : "10:00");
     setFormSummary("");
-    setFormTag("other");
-    setFormStatus("Scheduled");
+    setFormTag("event");
+    setFormStatus("Planned");
     setFormAllDay(false);
     setShowEventModal(true);
   }

@@ -21888,3 +21888,111 @@ Mizaan remains browser/localStorage-only. This phase did not implement Tauri, SQ
 
 Next recommended phase:
 Calendar Completion and Hardening using the new workflow system.
+
+## Append-Only Calendar Completion and Hardening Implementation - 2026-06-04
+
+Selected phase:
+Calendar Completion and Hardening.
+
+Original master Markdown proof:
+The original master Markdown at `docs\Plan\Mizaan_A_to_Z_Plan.md` was accessible before implementation.
+Before master plan hash: `6707E2CEF7353F8917E3C5950657FB0BF38E53A41E46CCD8EE27234B34D36C9B`.
+Before master plan length: `793903`.
+
+Why Calendar came next:
+The PRD, Product Blueprint, Next Phase Queue, and previous workflow acceleration phase all identified Calendar Completion and Hardening as the next bounded phase. Calendar was already a local core module but still lacked typed event metadata, Calendar-owned relation edges, template/command-palette creation, detail metadata editing, and stronger validation.
+
+Calendar Feature Opportunity Inventory summary:
+Safe features included typed event metadata, provider-backed creation/editing, move-to-trash deletion, cancel/archive status behavior, month/day/agenda hardening, all-day/timed normalization, date/time validation helpers, event type/status normalization, location, notes, metadata-only private/sensitive flags, linked project/task/person/document/finance IDs, search metadata, graph edges, templates, command-palette creation, empty states, and browser QA.
+
+Risky or future-only features excluded:
+Recurring event engine, reminder engine, native notifications, push notifications, Google Calendar sync, ICS import/export, cloud calendar sync, AI scheduling, mobile calendar capture, encrypted private Calendar, app lock, Tauri, SQLite, native filesystem, and portable vault folders remain not implemented.
+
+Code inspection summary:
+`src/routes/calendar.tsx` remained a thin route wrapper around `CalendarView`. `src/components/calendar/CalendarView.tsx` already supported provider-backed month/week/day/agenda views and modal CRUD. `src/lib/calendar/calendar-events.ts` had simple date/time helpers but no typed relation metadata. Search already indexed item metadata and properties. Graph already supported metadata edge passes for other modules but not Calendar-owned edges. Page templates and command palette creation existed but Calendar event template metadata was not normalized.
+
+Implementation summary:
+Added `src/lib/calendar/calendar-event.ts` with typed Calendar event metadata, default factory, normalization, update helper, provider-compatible record input, type/status normalization, relation ID dedupe, display/state helpers, date/month/agenda helpers, search metadata, graph targets, and range validation. `src/lib/calendar/calendar-events.ts` now re-exports the new helper for compatibility. Added Calendar helper tests, graph edge tests, and search metadata tests. Added `CalendarMetadataPanel` for Calendar event page context. Wired Calendar event template metadata and command-palette Calendar event creation. Added Calendar-owned graph edges to projects, tasks, people, documents, and finance records. Updated PRD, Product Blueprint, this master append, and the phase report.
+
+Implemented features:
+- Typed Calendar event metadata model.
+- Event type/status normalization.
+- All-day and timed event normalization.
+- Start/end date and time range validation helper.
+- Location and notes metadata.
+- Metadata-only private/sensitive flags.
+- linkedProjectIds, linkedTaskIds, linkedPersonIds, linkedDocumentIds, and linkedFinanceIds.
+- Search metadata coverage through existing metadata/property search.
+- Calendar-owned graph edges.
+- Calendar Event template metadata defaults.
+- Command palette Calendar event creation.
+- Calendar detail metadata panel.
+- Existing provider-backed Calendar route CRUD remains the route foundation.
+
+Partially implemented:
+- Calendar route modal still has the earlier compact create/edit controls; the new metadata panel provides the richer typed relation/privacy editing on Calendar event pages.
+- Browser QA and screenshot capture were still pending at the time of this append and are recorded in the phase report after final attempts.
+
+Validation during implementation:
+`npm run mizaan:preflight` passed. Baseline `npm run mizaan:verify:fast` passed. Baseline `npm run mizaan:red-scan` passed blocking checks. Baseline `npm run mizaan:verify:full` timed out in this environment. Decomposed baseline typecheck and lint passed before implementation; full `npm test` failed before implementation because Vitest worker startup timed out after 4 files and 18 passing tests; `npm run build` timed out in the same validation environment. After implementation, `npx tsc --noEmit --pretty false` passed. Focused Vitest and eslint commands timed out in the same Node process environment. Touched-path `git diff --check` passed with line-ending warnings only.
+
+Files changed:
+Calendar helper and tests, Calendar route helper compatibility module, Calendar metadata panel, PageRightPanel integration, page workspace templates, CommandPalette, graph model/tests, search index tests, PRD, Product Blueprint, phase report, and this append-only master plan.
+
+Remaining limitations:
+Mizaan remains a browser/localStorage prototype. Calendar is an implemented local foundation but overall Calendar remains partial. There is no recurring event engine, reminder engine, native notification path, push notification path, Google Calendar sync, ICS import/export, cloud calendar sync, automatic scheduling, AI scheduling, mobile calendar capture, encrypted private calendar, real app lock/privacy lock, SQLite, Tauri, native filesystem, or portable vault folder storage.
+
+Next recommended phase:
+Template Expansion and Template QA, because Calendar event creation now has typed template support and the next queue item can broaden verified provider-backed templates without native/cloud scope.
+
+## Append-Only Calendar Completion and Hardening Continuation Closeout - 2026-06-05
+
+Selected phase:
+Calendar Completion and Hardening continuation from the in-progress dirty worktree.
+
+Continuation rule:
+This continuation did not restart the phase, reset the repo, discard current work, remove the Calendar implementation, remove `vitest.config.ts`, or remove `scripts/run-vitest-serial.ps1`.
+
+Original master Markdown proof:
+The original master Markdown remained readable. This continuation captured the current pre-append master Markdown hash and length because the earlier session had already appended the first Calendar implementation section.
+Continuation before hash: `7EE07C52742AB85FC9414CAA71D80725E99A5BF33FAA83A91FD4619564A0ADCB`.
+Continuation before length: `799658`.
+The after hash/length and prefix-preservation proof for this continuation are recorded in `docs/Phases/phase-calendar-completion-hardening.md` after the append.
+
+Continuation recovery:
+The live repo was `E:\Github\Mizaan-Revamp` on branch `main`, with parity `main...origin/main = 0 0` before closeout work. The worktree already contained Calendar helper, UI, tests, docs, screenshots, `vitest.config.ts`, and the serial Vitest wrapper. The old phase report still recorded the previous stop as partial because validation and browser QA had earlier timed out.
+
+Validation environment hardening:
+The standard `npm test` path now runs through `scripts/run-vitest-serial.ps1`. The wrapper runs test files serially, retries worker-start timeouts, and forwards targeted test paths. The committed `vitest.config.ts` keeps unit tests on a minimal config instead of loading the full app config.
+
+Implementation summary:
+Calendar now has a typed event metadata helper, provider-compatible event input, metadata normalization, relation ID dedupe, display/state helpers, search metadata, graph target extraction, invalid-range detection, compatibility re-export, Calendar metadata panel, graph/search/template/command-palette integration, and normalized route filter values. The route modal remains a compact create/edit surface; richer relation/privacy/location metadata is available through Calendar event page metadata.
+
+Browser QA after work:
+`npm run mizaan:browser-qa` passed route checks and captured screenshots on `20260605-143540` for `/`, `/settings`, `/vault`, `/import-export`, `/repair`, `/finance`, `/people`, `/projects`, `/trackers`, `/goals`, `/graph`, `/search`, `/templates`, and `/calendar`.
+
+Interactive Calendar QA after work:
+The in-app Browser flow created a provider-backed Calendar event from the June month grid, edited title/type/status/notes, changed it from timed to all-day, verified it in month/week/day/agenda views, refreshed `/calendar`, and confirmed the edited event persisted. Browser console logs captured during the successful Calendar flow showed no relevant errors or warnings.
+
+Browser tooling limitations:
+Native date/time input automation did not accept direct ISO or segmented keyboard entry in the in-app Browser, so date proof used the Calendar grid create control and timed/all-day proof used default timed fields plus all-day toggling. Search input proof and graph relation browser proof were not completed after Browser virtual-clipboard and CDP timeout failures. Search metadata and Calendar-owned graph edges are covered by targeted unit tests, and `/search` plus `/graph` route reachability/screenshots are covered by the browser QA helper.
+
+Screenshots:
+`docs/screenshots/20260605-143540-browser-qa-calendar.png`
+`docs/screenshots/20260605-1441-calendar-new-event.png`
+`docs/screenshots/20260605-1442-calendar-event-edited.png`
+`docs/screenshots/20260605-1443-calendar-day-view.png`
+`docs/screenshots/20260605-1443-calendar-week-view.png`
+`docs/screenshots/20260605-1443-calendar-agenda-view.png`
+
+Validation after work:
+`npm run mizaan:preflight` passed. `npm run mizaan:red-scan` passed blocking checks. `npm run mizaan:verify:fast -- src/lib/calendar/calendar-event.test.ts` passed with typecheck, targeted Calendar tests, and fast red scan. `npm run mizaan:verify:full` passed with typecheck, lint, serial tests, build, diff check, and full red scan. Full serial Vitest ran 22 test files and 240 tests with 0 failed. Lint produced the known 10 Fast Refresh warnings and 0 errors. `git diff --check` passed with line-ending warnings only.
+
+DOCX / fallback:
+`docs/Plan/Mizaan Work Log.docx` still failed `python-docx` parsing with `XMLSyntaxError: xml namespace URI mapped to wrong prefix, line 5006, column 85`, and `word/document.xml` did not contain `Calendar Completion and Hardening`. The DOCX was preserved unchanged and `docs/Plan/Mizaan Work Log - fallback.md` was updated with the Calendar work-log entry.
+
+What remains deliberately not implemented:
+Recurring event engine, reminder engine, native notifications, push notifications, Google Calendar sync, ICS import/export, cloud calendar sync, automatic scheduling, AI scheduling, mobile calendar capture, encrypted private Calendar, app lock/privacy lock, Tauri, SQLite, native filesystem, and portable vault folders.
+
+Next recommended phase:
+Template Expansion and Template QA, because Calendar event template metadata now exists and template work can stay bounded to provider-backed browser/localStorage records without native/cloud scope.

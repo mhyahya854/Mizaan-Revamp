@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
+import { CalendarMetadataPanel } from "@/components/calendar/CalendarMetadataPanel";
 import { DocumentMetadataPanel } from "@/components/documents/DocumentMetadataPanel";
 import { FinanceMetadataPanel } from "@/components/finance/FinanceMetadataPanel";
 import { GoalMetadataPanel } from "@/components/goals/GoalMetadataPanel";
@@ -18,6 +19,7 @@ import { PageLinkedContext } from "./PageLinkedContext";
 import { isDocumentRecordItem } from "@/lib/documents/document-record";
 import { isFinanceRecordItem } from "@/lib/finance/finance-record";
 import { isGoalRecordItem } from "@/lib/goals/goal-record";
+import { isCalendarEventItem } from "@/lib/calendar/calendar-event";
 import { isInteractionRecordItem } from "@/lib/people/interaction-record";
 import { isPersonRecordItem } from "@/lib/people/person-record";
 import { isProjectRecordItem } from "@/lib/projects/project-record";
@@ -187,6 +189,9 @@ function PageDataPanel({
         <TrackerMetadataPanel item={model.item} provider={provider} />
       )}
       {isGoalRecordItem(model.item) && <GoalMetadataPanel item={model.item} provider={provider} />}
+      {isCalendarEventItem(model.item) && (
+        <CalendarMetadataPanel item={model.item} provider={provider} />
+      )}
       {/* 1. Basic */}
       <CollapsibleSection title="Basic" isOpenDefault={true}>
         <MetadataRow label="Type" value={model.properties.type} />

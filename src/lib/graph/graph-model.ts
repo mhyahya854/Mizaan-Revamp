@@ -1,3 +1,8 @@
+import {
+  getCalendarGraphTargets,
+  isCalendarEventItem,
+  normalizeCalendarMetadataForItem,
+} from "../calendar/calendar-event";
 import { normalizeDocumentMetadataForItem } from "../documents/document-record";
 import {
   getFinanceGraphTargets,
@@ -370,6 +375,24 @@ function buildEdges(
         bidirectional: false,
         metadata: {
           relationSource: "finance-metadata",
+        },
+      });
+    }
+  }
+
+  for (const calendarItem of items.filter(isCalendarEventItem)) {
+    const metadata = normalizeCalendarMetadataForItem(calendarItem);
+    for (const target of getCalendarGraphTargets(metadata)) {
+      addEdge({
+        sourceId: calendarItem.id,
+        targetId: target.targetId,
+        type: target.edgeType,
+        label: target.label,
+        strength: 1,
+        sourceField: target.sourceField,
+        bidirectional: false,
+        metadata: {
+          relationSource: "calendar-metadata",
         },
       });
     }
