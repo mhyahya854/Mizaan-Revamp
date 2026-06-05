@@ -45,7 +45,7 @@ There is no cloud/account dependency in the current product law or implementatio
 | Persistence/export/restore hardening | Implemented for browser archive | JSON archive helpers, validation, restore preview, safe merge, explicit-confirmation replace, corruption tests, metadata round-trip, and Settings/Vault UI exist for current provider data. |
 | Trackers/goals | Partial | Typed tracker and goal metadata, routes, creation, check-ins/progress fields, detail panels, templates, search, and graph edges exist. No charts, fake streak engine, reminders, notifications, AI coaching, wearable import, or medical claims. |
 | Calendar | Partial / implemented foundation | Core local calendar module, typed event metadata helper, provider-backed views/CRUD, Calendar detail metadata panel, relation IDs, template/command-palette creation, search metadata, graph edges, and tests exist. No recurrence, reminders, ICS import/export, native notifications, encrypted private calendar, app lock, or sync. |
-| Templates | Partial | Built-in templates create real provider-backed records for current modules. No template editor or template management system. |
+| Templates | Partial | A tested static template registry exposes implemented, partial, and future templates; `/templates` has search, category/status filters, counts, previews, and disabled future entries. Implemented templates create real provider-backed records for current modules. No template editor, custom template storage, version history, import/export, AI generation, or marketplace. |
 | Vault | Partial | Provider status, health counts, capability truth, and browser archive controls exist. No portable folder, SQLite, Tauri filesystem, lock file, markdown mirrors, native backup, or encrypted backup. |
 | Import/Export Manager | Partial | `/import-export` exists with browser archive JSON support, current capability truth, future-only unsupported formats, and the shared archive panel for export, paste/load, validate, preview, safe merge, and guarded replace. No native file/folder import or markdown/CSV/PDF export. |
 | Repair/Recovery Center | Partial | `/repair` exists with provider health summary, category counts, duplicate ID checks, orphan checks, invalid metadata-reference checks, issue/suggestion reporting, archive validation, restore preview, safe merge, and guarded replace. No automatic repair, migration rollback, native recovery, SQLite repair, or encrypted recovery. |
@@ -255,14 +255,14 @@ Each module below must be implemented through provider-backed data, tested helpe
 - Purpose: creation sources for provider-backed records.
 - User stories: create pages/records from templates without fake starter cards.
 - Current status: partial.
-- Required data model: template definitions and typed metadata defaults.
-- Required UI: template picker and templates route.
+- Required data model: static template registry with status/category fields, typed metadata defaults, safe starter blocks, preview data, and future-template guards.
+- Required UI: template picker and templates route with search, category/status filters, counts, preview, and disabled partial/future creation.
 - Required persistence: template outputs persist as provider items.
 - Required graph/search/template integration: output metadata searchable and graphable.
 - Success criteria: templates create real records only.
-- Test criteria: page-workspace template tests.
-- Browser QA criteria: create from representative templates and refresh.
-- Limitations: no template editor or library management.
+- Test criteria: page-workspace template tests plus template registry tests for uniqueness, status/category counts, metadata normalization, safe blocks, previews, future guards, and custom title propagation.
+- Browser QA criteria: route sweep, templates route screenshot, search/filter proof, future-template disabled proof, and representative create/refresh proof when browser automation can safely create records.
+- Limitations: no template editor, custom template storage, template library management, import/export, version history, AI generation, cloud marketplace, or sync.
 
 ### Vault
 
@@ -505,7 +505,7 @@ A feature fails if:
 1. Repair/Recovery Center Foundation - completed as a browser-prototype foundation.
 2. Import/Export Manager Foundation - completed as a browser archive manager foundation.
 3. Calendar completion - completed as a browser/localStorage foundation; overall Calendar remains partial until scheduling/native/privacy systems exist.
-4. Template expansion.
+4. Template expansion - completed as a browser-prototype static registry and `/templates` QA route; overall Templates remain partial until editor/management/user-template systems exist.
 5. Version history.
 6. Privacy/app lock UX.
 7. Native Windows readiness.

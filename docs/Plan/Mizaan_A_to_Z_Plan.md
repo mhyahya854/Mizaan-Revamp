@@ -21996,3 +21996,54 @@ Recurring event engine, reminder engine, native notifications, push notification
 
 Next recommended phase:
 Template Expansion and Template QA, because Calendar event template metadata now exists and template work can stay bounded to provider-backed browser/localStorage records without native/cloud scope.
+
+## Append-Only Template Expansion and Template QA Implementation - 2026-06-05
+
+This section records the bounded Template Expansion and Template QA phase. It was appended after the existing Calendar closeout content without rewriting historical master-plan text.
+
+Original master Markdown access gate:
+- File: `docs/Plan/Mizaan_A_to_Z_Plan.md`
+- Before hash: `BE025E69A21BCDD4698E2AAB9C19945F25AFA05ABC08AC6B63FEC7826689C26C`
+- Before length: `804989`
+- Before copy used for append-only proof: `C:\Users\mhyah\AppData\Local\Temp\mizaan-template-expansion-phase\before-master-plan.txt`
+
+Phase interpretation:
+Templates are creation sources for real provider-backed local records, not fake starter cards. The bounded implementation could safely expand static built-in templates, add a registry/status model, add template QA tests, and improve the `/templates` route. It could not honestly implement editable user templates, template import/export, AI generation, template marketplace, sync, native template packs, or template version history.
+
+Implementation summary:
+- Added `src/lib/templates/template-registry.ts` with implemented/partial/future status, category metadata, search text, preview derivation, status/category counts, safe starter block validation, metadata normalization, future guards, and provider-backed creation.
+- Added `src/lib/templates/template-registry.test.ts` with registry coverage for uniqueness, counts, search, safe starter blocks, provider-backed creation, typed metadata normalization, database/table honesty, partial/future rejection, previews, command-palette template IDs, forbidden capability flags, duplicate names, relation defaults, and caller-provided title propagation.
+- Expanded safe built-in templates for notes, documents, project/task records, finance records, tracker records, goal records, calendar event records, and database/table variants.
+- Updated `/templates` with search, category/status filters, counts, clear state, selected preview, metadata/properties/limitations display, enabled create action for implemented templates, and disabled create action for partial/future templates.
+- Updated `src/lib/blueprint/product-map.ts`, `docs/Plan/Mizaan_PRD.md`, `docs/Plan/Mizaan_Product_Blueprint.md`, `docs/Plan/Mizaan Work Log - fallback.md`, and `docs/Phases/phase-template-expansion-and-qa.md`.
+
+Validation evidence:
+- `npm run mizaan:preflight`: passed before implementation.
+- Baseline `npm run mizaan:verify:fast`: passed.
+- Baseline `npm run mizaan:red-scan`: passed blocking checks.
+- Baseline `npm run mizaan:verify:full`: passed.
+- TDD red proof: the new custom-title metadata test initially failed because Calendar metadata kept the template default title.
+- `npm test -- src/lib/templates/template-registry.test.ts`: passed with 13 tests.
+- `npm test -- src/lib/templates/template-registry.test.ts src/lib/page/page-workspace.test.ts`: passed with 2 files and 35 tests.
+- `npm run lint`: passed with the known 10 Fast Refresh warnings and 0 errors.
+- `npm run typecheck`: passed.
+- `npm run mizaan:verify:fast -- src/lib/templates/template-registry.test.ts`: passed.
+- `npm run mizaan:verify:full`: passed with typecheck, lint, serial tests, build, diff check, and full red scan.
+- `npm run mizaan:browser-qa`: passed route checks and screenshots.
+
+Browser QA evidence:
+- Browser QA route sweep passed for `/`, `/settings`, `/vault`, `/import-export`, `/repair`, `/finance`, `/people`, `/projects`, `/trackers`, `/goals`, `/graph`, `/search`, `/templates`, and `/calendar`.
+- Final templates screenshot: `docs/screenshots/20260605-182705-browser-qa-templates.png`
+- Final Browser QA log: `docs/logs/browser-qa-20260605-182705.md`
+- Final Browser QA JSON: `docs/logs/browser-qa-20260605-182705.json`
+- Earlier templates screenshot also captured during implementation QA: `docs/screenshots/20260605-181242-browser-qa-templates.png`
+- In-app Browser QA loaded `http://127.0.0.1:4199/templates`, verified the search input, found Subscription Record via search, selected the future filter, verified future-only cards were visible, and verified the Not available create button was disabled.
+
+DOCX / fallback:
+`docs/Plan/Mizaan Work Log.docx` still failed `python-docx` parsing with `XMLSyntaxError: xml namespace URI mapped to wrong prefix, line 5006, column 85`. The DOCX was preserved unchanged and `docs/Plan/Mizaan Work Log - fallback.md` was updated with this work-log entry.
+
+What remains deliberately not implemented:
+Template editor, custom template storage, template import/export, template version history, AI template generation, cloud template marketplace, template sync, native template packs, large multi-page page-system template application, reminder engines, native notifications, Tauri, SQLite, native filesystem, portable vault folders, encryption, app lock, mobile, cloud, auth, backend, and bank/payment integrations.
+
+Next recommended phase:
+Version history or scoped template management data-model design. Editable templates should not start until provider storage rules, migration rules, validation tests, and unsupported-future guards are defined.

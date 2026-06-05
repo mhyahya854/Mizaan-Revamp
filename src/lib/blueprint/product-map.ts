@@ -186,9 +186,10 @@ export const productModules: ProductModule[] = [
     category: "system",
     status: "partial",
     route: "/templates",
-    summary: "Creation sources that produce real provider-backed prototype pages.",
-    currentTruth: "Static template definitions exist; template editing does not.",
-    nextPhase: "Templates expansion.",
+    summary: "Static creation registry with implemented, partial, and future template states.",
+    currentTruth:
+      "A tested static registry exposes template status, category counts, search text, previews, safe starter blocks, future guards, and provider-backed creation for implemented templates. The /templates route has search, category/status filters, counts, preview, and disabled future entries. Template editing, custom template storage, version history, import/export, AI generation, marketplace, and sync are future.",
+    nextPhase: "Version history or scoped template management data-model design.",
   },
   {
     id: "vault",

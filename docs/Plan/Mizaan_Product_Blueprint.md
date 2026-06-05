@@ -88,7 +88,7 @@ Current module truth:
 - Trackers: [PARTIAL] - typed tracker metadata helper, provider-backed tracker record creation, dedicated Trackers route/list, tracker detail metadata panel, target/current/frequency/check-in fields, metadata search, graph edges, template defaults, command-palette creation, and non-destructive legacy seeded-streak preservation are implemented for the browser prototype. Fake streak engines, charts, rollups, reminders, native notifications, AI coaching, wearable imports, medical tracking claims, SQLite/native storage, and encrypted private tracking remain not implemented.
 - Goals: [PARTIAL] - typed goal metadata helper, provider-backed goal record creation, dedicated Goals route/list, goal detail metadata panel, target date/progress/priority fields, metadata search, graph edges including tracker links, template defaults, and command-palette creation are implemented for the browser prototype. Progress history, charts, reminders, native notifications, AI coaching, cloud sync, mobile capture, SQLite/native storage, and encrypted private goals remain not implemented.
 - Graph: [PARTIAL] - graph model/helper, provider-backed global graph foundation, relation/document/project/task/people/interaction/finance/tracker/goal metadata edge extraction, parent hierarchy edges, orphan summaries, filters, direct local focus, and open-node actions are implemented for the browser prototype; backlink index, wiki links, manual canvas, saved layouts, clustering, export, and semantic/local-AI graph do not.
-- Templates: [PARTIAL] - implemented templates create provider-backed pages, including project, task, people, interaction, document, finance, tracker, and goal record defaults; full template editor and template management do not.
+- Templates: [PARTIAL] - a tested static template registry now exposes implemented, partial, and future template statuses, category counts, search text, previews, safe starter blocks, future creation guards, and provider-backed creation for current module records. The `/templates` route has search, category/status filters, counts, preview, and disabled future entries. Full template editor, custom template storage, import/export, version history, AI generation, marketplace, and sync do not exist.
 - Vault: [PARTIAL] - provider and health UI state prototype truth plus tested browser-prototype JSON archive export, validation, restore preview, safe merge apply, and guarded replace semantics. Portable folders, SQLite, Tauri filesystem, lock file, markdown mirrors, native backups, encrypted backups, and repair center do not exist.
 - Trash: [PARTIAL] - soft trash/restore provider paths exist; retention policy, permanent deletion flow, audit history, and native recovery do not.
 - Settings: [PARTIAL] - read-only prototype facts and theme controls; broad settings system does not.
@@ -195,7 +195,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Core | Databases | [PARTIAL] | Route and table page exist | Database metadata helper | localStorage prototype | Unit and browser QA exist | No filters/sorts/views/formulas/rollups | Database views and filters |
 | Core | Graph | [PARTIAL] | Filterable route and local focus foundation | Provider items, relations, document metadata arrays, parentId hierarchy | localStorage prototype | Graph helper tests and browser QA | No backlink index/wiki links/manual canvas/export | Graph search/canvas later |
 | Core | Calendar | [PARTIAL / IMPLEMENTED FOUNDATION] | Route exists with provider-backed events | Typed calendar event helper | localStorage prototype | Helper, graph, and search tests added; browser QA attempted | No recurrence/reminders/ICS/native notifications/sync | Template expansion or version history |
-| System | Templates | [PARTIAL] | Template picker and route exist | Template definitions | provider-backed creations | Page template tests exist | No template editor | Templates expansion |
+| System | Templates | [PARTIAL] | Template picker plus searchable/filterable `/templates` registry route exist | Static template definitions with status/category/preview metadata | provider-backed creations | Page template tests, template registry tests, full validation, and browser QA exist | No template editor, custom templates, version history, import/export, AI generation, marketplace, or sync | Version history or template management only after scoped data model |
 | System | Vault | [PARTIAL] | Route exists with provider truth and browser archive controls | Provider info/health plus archive helper model | localStorage prototype | Provider and archive tests exist | No portable folder/SQLite/native/encrypted backup | Native readiness after archive hardening |
 | System | Trash | [PARTIAL] | Route exists | deletedAt records | localStorage prototype | Limited | No retention/permanent deletion policy | Repair/recovery center |
 | System | Settings | [PARTIAL] | Route exists | Theme/session/provider facts | localStorage prototype | Theme tests exist | Mostly read-only | Settings hardening |
@@ -577,20 +577,20 @@ the UI must show its status.
 - Purpose: create real local pages from known blueprints.
 - User mental model: a template is a creation source.
 - Current status: [PARTIAL]
-- UI now: route and picker.
-- Implemented now: fixed template definitions and provider-backed creation.
-- Not implemented yet: template editor, custom templates, template versions.
-- Data model: static template definitions.
+- UI now: route, picker, search, category/status filters, counts, preview panel, and disabled future entries.
+- Implemented now: static registry, expanded provider-backed built-in templates, implemented/partial/future status split, typed metadata defaults, safe starter blocks, preview derivation, future-template creation guards, and provider-backed creation.
+- Not implemented yet: template editor, custom templates, import/export, template versions, AI generation, marketplace, and sync.
+- Data model: static template definitions with status/category/preview metadata.
 - Routes: `/templates`
-- Main components: `PageTemplatePicker`, templates route.
-- Empty states: none needed while fixed templates exist.
-- Error states: unknown template falls back to first template.
-- Actions: create items from templates.
-- Disabled/future actions: no template editing controls.
-- Tests required: template creation helper tests.
-- Screenshots required: templates route.
-- Done criteria: template editor and custom storage verified.
-- Future phases: Templates expansion.
+- Main components: `PageTemplatePicker`, templates route, and `src/lib/templates/template-registry.ts`.
+- Empty states: route shows no-match state for active filters.
+- Error states: unknown, partial, and future template IDs are rejected by the registry creation helper.
+- Actions: create implemented provider-backed items from templates.
+- Disabled/future actions: partial/future template cards are visible but cannot create records.
+- Tests required: [IMPLEMENTED] page workspace tests and template registry tests.
+- Screenshots required: [IMPLEMENTED] templates route screenshot via browser QA.
+- Done criteria: static expansion is complete for this bounded phase; overall Templates remain partial until template editor and custom storage are verified.
+- Future phases: version history, custom template storage, template import/export, and template management.
 
 ### 6.14 Vault
 
@@ -1298,18 +1298,18 @@ Mizaan-specific differentiation:
 
 ### Phase G - Templates expansion
 
-- Goal: improve real provider-backed templates.
+- Goal: [IMPLEMENTED FOR STATIC REGISTRY] improve real provider-backed templates.
 - Why now: modules need creation sources.
 - Preconditions: document and database templates stable.
-- Implementation tasks: more templates, template tests, route organization.
-- Files likely touched: page workspace templates and picker.
-- Tests required: each template creates valid item/blocks/metadata.
-- Browser QA required: create selected templates.
-- Screenshots required: templates route and created pages.
-- Documentation required: blueprint and reports.
-- Done criteria: no fake templates.
-- What not to implement: full template editor unless scoped.
-- Next phase: Projects/tasks foundation.
+- Implementation tasks: [IMPLEMENTED] expanded built-in templates, template registry tests, provider-backed creation helper, route search/category/status organization, previews, future guards, docs, and QA.
+- Files touched: template registry/tests, templates route, PRD, Blueprint, master append, phase report, fallback work log, screenshots/logs.
+- Tests required: [IMPLEMENTED] each implemented template creates valid provider item/blocks/metadata; partial/future templates cannot create records.
+- Browser QA required: [IMPLEMENTED] route sweep, `/templates` screenshot, in-app browser search/filter/future-disabled proof.
+- Screenshots required: [IMPLEMENTED] templates route screenshot.
+- Documentation required: [IMPLEMENTED] blueprint and reports.
+- Done criteria: [IMPLEMENTED FOR STATIC REGISTRY] no fake templates; unsupported template systems remain disabled/future.
+- What not to implement: full template editor, custom storage, version history, AI generation, import/export, marketplace, or sync unless scoped later.
+- Next phase: Version history or template management data-model design.
 
 ### Phase H - Projects/tasks foundation
 
