@@ -11,7 +11,7 @@ import {
   LocalStorageVaultProvider,
   createMemoryStorage,
 } from "../vault/local-storage-vault-provider";
-import { buildSidebarPageTree, buildSidebarTrees } from "../../components/layout/AppSidebar";
+import { buildSidebarPageTree, buildSidebarTrees } from "@/lib/sidebar/sidebar-tree";
 
 function createProvider() {
   let sequence = 0;
