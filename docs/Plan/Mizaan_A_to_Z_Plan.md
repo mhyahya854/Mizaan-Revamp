@@ -22144,3 +22144,15 @@ Mizaan is local-only and browser-bound. SQLite database, Tauri desktop packaging
 * Browser QA: Passed with screenshot proofs.
 * Validation: Full baseline validation passed.
 * Next recommended phase: System and Settings hardening or native readiness.
+
+## Append-Only Settings Hardening — 2026-06-07
+- **Phase:** Settings Hardening
+- **Before Hash:** 5243F079B3F81A6C7DF99A7718C4C6DF6F60EAC837ECF210C16120B218DDAB01
+- **Before Length:** 806821
+- **Append-only proof:** Preserved.
+- **Settings improvements:** Implemented explicit System Status showing browser/local prototype mode. Added explicit Data Safety warning with links to Import/Export, Vault, and Repair. Implemented full Feature Status table denoting prototype readiness vs future modules. Disclosed future limitations accurately.
+- **Validation results:** All red scans, full verification, tests, and build checks passed cleanly.
+- **Browser QA:** Passed, route checks 200 OK.
+- **Screenshots:** Captured settings-system-status (and standard QA screenshots).
+- **Limitations:** Tauri, SQLite, encryption, cloud sync, and native backups remain absent as intended.
+- **Next recommended phase:** Native Windows/Tauri Readiness Boundary or Vault Encryption Preparation.
