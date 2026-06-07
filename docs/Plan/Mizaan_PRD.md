@@ -603,3 +603,9 @@ Future Codex prompts should follow this template:
 14. Run `npm run mizaan:browser-qa` for UI-facing work and capture screenshots if possible.
 15. Commit, push, verify parity, and report final HEAD.
 16. Provide an honest final report with limitations and next recommended phase.
+
+## Native Tauri Readiness Probe
+- **Current status:** Investigated and verified web toolchain parity.
+- **Blockers:** Tauri CLI not installed. The current VaultProvider abstraction is synchronous and must be refactored to an async interface before native SQLite/Filesystem adapters can be written.
+- **Next phases:** Native Readiness Cleanup (async refactor), followed by Tauri Shell Scaffold, Native Provider Contract, SQLite Prototype, and Portable Vault Folder.
+- **Limitation:** Do not claim native integration is implemented until the shell and provider boundaries are verified.

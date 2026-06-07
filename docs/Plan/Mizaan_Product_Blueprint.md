@@ -1664,3 +1664,11 @@ Do not implement future native/mobile/cloud/auth/encryption/OCR/import behavior 
 Run typecheck, lint, tests, build, git diff --check, red-flag scans, browser QA, screenshots, docs updates, DOCX update, commit, push, and parity verification.
 Report honestly with implemented, partial, not implemented, deliberately not implemented, blocked, and future-only categories.
 ```
+
+## Native Tauri Readiness Probe
+- **Native Windows/Tauri readiness status:** PROBED (Blocker: async provider refactor needed)
+- **Tauri shell status:** NOT STARTED
+- **SQLite status:** NOT STARTED
+- **Native filesystem status:** NOT STARTED
+- **Portable vault folder status:** NOT STARTED
+- **Native app packaging status:** NOT STARTED
