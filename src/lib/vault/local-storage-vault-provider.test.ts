@@ -31,31 +31,31 @@ describe("LocalStorageVaultProvider", () => {
   it(``, async () => {
     const provider = createProvider();
 
-    const item = provider.createItem({
+    const item = await provider.createItem({
       title: "Lecture Notes",
       category: "notes",
       type: "note",
       icon: "N",
     });
-    const block = provider.createBlock(item?.id, { type: "paragraph", content: "Initial" });
+    const block = await provider.createBlock(item?.id, { type: "paragraph", content: "Initial" });
 
-    provider.updateItem(item?.id, { title: "Renamed Lecture Notes" });
-    provider.updateBlock(block.id, { content: "Updated block text" });
+    await provider.updateItem(item?.id, { title: "Renamed Lecture Notes" });
+    await provider.updateBlock(block.id, { content: "Updated block text" });
 
-    expect((await provider.getItem(item?.id)?.title)).toBe("Renamed Lecture Notes");
+    expect((await provider.getItem(item?.id))?.title).toBe("Renamed Lecture Notes");
     expect((await (await provider.getBlocks(item?.id))[0]?.content)).toBe("Updated block text");
   });
 
   it(``, async () => {
     const provider = createProvider();
-    const source = provider.createItem({ title: "Project", category: "projects", type: "project" });
-    const target = provider.createItem({
+    const source = await provider.createItem({ title: "Project", category: "projects", type: "project" });
+    const target = await provider.createItem({
       title: "Document",
       category: "documents",
       type: "document",
     });
 
-    provider.createRelation({
+    await provider.createRelation({
       sourceId: source.id,
       targetId: target.id,
       relationType: "project_to_document",
@@ -68,21 +68,21 @@ describe("LocalStorageVaultProvider", () => {
 
   it(``, async () => {
     const provider = createProvider();
-    const item = provider.createItem({ title: "Archive me", category: "notes", type: "note" });
+    const item = await provider.createItem({ title: "Archive me", category: "notes", type: "note" });
 
-    provider.archiveItem(item?.id);
-    expect((await provider.getItem(item?.id)?.archivedAt)).toBe("2026-05-29T00:00:00.000Z");
+    await provider.archiveItem(item?.id);
+    expect((await provider.getItem(item?.id))?.archivedAt).toBe("2026-05-29T00:00:00.000Z");
 
-    provider.restoreItem(item?.id);
-    expect((await provider.getItem(item?.id)?.archivedAt)).toBeUndefined();
-    expect((await provider.getItem(item?.id)?.deletedAt)).toBeUndefined();
+    await provider.restoreItem(item?.id);
+    expect((await provider.getItem(item?.id))?.archivedAt).toBeUndefined();
+    expect((await provider.getItem(item?.id))?.deletedAt).toBeUndefined();
   });
 
   it(``, async () => {
     const provider = createProvider();
-    const existing = provider.createItem({ title: "Existing", category: "notes", type: "note" });
+    const existing = await provider.createItem({ title: "Existing", category: "notes", type: "note" });
 
-    provider.restoreSnapshotData({
+    await provider.restoreSnapshotData({
       mode: "merge",
       items: [
         { ...existing, title: "Existing from archive" },
@@ -116,25 +116,18 @@ describe("LocalStorageVaultProvider", () => {
       relations: [],
     });
 
-    expect((await provider.getItem(existing.id)?.title)).toBe("Existing from archive");
-    expect((await provider.getItem("archive-note")?.metadata.custom)).toBe("kept");
+    expect((await provider.getItem(existing.id))?.title).toBe("Existing from archive");
+    expect((await provider.getItem("archive-note"))?.metadata.custom).toBe("kept");
     expect((await (await provider.getBlocks("archive-note"))[0]?.id)).toBe("archive-block");
   });
 
   it(``, async () => {
     const provider = createProvider();
-    const existing = provider.createItem({ title: "Existing", category: "notes", type: "note" });
+    const existing = await provider.createItem({ title: "Existing", category: "notes", type: "note" });
 
-    expect(() =>
-      provider.restoreSnapshotData({
-        mode: "replace",
-        items: [],
-        blocks: [],
-        relations: [],
-      }),
-    ).toThrow(/requires explicit confirmation/i);
+    await expect(provider.restoreSnapshotData({ mode: "replace", items: [], blocks: [], relations: [] })).rejects.toThrow(/requires explicit confirmation/i);
 
-    provider.restoreSnapshotData({
+    await provider.restoreSnapshotData({
       mode: "replace",
       confirmedReplace: true,
       items: [],

@@ -88,7 +88,7 @@ function PeoplePage() {
   }
 
   async function createFromTemplate(templateId: string) {
-    const item = createPageFromTemplate(provider, templateId, {
+    const item = await createPageFromTemplate(provider, templateId, {
       parentId: templateId === "interaction-log" ? undefined : peopleSpace?.id,
     });
     navigate({ to: "/page/$id", params: { id: item.id } });
@@ -329,5 +329,6 @@ function searchablePersonText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
+
 
 

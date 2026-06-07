@@ -136,7 +136,7 @@ export function VaultArchivePanel({ provider, snapshot, surface }: VaultArchiveP
     );
   }
 
-  function handleApplyRestore() {
+  async function handleApplyRestore() {
     const archive = validatedArchive ?? validateText().archive;
     if (!archive) {
       handleValidateArchive();

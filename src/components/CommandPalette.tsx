@@ -152,8 +152,8 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       icon: action.icon,
       title: action.title,
       sub: action.sub,
-      run: () => {
-        const item = createPageFromTemplate(provider, action.templateId, {
+      run: async () => {
+        const item = await createPageFromTemplate(provider, action.templateId, {
           category: action.category,
         });
         navigate({ to: "/page/$id", params: { id: item.id } });
@@ -382,4 +382,5 @@ function labelFor(category: ItemCategory) {
   };
   return labels[category];
 }
+
 

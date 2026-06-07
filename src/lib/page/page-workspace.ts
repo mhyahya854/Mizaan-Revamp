@@ -974,7 +974,7 @@ export function getSpaceHref(category: ItemCategory) {
 export function buildPageWorkspaceModel(
   provider: VaultProvider,
   itemId: string,
-  snapshot: VaultSnapshot = await provider.getSnapshot(),
+  snapshot: VaultSnapshot,
 ): PageWorkspaceModel {
   const matchedItem = snapshot.items.find((candidate) => candidate.id === itemId);
   const item = normalizeItem(matchedItem, itemId);
@@ -1030,14 +1030,14 @@ export function buildPageWorkspaceModel(
   };
 }
 
-export function createChildPage(
+export async function createChildPage(
   provider: VaultProvider,
   parentId: string,
   title = "Untitled Subpage",
 ) {
   const parent = await provider.getItem(parentId);
   const category = parent?.category ?? "notes";
-  const child = createPageFromTemplate(provider, "blank-page", {
+  const child = await createPageFromTemplate(provider, "blank-page", {
     category,
     parentId,
     title,
@@ -1051,7 +1051,7 @@ export function createChildPage(
   return child;
 }
 
-export function createPageFromTemplate(
+export async function createPageFromTemplate(
   provider: VaultProvider,
   templateId: string,
   options: {
@@ -1246,5 +1246,10 @@ function resolveRelations(relations: MizaanRelation[], items: MizaanItem[]): Res
     return [{ relation, source, target }];
   });
 }
+
+
+
+
+
 
 

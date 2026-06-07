@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { CalendarMetadataPanel } from "@/components/calendar/CalendarMetadataPanel";
@@ -163,7 +163,10 @@ function PageDataPanel({
   items: MizaanItem[];
 }) {
   const hasTags = model.item.tags && model.item.tags.length > 0;
-  const providerInfo = await provider.getProviderInfo();
+  const [providerInfo, setProviderInfo] = useState({ name: "Loading...", storageLabel: "Loading..." });
+  useEffect(() => {
+    provider.getProviderInfo().then(setProviderInfo);
+  }, [provider]);
 
   return (
     <div className="space-y-4">

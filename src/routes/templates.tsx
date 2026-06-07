@@ -47,7 +47,7 @@ function TemplatesPage() {
   const preview = selectedTemplate ? getTemplatePreview(selectedTemplate) : undefined;
 
   async function createFromTemplate(templateId: string) {
-    const item = createItemFromTemplate(provider, templateId);
+    const item = await createItemFromTemplate(provider, templateId);
     navigate({ to: "/page/$id", params: { id: item.id } });
   }
 

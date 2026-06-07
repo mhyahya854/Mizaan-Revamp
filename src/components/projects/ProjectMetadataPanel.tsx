@@ -42,7 +42,7 @@ export function ProjectMetadataPanel({
   const linkedTasks = getLinkedTasks(item.id, metadata.linkedTaskIds, items);
   const summary = getProjectStateSummary(metadata, linkedTasks);
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updateProjectMetadata(metadata, patch);
     await provider.updateItem(item.id, {
       title: next.projectTitle || "Untitled project",
@@ -58,7 +58,7 @@ export function ProjectMetadataPanel({
     });
   }
 
-  function createLinkedTask() {
+  async function createLinkedTask() {
     const task = await provider.createItem(
       createTaskRecordInput({
         title: "Untitled task",
@@ -223,7 +223,7 @@ export function TaskMetadataPanel({
     ? items.find((entry) => entry.id === metadata.taskProjectId)
     : undefined;
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updateTaskMetadata(metadata, patch);
     await provider.updateItem(item.id, {
       title: next.taskTitle || "Untitled task",
@@ -322,7 +322,7 @@ function TaskInlineEditor({
   const display = getTaskDisplayFields(metadata);
   const summary = getTaskStateSummary(metadata);
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updateTaskMetadata(metadata, { taskProjectId: projectId, ...patch });
     await provider.updateItem(task.id, {
       title: next.taskTitle || "Untitled task",

@@ -311,7 +311,7 @@ export function editDatabaseCell(
   });
 }
 
-export function ensureDatabaseRowPage(
+export async function ensureDatabaseRowPage(
   provider: VaultProvider,
   databaseItem: MizaanItem,
   model: DatabaseModel,
@@ -530,4 +530,5 @@ export function filterAndSortRows(
 
   return result;
 }
+
 

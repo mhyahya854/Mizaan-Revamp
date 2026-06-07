@@ -284,7 +284,7 @@ describe("task metadata helpers", () => {
       seedOnEmpty: false,
     });
 
-    const task = createPageFromTemplate(provider, "task-record");
+    const task = await createPageFromTemplate(provider, "task-record");
 
     expect(task.category).toBe("tasks");
     expect(task.type).toBe("task");
@@ -292,7 +292,7 @@ describe("task metadata helpers", () => {
     expect(task.metadata.taskStatus).toBe("todo");
     expect(task.metadata.taskPriority).toBe("none");
     expect(task.metadata.taskProjectId).toBe("");
-    expect(await provider.getBlocks(task.id).some((block) => block.type === "callout")).toBe(true);
+    expect((await provider.getBlocks(task.id)).some((block) => block.type === "callout")).toBe(true);
   });
 });
 
@@ -312,6 +312,7 @@ function item(input: Partial<MizaanItem> & Pick<MizaanItem, "id" | "title">): Mi
     ...input,
   };
 }
+
 
 
 

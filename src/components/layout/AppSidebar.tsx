@@ -418,7 +418,7 @@ function PageRowActionsMenu({
     e.stopPropagation();
     const subTitle = window.prompt(isSpace ? "Enter page title:" : "Enter subpage title:");
     if (subTitle && subTitle.trim()) {
-      const child = createChildPage(provider, node.id, subTitle.trim());
+      const child = await createChildPage(provider, node.id, subTitle.trim());
       if (onForceOpen) {
         onForceOpen(node.id);
       }
@@ -600,7 +600,7 @@ function TreeNode({
             e.stopPropagation();
             const subTitle = window.prompt("Enter subpage title:");
             if (subTitle && subTitle.trim()) {
-              const child = createChildPage(provider, node.id, subTitle.trim());
+              const child = await createChildPage(provider, node.id, subTitle.trim());
               onForceOpen(node.id);
               navigate({ to: "/page/$id", params: { id: child.id } });
             }
@@ -630,5 +630,6 @@ function TreeNode({
     </li>
   );
 }
+
 
 

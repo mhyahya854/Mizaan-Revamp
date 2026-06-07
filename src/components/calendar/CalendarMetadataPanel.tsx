@@ -26,7 +26,7 @@ export function CalendarMetadataPanel({
   const display = getCalendarEventDisplayFields(metadata);
   const summary = getCalendarEventStateSummary(metadata);
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updateCalendarEventMetadata(metadata, patch);
     await provider.updateItem(item.id, {
       title: next.eventTitle || "Untitled event",

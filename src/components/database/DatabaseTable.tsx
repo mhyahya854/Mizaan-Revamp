@@ -44,12 +44,12 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
     );
   }, [model.rows, model.columns, sortColumnId, sortDirection, filterColumnId, filterQuery]);
 
-  function save(next: typeof model) {
+  async function save(next: typeof model) {
     await provider.updateItem(item.id, { metadata: { database: toDatabaseMetadata(next) } });
   }
 
-  function openRow(rowId: string) {
-    const result = ensureDatabaseRowPage(provider, item, model, rowId);
+  async function openRow(rowId: string) {
+    const result = await ensureDatabaseRowPage(provider, item, model, rowId);
     navigate({ to: "/page/$id", params: { id: result.page.id } });
   }
 
@@ -312,5 +312,6 @@ function DatabaseCell({
     />
   );
 }
+
 
 

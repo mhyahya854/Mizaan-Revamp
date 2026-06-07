@@ -107,14 +107,14 @@ describe("template registry", () => {
     const provider = createProvider();
 
     for (const template of getImplementedTemplates()) {
-      const item = createItemFromTemplate(provider, template.id);
+      const item = await createItemFromTemplate(provider, template.id);
       const blocks = await provider.getBlocks(item?.id);
 
       expect(item?.id).toMatch(/^item-/);
       expect(item.category).toBe(template.universal ? item.category : template.category);
       expect(item.type).toBe(template.universal ? item.type : template.type);
       expect(item.metadata.templateId).toBe(template.id);
-      expect((await provider.getItem(item?.id)?.id))?.toBe(item?.id);
+      expect((await provider.getItem(item?.id))?.id).toBe(item?.id);
       expect(blocks.every((block) => safeBlockTypes.has(block.type))).toBe(true);
     }
   });
@@ -122,41 +122,41 @@ describe("template registry", () => {
   it(``, async () => {
     const provider = createProvider();
 
-    const document = createItemFromTemplate(provider, "receipt-document-record");
+    const document = await createItemFromTemplate(provider, "receipt-document-record");
     expect(normalizeDocumentMetadata(document.metadata).documentKind).toBe("receipt");
 
-    const project = createItemFromTemplate(provider, "study-project");
+    const project = await createItemFromTemplate(provider, "study-project");
     expect(normalizeProjectMetadata(project.metadata).projectArea).toBe("Study");
 
-    const task = createItemFromTemplate(provider, "project-task");
+    const task = await createItemFromTemplate(provider, "project-task");
     expect(normalizeTaskMetadata(task.metadata).taskStatus).toBe("todo");
 
-    const person = createItemFromTemplate(provider, "person-profile");
+    const person = await createItemFromTemplate(provider, "person-profile");
     expect(normalizePersonMetadata(person.metadata).displayName).toBe(person.title);
 
-    const interaction = createItemFromTemplate(provider, "interaction-log");
+    const interaction = await createItemFromTemplate(provider, "interaction-log");
     expect(normalizeInteractionMetadata(interaction.metadata).interactionStatus).toBe("logged");
 
-    const finance = createItemFromTemplate(provider, "bill-record");
+    const finance = await createItemFromTemplate(provider, "bill-record");
     expect(normalizeFinanceMetadata(finance.metadata).financeKind).toBe("bill");
 
-    const tracker = createItemFromTemplate(provider, "reading-tracker");
+    const tracker = await createItemFromTemplate(provider, "reading-tracker");
     expect(normalizeTrackerMetadata(tracker.metadata).trackerType).toBe("reading");
 
-    const goal = createItemFromTemplate(provider, "long-term-goal");
+    const goal = await createItemFromTemplate(provider, "long-term-goal");
     expect(normalizeGoalMetadata(goal.metadata).goalHorizon).toBe("long-term");
 
-    const calendar = createItemFromTemplate(provider, "calendar-appointment");
+    const calendar = await createItemFromTemplate(provider, "calendar-appointment");
     expect(normalizeCalendarEventMetadata(calendar.metadata).eventType).toBe("appointment");
   });
 
   it(``, async () => {
     const provider = createProvider();
-    const simpleTable = createItemFromTemplate(provider, "simple-table-page");
-    const readingList = createItemFromTemplate(provider, "reading-list-table");
-    const financeLedger = createItemFromTemplate(provider, "finance-ledger-table");
+    const simpleTable = await createItemFromTemplate(provider, "simple-table-page");
+    const readingList = await createItemFromTemplate(provider, "reading-list-table");
+    const financeLedger = await createItemFromTemplate(provider, "finance-ledger-table");
 
-    expect((await (await provider.getBlocks(simpleTable.id))?.some((block) => block.type === "table"))).toBe(true);
+    expect((await provider.getBlocks(simpleTable.id)).some((block) => block.type === "table")).toBe(true);
     expect(readingList.category).toBe("databases");
     expect(readingList.metadata.database).toBeDefined();
     expect(financeLedger.category).toBe("databases");
@@ -167,11 +167,11 @@ describe("template registry", () => {
   it(``, async () => {
     const provider = createProvider();
 
-    expect(() => createItemFromTemplate(provider, "missing-template")).toThrow(/unknown/i);
-    expect(() => createItemFromTemplate(provider, "custom-template-builder")).toThrow(
+    await expect(createItemFromTemplate(provider, "missing-template")).rejects.toThrow(/unknown/i);
+    await expect(createItemFromTemplate(provider, "custom-template-builder")).rejects.toThrow(
       /not implemented/i,
     );
-    expect(() => createItemFromTemplate(provider, "page-system-template")).toThrow(
+    await expect(createItemFromTemplate(provider, "page-system-template")).rejects.toThrow(
       /not implemented/i,
     );
   });
@@ -244,7 +244,7 @@ describe("template registry", () => {
       trackers: "habit-tracker",
       goals: "goal-plan",
     }) as Array<[ItemCategory, string]>) {
-      created[category] = createItemFromTemplate(provider, templateId);
+      created[category] = await createItemFromTemplate(provider, templateId);
     }
 
     expect(normalizeDocumentMetadata(created.documents.metadata).linkedFinanceIds).toEqual([]);
@@ -260,10 +260,10 @@ describe("template registry", () => {
   it(``, async () => {
     const provider = createProvider();
 
-    const calendar = createItemFromTemplate(provider, "calendar-appointment", {
+    const calendar = await createItemFromTemplate(provider, "calendar-appointment", {
       title: "Dentist Appointment",
     });
-    const finance = createItemFromTemplate(provider, "expense-record", {
+    const finance = await createItemFromTemplate(provider, "expense-record", {
       title: "Conference Travel Expense",
     });
 

@@ -30,7 +30,7 @@ export function GoalMetadataPanel({
   const summary = getGoalStateSummary(metadata);
   const privacy = getGoalPrivacySummary(metadata);
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updateGoalMetadata(metadata, patch);
     await provider.updateItem(item.id, {
       title: next.goalTitle || "Untitled goal",

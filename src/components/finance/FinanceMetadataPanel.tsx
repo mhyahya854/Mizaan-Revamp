@@ -33,7 +33,7 @@ export function FinanceMetadataPanel({
   const summary = getFinanceStateSummary(metadata);
   const privacy = getFinancePrivacySummary(metadata);
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updateFinanceMetadata(metadata, patch);
     await provider.updateItem(item.id, {
       title: next.financeTitle || "Untitled finance record",

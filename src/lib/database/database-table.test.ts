@@ -167,7 +167,7 @@ describe("database table model", () => {
 
     expect(
       normalizeDatabaseModel(
-        await provider.getItem(item.id)?.metadata.database,
+        (await provider.getItem(item.id))?.metadata.database,
         item.id,
         item.title,
       ).columns.some((column) => column.id === "col-priority"),
@@ -184,12 +184,12 @@ describe("database table model", () => {
     });
     const model = normalizeDatabaseModel(item.metadata.database, item.id, item.title);
 
-    const result = ensureDatabaseRowPage(provider, item, model, model.rows[0]?.id ?? "");
+    const result = await ensureDatabaseRowPage(provider, item, model, model.rows[0]?.id ?? "");
 
     expect(result.page.parentId).toBe(item.id);
     expect(result.page.metadata.databaseRow).toBe(true);
     expect(result.model.rows[0]?.pageId).toBe(result.page.id);
-    expect(await provider.getItem(result.page.id)?.title).toBe(result.page.title);
+    expect((await provider.getItem(result.page.id))?.title).toBe(result.page.title);
   });
 
   it(``, async () => {

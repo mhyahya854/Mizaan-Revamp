@@ -248,7 +248,7 @@ describe("document metadata helpers", () => {
       seedOnEmpty: false,
     });
 
-    const invoice = createPageFromTemplate(provider, "invoice-document-record");
+    const invoice = await createPageFromTemplate(provider, "invoice-document-record");
 
     expect(invoice.category).toBe("documents");
     expect(invoice.type).toBe("document");
@@ -257,7 +257,7 @@ describe("document metadata helpers", () => {
     expect(invoice.metadata.importState).toBe("record-only");
     expect(invoice.metadata.previewState).toBe("unavailable");
     expect(invoice.metadata.storageState).toBe("browser-record");
-    expect(await provider.getBlocks(invoice.id).some((block) => block.type === "callout")).toBe(true);
+    expect((await provider.getBlocks(invoice.id)).some((block) => block.type === "callout")).toBe(true);
   });
 });
 

@@ -541,7 +541,7 @@ describe("vault archive helpers", () => {
 
     previewVaultRestore(current, archive, { mode: "merge" });
 
-    expect((await provider.getItem(created.id)?.title))?.toBe("Keep me");
+    expect((await provider.getItem(created.id))?.title).toBe("Keep me");
     expect(storage.getItem("mizaan.prototype.vault.v1")).toBe(before);
   });
 

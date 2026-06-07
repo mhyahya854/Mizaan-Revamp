@@ -200,7 +200,7 @@ export function CalendarView() {
     setShowEventModal(true);
   }
 
-  function handleSaveEvent(event: React.FormEvent) {
+  async function handleSaveEvent(event: React.FormEvent) {
     event.preventDefault();
     if (!formTitle.trim() || !formDate) return;
 
@@ -235,7 +235,7 @@ export function CalendarView() {
     setShowEventModal(false);
   }
 
-  function handleDeleteEvent(eventId: string) {
+  async function handleDeleteEvent(eventId: string) {
     const confirmed = window.confirm("Move this event to trash?");
     if (!confirmed) return;
     await provider.trashItem(eventId);

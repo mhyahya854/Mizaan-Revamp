@@ -27,7 +27,7 @@ export function DocumentMetadataPanel({
   const display = getDocumentDisplayFields(metadata);
   const summary = getDocumentStateSummary(metadata);
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updateDocumentMetadata(metadata, patch);
     await provider.updateItem(item.id, {
       title: next.documentTitle || "Untitled document",

@@ -100,7 +100,7 @@ function ProjectsPage() {
   }
 
   async function createFromTemplate(templateId: string) {
-    const item = createPageFromTemplate(provider, templateId, {
+    const item = await createPageFromTemplate(provider, templateId, {
       parentId: projectSpace?.id,
     });
     navigate({ to: "/page/$id", params: { id: item.id } });
@@ -568,5 +568,6 @@ function searchableProjectText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
+
 
 

@@ -59,7 +59,7 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     setDraftTitle(model.item.title);
   }, [model.item.title]);
 
-  function updateTitle(title: string) {
+  async function updateTitle(title: string) {
     const nextTitle = title || "Untitled";
     setDraftTitle(title);
     if (model.state !== "ready") return;
@@ -131,8 +131,8 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     setTemplatePickerOpen(true);
   }
 
-  function createChildFromTemplate(templateId: string) {
-    const child = createPageFromTemplate(provider, templateId, {
+  async function createChildFromTemplate(templateId: string) {
+    const child = await createPageFromTemplate(provider, templateId, {
       category: model.item.category,
       parentId: model.item.id,
     });
@@ -175,8 +175,8 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
             title={draftTitle}
             onTitleChange={updateTitle}
             onCreateChild={handleCreateChild}
-            onArchive={() => await provider.archiveItem(model.item.id)}
-            onRestore={() => await provider.restoreItem(model.item.id)}
+            onArchive={async () => await provider.archiveItem(model.item.id)}
+            onRestore={async () => await provider.restoreItem(model.item.id)}
           />
           {model.item.type === "database" ? (
             <DatabaseTable item={model.item} provider={provider} />
@@ -203,5 +203,6 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     </div>
   );
 }
+
 
 

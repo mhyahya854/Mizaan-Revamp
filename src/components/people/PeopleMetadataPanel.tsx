@@ -50,7 +50,7 @@ export function PeopleMetadataPanel({
   const privacy = getPersonPrivacySummary(metadata);
   const interactions = getLinkedInteractions(item.id, items);
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updatePersonMetadata(metadata, patch);
     await provider.updateItem(item.id, {
       title: next.displayName || "Untitled person",
@@ -70,7 +70,7 @@ export function PeopleMetadataPanel({
     });
   }
 
-  function createLinkedInteraction() {
+  async function createLinkedInteraction() {
     const interaction = await provider.createItem(
       createInteractionRecordInput({
         title: "Interaction note",
@@ -312,7 +312,7 @@ export function InteractionMetadataPanel({
     ? items.find((entry) => entry.id === metadata.personId)
     : undefined;
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updateInteractionMetadata(metadata, patch);
     await provider.updateItem(item.id, {
       title: next.interactionTitle || "Untitled interaction",
@@ -424,7 +424,7 @@ function InteractionInlineEditor({
   const display = getInteractionDisplayFields(metadata);
   const summary = getInteractionStateSummary(metadata);
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updateInteractionMetadata(metadata, { personId, ...patch });
     await provider.updateItem(interaction.id, {
       title: next.interactionTitle || "Untitled interaction",

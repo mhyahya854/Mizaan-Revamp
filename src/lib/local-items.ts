@@ -7,22 +7,23 @@ import type {
   UpdateItemInput,
 } from "./vault/types";
 
-export function listLocalItems(category?: ItemCategory): MizaanItem[] {
+export async function listLocalItems(category?: ItemCategory): Promise<MizaanItem[]> {
   return getVaultProvider().listItems(category ? { category } : undefined);
 }
 
-export function getLocalItem(id: string): MizaanItem | undefined {
+export async function getLocalItem(id: string): Promise<MizaanItem | undefined> {
   return getVaultProvider().getItem(id);
 }
 
-export function createLocalItem(input: CreateItemInput): MizaanItem {
+export async function createLocalItem(input: CreateItemInput): Promise<MizaanItem> {
   return getVaultProvider().createItem(input);
 }
 
-export function updateLocalItem(id: string, input: UpdateItemInput): MizaanItem | undefined {
+export async function updateLocalItem(id: string, input: UpdateItemInput): Promise<MizaanItem | undefined> {
   return getVaultProvider().updateItem(id, input);
 }
 
-export function getLocalItemBlocks(itemId: string): MizaanBlock[] {
+export async function getLocalItemBlocks(itemId: string): Promise<MizaanBlock[]> {
   return getVaultProvider().getBlocks(itemId);
 }
+

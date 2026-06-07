@@ -50,7 +50,7 @@ function FinancePage() {
     return metadata.recurring;
   }).length;
 
-  function createRecord(
+  async function createRecord(
     preset: NonNullable<Parameters<typeof createFinanceRecordInput>[0]>,
     blocksTitle = "Finance notes",
   ) {
@@ -72,7 +72,7 @@ function FinancePage() {
     navigate({ to: "/page/$id", params: { id: item.id } });
   }
 
-  function createTransaction(
+  async function createTransaction(
     title: string,
     transactionType: "expense" | "income",
     category: string,
@@ -420,5 +420,6 @@ function searchableFinanceText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
+
 
 

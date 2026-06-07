@@ -45,8 +45,8 @@ export function SpacePage({ category }: { category: ItemCategory }) {
     setTemplatePickerOpen(true);
   }
 
-  function applyTemplate(templateId: string) {
-    const item = createPageFromTemplate(provider, templateId, { category });
+  async function applyTemplate(templateId: string) {
+    const item = await createPageFromTemplate(provider, templateId, { category });
     navigate({ to: "/page/$id", params: { id: item.id } });
     setTemplatePickerOpen(false);
   }
@@ -181,4 +181,5 @@ function formatDate(value: string) {
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
+
 

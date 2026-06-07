@@ -69,7 +69,7 @@ function DocumentsPage() {
   }
 
   async function createFromTemplate(templateId: string) {
-    const item = createPageFromTemplate(provider, templateId, {
+    const item = await createPageFromTemplate(provider, templateId, {
       parentId: documentSpace?.id,
     });
     navigate({ to: "/page/$id", params: { id: item.id } });
@@ -257,5 +257,6 @@ function searchableDocumentText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
+
 
 

@@ -273,7 +273,7 @@ describe("project metadata helpers", () => {
       seedOnEmpty: false,
     });
 
-    const project = createPageFromTemplate(provider, "research-project");
+    const project = await createPageFromTemplate(provider, "research-project");
 
     expect(project.category).toBe("projects");
     expect(project.type).toBe("project");
@@ -281,7 +281,7 @@ describe("project metadata helpers", () => {
     expect(project.metadata.projectStatus).toBe("planning");
     expect(project.metadata.projectPriority).toBe("medium");
     expect(project.metadata.projectArea).toBe("Research");
-    expect(await provider.getBlocks(project.id).some((block) => block.type === "heading1")).toBe(true);
+    expect((await provider.getBlocks(project.id)).some((block) => block.type === "heading1")).toBe(true);
   });
 });
 
@@ -301,6 +301,7 @@ function item(input: Partial<MizaanItem> & Pick<MizaanItem, "id" | "title">): Mi
     ...input,
   };
 }
+
 
 
 

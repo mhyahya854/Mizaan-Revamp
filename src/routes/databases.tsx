@@ -23,7 +23,7 @@ function DatabasesPage() {
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 
   async function createDatabase(templateId: string) {
-    const item = createPageFromTemplate(provider, templateId, { category: "databases" });
+    const item = await createPageFromTemplate(provider, templateId, { category: "databases" });
     navigate({ to: "/page/$id", params: { id: item.id } });
     setPickerOpen(false);
   }
@@ -89,4 +89,5 @@ function DatabasesPage() {
     </div>
   );
 }
+
 

@@ -708,7 +708,7 @@ export function validateTemplateDefinition(template: TemplateDefinition): string
   return issues;
 }
 
-export function createItemFromTemplate(
+export async function createItemFromTemplate(
   provider: VaultProvider,
   templateId: string,
   options: {
@@ -717,7 +717,7 @@ export function createItemFromTemplate(
     title?: string;
     initialContent?: string;
   } = {},
-): MizaanItem {
+): Promise<MizaanItem> {
   const template = getTemplateById(templateId);
   if (!template) throw new Error(`Unknown template: ${templateId}`);
   if (template.status !== "implemented") {
@@ -725,7 +725,7 @@ export function createItemFromTemplate(
   }
 
   if (isWorkspaceTemplate(templateId)) {
-    return createWorkspacePageFromTemplate(provider, templateId, options);
+    return await createWorkspacePageFromTemplate(provider, templateId, options);
   }
 
   const category = template.universal ? (options.category ?? template.category) : template.category;
@@ -1222,4 +1222,7 @@ function titleCase(value: string) {
 export function createSimpleTableBlock(): CreateBlockInput {
   return { type: "table", content: serializeTableData(createDefaultTableData()) };
 }
+
+
+
 

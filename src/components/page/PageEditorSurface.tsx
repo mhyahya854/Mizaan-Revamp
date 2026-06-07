@@ -53,7 +53,7 @@ export function PageEditorSurface({
     });
   }, [slashQuery]);
 
-  function addBlock(type: MizaanBlock["type"], after?: MizaanBlock) {
+  async function addBlock(type: MizaanBlock["type"], after?: MizaanBlock) {
     await provider.createBlock(itemId, {
       type,
       content: type === "table" ? serializeTableData(createDefaultTableData()) : "",

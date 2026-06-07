@@ -35,7 +35,7 @@ export function TrackerMetadataPanel({
   const [checkInValue, setCheckInValue] = useState("");
   const [checkInNote, setCheckInNote] = useState("");
 
-  function persist(patch: Record<string, unknown>) {
+  async function persist(patch: Record<string, unknown>) {
     const next = updateTrackerMetadata(metadata, patch);
     await provider.updateItem(item.id, {
       title: next.trackerTitle || "Untitled tracker",
@@ -56,7 +56,7 @@ export function TrackerMetadataPanel({
     });
   }
 
-  function addCheckIn() {
+  async function addCheckIn() {
     const next = addTrackerCheckIn(metadata, {
       date: checkInDate,
       value: checkInValue,
