@@ -29,7 +29,7 @@ export function DocumentMetadataPanel({
 
   function persist(patch: Record<string, unknown>) {
     const next = updateDocumentMetadata(metadata, patch);
-    provider.updateItem(item.id, {
+    await provider.updateItem(item.id, {
       title: next.documentTitle || "Untitled document",
       status: getDocumentStatusLabel(next.documentStatus),
       tags: next.tags,
@@ -222,3 +222,5 @@ function StateRow({ label, value, active }: { label: string; value: string; acti
     </div>
   );
 }
+
+

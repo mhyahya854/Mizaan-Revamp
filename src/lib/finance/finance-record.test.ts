@@ -50,7 +50,7 @@ function item(input: Partial<MizaanItem> = {}): MizaanItem {
 }
 
 describe("finance record model", () => {
-  it("creates default transaction metadata without fake banking or accounting claims", () => {
+  it(``, async () => {
     const metadata = createDefaultFinanceMetadata();
 
     expect(metadata.financeTitle).toBe("Untitled finance record");
@@ -65,7 +65,7 @@ describe("finance record model", () => {
     expect(metadata.accountingGrade).toBe(false);
   });
 
-  it("normalizes finance kind, transaction type, status, payment method, currency, and amount", () => {
+  it(``, async () => {
     expect(normalizeFinanceKind("bill")).toBe("bill");
     expect(normalizeFinanceKind("unsupported")).toBe("transaction");
     expect(normalizeTransactionType("Income")).toBe("income");
@@ -81,7 +81,7 @@ describe("finance record model", () => {
     expect(normalizeAmount("not a number")).toBeNull();
   });
 
-  it("normalizes minimal metadata, trims strings, and preserves unknown safe fields", () => {
+  it(``, async () => {
     const metadata = normalizeFinanceMetadata({
       financeTitle: "  Rent payment  ",
       financeKind: "transaction",
@@ -119,7 +119,7 @@ describe("finance record model", () => {
     expect(metadata.customSafeField).toBe("kept");
   });
 
-  it("updates metadata while preserving unrelated fields", () => {
+  it(``, async () => {
     const next = updateFinanceMetadata(
       {
         financeTitle: "Old",
@@ -139,7 +139,7 @@ describe("finance record model", () => {
     expect(next.customSafeField).toBe("kept");
   });
 
-  it("dedupes relation ids and removes invalid relation ids", () => {
+  it(``, async () => {
     expect(normalizeFinanceRelationIds(["doc-1", " doc-1 ", "bad id", "", "person:2", 12])).toEqual(
       ["doc-1", "person:2"],
     );
@@ -187,7 +187,7 @@ describe("finance record model", () => {
     ]);
   });
 
-  it("normalizes private and sensitive flags as metadata-only with an honest privacy summary", () => {
+  it(``, async () => {
     const summary = getFinancePrivacySummary({ private: "true", sensitive: 1 });
 
     expect(summary).toMatchObject({
@@ -202,7 +202,7 @@ describe("finance record model", () => {
     expect(summary.message).toContain("not encrypted");
   });
 
-  it("creates provider-compatible finance and transaction inputs", () => {
+  it(``, async () => {
     const finance = createFinanceRecordInput({
       title: "Monthly budget",
       kind: "budget",
@@ -234,7 +234,7 @@ describe("finance record model", () => {
     expect(transaction.metadata?.merchant).toBe("Cafe");
   });
 
-  it("detects real finance record items and normalizes older generic finance pages at read time", () => {
+  it(``, async () => {
     expect(isFinanceRecordItem(item())).toBe(true);
     expect(
       isFinanceRecordItem(
@@ -261,7 +261,7 @@ describe("finance record model", () => {
     expect(metadata.tags).toEqual(["budget"]);
   });
 
-  it("exposes display, state, graph, and search metadata safely", () => {
+  it(``, async () => {
     const metadata = createDefaultFinanceMetadata({
       financeTitle: "BrowserQA rent",
       financeKind: "transaction",
@@ -299,7 +299,7 @@ describe("finance record model", () => {
     expect(getFinanceSearchMetadata(metadata).money).toContain("MYR");
   });
 
-  it("computes totals only from real provider-backed transaction records", () => {
+  it(``, async () => {
     const items = [
       item({
         id: "income-1",
@@ -368,7 +368,7 @@ describe("finance record model", () => {
     });
   });
 
-  it("handles mixed currencies and deterministic overdue logic", () => {
+  it(``, async () => {
     const records = [
       item({
         id: "income-usd",
@@ -408,7 +408,7 @@ describe("finance record model", () => {
     ).toBe(false);
   });
 
-  it("keeps enum value exports stable for UI option lists", () => {
+  it(``, async () => {
     expect(FINANCE_KIND_VALUES).toContain("transaction");
     expect(FINANCE_KIND_VALUES).toContain("budget");
     expect(FINANCE_KIND_VALUES).toContain("subscription");
@@ -420,3 +420,4 @@ describe("finance record model", () => {
     expect(getFinanceStatusLabel("cleared")).toBe("Cleared");
   });
 });
+

@@ -349,28 +349,28 @@ function PageRowActionsMenu({
   const disableDuplicate = isSpace;
   const disableTrash = isProtectedItem || isSpace;
 
-  const handleOpen = (e: React.MouseEvent) => {
+  const handleOpen = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     navigate({ to: "/page/$id", params: { id: node.id } });
   };
 
-  const handleRename = (e: React.MouseEvent) => {
+  const handleRename = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const newTitle = window.prompt("Rename page:", node.title);
     if (newTitle && newTitle.trim()) {
-      provider.updateItem(node.id, { title: newTitle.trim() });
+      await provider.updateItem(node.id, { title: newTitle.trim() });
     }
   };
 
-  const handleDuplicate = (e: React.MouseEvent) => {
+  const handleDuplicate = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const item = provider.getItem(node.id);
+    const item = await provider.getItem(node.id);
     if (!item) return;
 
-    const newItem = provider.createItem({
+    const newItem = await provider.createItem({
       title: `${item.title} (Copy)`,
       category: item.category,
       type: item.type,
@@ -387,9 +387,9 @@ function PageRowActionsMenu({
       },
     });
 
-    const blocks = provider.getBlocks(item.id);
+    const blocks = await provider.getBlocks(item.id);
     if (blocks.length > 0) {
-      provider.replaceBlocks(
+      await provider.replaceBlocks(
         newItem.id,
         blocks.map((b) => ({
           type: b.type,
@@ -401,10 +401,10 @@ function PageRowActionsMenu({
     }
   };
 
-  const handleTogglePin = (e: React.MouseEvent) => {
+  const handleTogglePin = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    provider.updateItem(node.id, {
+    await provider.updateItem(node.id, {
       metadata: {
         ...node.metadata,
         sidebarPinned: !isPinned,
@@ -413,7 +413,7 @@ function PageRowActionsMenu({
     });
   };
 
-  const handleCreateSubpage = (e: React.MouseEvent) => {
+  const handleCreateSubpage = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const subTitle = window.prompt(isSpace ? "Enter page title:" : "Enter subpage title:");
@@ -426,7 +426,7 @@ function PageRowActionsMenu({
     }
   };
 
-  const handleCopyLink = (e: React.MouseEvent) => {
+  const handleCopyLink = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const link = window.location.origin + "/page/" + node.id;
@@ -435,12 +435,12 @@ function PageRowActionsMenu({
     });
   };
 
-  const handleTrash = (e: React.MouseEvent) => {
+  const handleTrash = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const confirmText = `Are you sure you want to move "${node.title}" to the trash?`;
     if (window.confirm(confirmText)) {
-      provider.trashItem(node.id);
+      await provider.trashItem(node.id);
       if (active) {
         navigate({ to: "/" });
       }
@@ -451,7 +451,7 @@ function PageRowActionsMenu({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          onClick={(e) => {
+          onClick={async (e) => {
             e.stopPropagation();
           }}
           className={cn(
@@ -543,7 +543,7 @@ function TreeNode({
   return (
     <li>
       <div
-        onClick={() => {
+        onClick={async () => {
           navigate({ to: "/page/$id", params: { id: node.id } });
         }}
         className={cn(
@@ -556,7 +556,7 @@ function TreeNode({
       >
         {node.children.length ? (
           <button
-            onClick={(e) => {
+            onClick={async (e) => {
               e.preventDefault();
               e.stopPropagation();
               onToggle();
@@ -576,10 +576,10 @@ function TreeNode({
 
         {isPinned && (
           <button
-            onClick={(e) => {
+            onClick={async (e) => {
               e.preventDefault();
               e.stopPropagation();
-              provider.updateItem(node.id, {
+              await provider.updateItem(node.id, {
                 metadata: {
                   ...node.metadata,
                   sidebarPinned: false,
@@ -595,7 +595,7 @@ function TreeNode({
         )}
 
         <button
-          onClick={(e) => {
+          onClick={async (e) => {
             e.preventDefault();
             e.stopPropagation();
             const subTitle = window.prompt("Enter subpage title:");
@@ -630,3 +630,5 @@ function TreeNode({
     </li>
   );
 }
+
+

@@ -478,7 +478,7 @@ export class LocalStorageVaultProvider implements VaultProvider {
     this.seedOnEmpty = options.seedOnEmpty ?? true;
   }
 
-  getProviderInfo(): VaultProviderInfo {
+  async getProviderInfo(): Promise<VaultProviderInfo> {
     return {
       id: "local-storage",
       name: "LocalStorageVaultProvider",
@@ -499,10 +499,10 @@ export class LocalStorageVaultProvider implements VaultProvider {
     };
   }
 
-  getHealth(): VaultHealth {
+  async getHealth(): Promise<VaultHealth> {
     const state = this.readState();
     return {
-      providerId: this.getProviderInfo().id,
+      providerId: (await this.getProviderInfo()).id,
       itemCount: state.items.length,
       blockCount: state.blocks.length,
       relationCount: state.relations.length,
@@ -519,18 +519,18 @@ export class LocalStorageVaultProvider implements VaultProvider {
     };
   }
 
-  getSnapshot(): VaultSnapshot {
+  async getSnapshot(): Promise<VaultSnapshot> {
     const state = this.readState();
     return {
       items: [...state.items],
       blocks: [...state.blocks],
       relations: [...state.relations],
-      providerInfo: this.getProviderInfo(),
-      health: this.getHealth(),
+      providerInfo: await this.getProviderInfo(),
+      health: await this.getHealth(),
     };
   }
 
-  listItems(filter: ListItemsFilter = {}): MizaanItem[] {
+  async listItems(filter: ListItemsFilter = {}): Promise<MizaanItem[]> {
     return this.readState()
       .items.filter((item) => {
         if (filter.category && item.category !== filter.category) return false;
@@ -542,11 +542,11 @@ export class LocalStorageVaultProvider implements VaultProvider {
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
 
-  getItem(id: string) {
+  async getItem(id: string): Promise<MizaanItem | undefined> {
     return this.readState().items.find((item) => item.id === id);
   }
 
-  createItem(input: CreateItemInput): MizaanItem {
+  async createItem(input: CreateItemInput): Promise<MizaanItem> {
     const state = this.readState();
     const timestamp = this.now();
     const item: MizaanItem = {
@@ -572,7 +572,7 @@ export class LocalStorageVaultProvider implements VaultProvider {
     return item;
   }
 
-  updateItem(id: string, input: UpdateItemInput) {
+  async updateItem(id: string, input: UpdateItemInput): Promise<MizaanItem | undefined> {
     const state = this.readState();
     const index = state.items.findIndex((item) => item.id === id);
     if (index === -1) return undefined;
@@ -595,25 +595,25 @@ export class LocalStorageVaultProvider implements VaultProvider {
     return next;
   }
 
-  archiveItem(id: string) {
+  async archiveItem(id: string): Promise<MizaanItem | undefined> {
     return this.updateItem(id, { archivedAt: this.now(), deletedAt: undefined });
   }
 
-  trashItem(id: string) {
+  async trashItem(id: string): Promise<MizaanItem | undefined> {
     return this.updateItem(id, { deletedAt: this.now() });
   }
 
-  restoreItem(id: string) {
+  async restoreItem(id: string): Promise<MizaanItem | undefined> {
     return this.updateItem(id, { archivedAt: undefined, deletedAt: undefined });
   }
 
-  getBlocks(itemId: string): MizaanBlock[] {
+  async getBlocks(itemId: string): Promise<MizaanBlock[]> {
     return this.readState()
       .blocks.filter((block) => block.itemId === itemId)
       .sort((a, b) => a.order - b.order);
   }
 
-  createBlock(itemId: string, input: CreateBlockInput): MizaanBlock {
+  async createBlock(itemId: string, input: CreateBlockInput): Promise<MizaanBlock> {
     const state = this.readState();
     const timestamp = this.now();
     const nextOrder =
@@ -638,7 +638,7 @@ export class LocalStorageVaultProvider implements VaultProvider {
     return block;
   }
 
-  updateBlock(blockId: string, input: UpdateBlockInput) {
+  async updateBlock(blockId: string, input: UpdateBlockInput): Promise<MizaanBlock | undefined> {
     const state = this.readState();
     const index = state.blocks.findIndex((block) => block.id === blockId);
     if (index === -1) return undefined;
@@ -656,7 +656,7 @@ export class LocalStorageVaultProvider implements VaultProvider {
     return block;
   }
 
-  replaceBlocks(itemId: string, blocks: CreateBlockInput[]): MizaanBlock[] {
+  async replaceBlocks(itemId: string, blocks: CreateBlockInput[]): Promise<MizaanBlock[]> {
     const state = this.readState();
     const timestamp = this.now();
     state.blocks = state.blocks.filter((block) => block.itemId !== itemId);
@@ -679,7 +679,7 @@ export class LocalStorageVaultProvider implements VaultProvider {
     return nextBlocks;
   }
 
-  listRelations(filter: ListRelationsFilter = {}): MizaanRelation[] {
+  async listRelations(filter: ListRelationsFilter = {}): Promise<MizaanRelation[]> {
     return this.readState().relations.filter((relation) => {
       if (filter.sourceId && relation.sourceId !== filter.sourceId) return false;
       if (filter.targetId && relation.targetId !== filter.targetId) return false;
@@ -687,7 +687,7 @@ export class LocalStorageVaultProvider implements VaultProvider {
     });
   }
 
-  createRelation(input: CreateRelationInput): MizaanRelation {
+  async createRelation(input: CreateRelationInput): Promise<MizaanRelation> {
     const state = this.readState();
     const relation: MizaanRelation = {
       id: this.idFactory("relation"),
@@ -705,7 +705,7 @@ export class LocalStorageVaultProvider implements VaultProvider {
     return relation;
   }
 
-  deleteRelation(id: string) {
+  async deleteRelation(id: string): Promise<void> {
     const state = this.readState();
     const relation = state.relations.find((entry) => entry.id === id);
     state.relations = state.relations.filter((entry) => entry.id !== id);
@@ -713,7 +713,7 @@ export class LocalStorageVaultProvider implements VaultProvider {
     this.writeState(state);
   }
 
-  restoreSnapshotData(input: RestoreSnapshotDataInput): VaultSnapshot {
+  async restoreSnapshotData(input: RestoreSnapshotDataInput): Promise<VaultSnapshot> {
     if (input.mode === "replace" && input.confirmedReplace !== true) {
       throw new Error("Replace snapshot restore requires explicit confirmation.");
     }
@@ -954,3 +954,6 @@ export function getVaultProvider() {
   singleton ??= new LocalStorageVaultProvider();
   return singleton;
 }
+
+
+

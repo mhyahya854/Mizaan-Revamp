@@ -14,7 +14,7 @@ import {
 } from "./simple-table";
 
 describe("simple table block model", () => {
-  it("normalizes missing and malformed table data safely", () => {
+  it(``, async () => {
     const table = normalizeTableData({ columns: "bad", rows: null });
 
     expect(table.columns.length).toBe(2);
@@ -22,7 +22,7 @@ describe("simple table block model", () => {
     expect(table.rows[0]?.cells[table.columns[0]?.id ?? ""]).toBe("");
   });
 
-  it("adds and removes rows", () => {
+  it(``, async () => {
     const table = createDefaultTableData();
     const withRow = addTableRow(table, "row-custom");
 
@@ -34,7 +34,7 @@ describe("simple table block model", () => {
     expect(removeTableRow(removed, removed.rows[0]?.id ?? "").rows.length).toBeGreaterThan(0);
   });
 
-  it("adds, renames, and removes columns without losing remaining cells", () => {
+  it(``, async () => {
     const table = createDefaultTableData();
     const withColumn = addTableColumn(table, "Notes", "col-notes");
     const renamed = renameTableColumn(withColumn, "col-notes", "Evidence");
@@ -47,14 +47,14 @@ describe("simple table block model", () => {
     expect(removed.rows[0]?.cells["col-notes"]).toBe("Receipt");
   });
 
-  it("persists the normalized table data shape through serialization", () => {
+  it(``, async () => {
     const table = editTableCell(createDefaultTableData(), "row-1", "col-1", "Persisted");
     const parsed = normalizeTableData(JSON.parse(serializeTableData(table)));
 
     expect(parsed.rows[0]?.cells["col-1"]).toBe("Persisted");
   });
 
-  it("preserves an explicit empty row state and computes table stats", () => {
+  it(``, async () => {
     const table = normalizeTableData({
       columns: [{ id: "name", name: "Name" }],
       rows: [],
@@ -69,7 +69,7 @@ describe("simple table block model", () => {
     });
   });
 
-  it("allows deleting the final simple-table row", () => {
+  it(``, async () => {
     const table = normalizeTableData({
       columns: [{ id: "name", name: "Name" }],
       rows: [{ id: "row-1", cells: { name: "Only row" } }],
@@ -80,3 +80,4 @@ describe("simple table block model", () => {
     expect(getTableStats(withoutRows).rowCount).toBe(0);
   });
 });
+

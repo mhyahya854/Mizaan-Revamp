@@ -30,7 +30,7 @@ import {
 } from "./document-record";
 
 describe("document metadata helpers", () => {
-  it("creates explicit default metadata for a metadata-only document record", () => {
+  it(``, async () => {
     const metadata = createDefaultDocumentMetadata();
 
     expect(metadata).toMatchObject({
@@ -51,7 +51,7 @@ describe("document metadata helpers", () => {
     expect(metadata.fileName).toBe("");
   });
 
-  it("normalizes minimal metadata without inventing fake file data", () => {
+  it(``, async () => {
     const metadata = normalizeDocumentMetadata({ documentTitle: "  Passport copy  " });
 
     expect(metadata.documentTitle).toBe("Passport copy");
@@ -62,7 +62,7 @@ describe("document metadata helpers", () => {
     expect(metadata.storageState).toBe("browser-record");
   });
 
-  it("normalizes invalid enum states safely", () => {
+  it(``, async () => {
     expect(normalizeDocumentKind("spreadsheet")).toBe("unknown");
     expect(normalizeDocumentStatus("done")).toBe("metadata-only");
     expect(normalizeDocumentImportState("imported")).toBe("record-only");
@@ -70,7 +70,7 @@ describe("document metadata helpers", () => {
     expect(normalizeDocumentStorageState("vault")).toBe("browser-record");
   });
 
-  it("trims string fields and preserves unknown safe metadata fields", () => {
+  it(``, async () => {
     const metadata = normalizeDocumentMetadata({
       documentTitle: "  Invoice 42  ",
       documentSource: "  Vendor email  ",
@@ -88,7 +88,7 @@ describe("document metadata helpers", () => {
     expect(metadata.retainedCustomField).toBe("keep me");
   });
 
-  it("updates metadata while preserving unrelated fields", () => {
+  it(``, async () => {
     const current = normalizeDocumentMetadata({
       documentTitle: "Old",
       documentKind: "pdf",
@@ -106,7 +106,7 @@ describe("document metadata helpers", () => {
     expect(next.retainedCustomField).toBe("keep");
   });
 
-  it("removes duplicate and invalid relation IDs", () => {
+  it(``, async () => {
     expect(
       normalizeDocumentRelationIds([" page-1 ", "page-1", "", "bad id", "project-1", null]),
     ).toEqual(["page-1", "project-1"]);
@@ -124,7 +124,7 @@ describe("document metadata helpers", () => {
     expect(metadata.linkedFinanceIds).toEqual(["finance-1", "finance-2"]);
   });
 
-  it("reports metadata-only, import, preview, and storage honesty", () => {
+  it(``, async () => {
     const metadata = createDefaultDocumentMetadata();
 
     expect(isDocumentMetadataOnly(metadata)).toBe(true);
@@ -139,7 +139,7 @@ describe("document metadata helpers", () => {
     });
   });
 
-  it("creates provider-backed document record input with default metadata", () => {
+  it(``, async () => {
     const input = createDocumentRecordInput({
       title: "Receipt May 2026",
       kind: "receipt",
@@ -166,7 +166,7 @@ describe("document metadata helpers", () => {
     });
   });
 
-  it("exposes stable display labels", () => {
+  it(``, async () => {
     const metadata = normalizeDocumentMetadata({
       documentKind: "identity",
       documentStatus: "needs-review",
@@ -179,7 +179,7 @@ describe("document metadata helpers", () => {
     expect(getDocumentDisplayFields(metadata).kindLabel).toBe("Identity");
   });
 
-  it("keeps document metadata searchable through the existing search index", () => {
+  it(``, async () => {
     const documentItem: MizaanItem = {
       id: "doc-1",
       type: "document",
@@ -241,7 +241,7 @@ describe("document metadata helpers", () => {
     expect(results[0].matchedFields).toContain("property");
   });
 
-  it("creates document templates with normalized metadata defaults", () => {
+  it(``, async () => {
     const provider = new LocalStorageVaultProvider({
       storage: createMemoryStorage(),
       now: () => "2026-06-01T00:00:00.000Z",
@@ -257,6 +257,8 @@ describe("document metadata helpers", () => {
     expect(invoice.metadata.importState).toBe("record-only");
     expect(invoice.metadata.previewState).toBe("unavailable");
     expect(invoice.metadata.storageState).toBe("browser-record");
-    expect(provider.getBlocks(invoice.id).some((block) => block.type === "callout")).toBe(true);
+    expect(await provider.getBlocks(invoice.id).some((block) => block.type === "callout")).toBe(true);
   });
 });
+
+

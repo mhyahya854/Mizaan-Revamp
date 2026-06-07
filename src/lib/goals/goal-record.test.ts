@@ -43,7 +43,7 @@ function item(input: Partial<MizaanItem> = {}): MizaanItem {
 }
 
 describe("goal record model", () => {
-  it("creates default goal metadata without fake automation or progress history", () => {
+  it(``, async () => {
     const metadata = createDefaultGoalMetadata();
 
     expect(metadata.goalTitle).toBe("Untitled goal");
@@ -57,7 +57,7 @@ describe("goal record model", () => {
     expect(metadata.sensitive).toBe(false);
   });
 
-  it("normalizes goal status, horizon, priority, progress, target date, and safe unknown fields", () => {
+  it(``, async () => {
     expect(normalizeGoalStatus("Completed")).toBe("completed");
     expect(normalizeGoalStatus("not-real")).toBe("not-started");
     expect(normalizeGoalHorizon("Long Term")).toBe("long-term");
@@ -88,7 +88,7 @@ describe("goal record model", () => {
     expect(metadata.unknownSafeField).toBe("kept");
   });
 
-  it("updates metadata while preserving unrelated safe fields", () => {
+  it(``, async () => {
     const metadata = updateGoalMetadata(
       {
         goalTitle: "Old goal",
@@ -106,7 +106,7 @@ describe("goal record model", () => {
     expect(metadata.customSafeField).toBe("kept");
   });
 
-  it("dedupes relation IDs and exposes graph targets including tracker links", () => {
+  it(``, async () => {
     expect(normalizeGoalRelationIds(["tracker-1", " tracker-1 ", "bad id", "project:2"])).toEqual([
       "tracker-1",
       "project:2",
@@ -161,7 +161,7 @@ describe("goal record model", () => {
     ]);
   });
 
-  it("creates provider-compatible goal input", () => {
+  it(``, async () => {
     const input = createGoalRecordInput({
       title: "Finish degree",
       status: "active",
@@ -187,7 +187,7 @@ describe("goal record model", () => {
     expect(input.metadata?.progressValue).toBe(24);
   });
 
-  it("detects goal records and normalizes older generic goal pages at read time", () => {
+  it(``, async () => {
     expect(isGoalRecordItem(item())).toBe(true);
     expect(
       isGoalRecordItem(
@@ -213,7 +213,7 @@ describe("goal record model", () => {
     expect(metadata.tags).toEqual(["personal"]);
   });
 
-  it("exposes display, state, privacy, and search metadata safely", () => {
+  it(``, async () => {
     const metadata = createDefaultGoalMetadata({
       goalTitle: "Launch portfolio",
       goalStatus: "active",
@@ -244,7 +244,7 @@ describe("goal record model", () => {
     expect(getGoalSearchMetadata(metadata).progress).toContain("35");
   });
 
-  it("computes goal totals only from real active goal records", () => {
+  it(``, async () => {
     const records = [
       item({
         id: "goal-active",
@@ -282,7 +282,7 @@ describe("goal record model", () => {
     });
   });
 
-  it("keeps goal enum exports stable for UI option lists", () => {
+  it(``, async () => {
     expect(GOAL_STATUS_VALUES).toContain("paused");
     expect(GOAL_STATUS_VALUES).toContain("completed");
     expect(GOAL_HORIZON_VALUES).toContain("short-term");
@@ -290,3 +290,4 @@ describe("goal record model", () => {
     expect(GOAL_PRIORITY_VALUES).toContain("urgent");
   });
 });
+

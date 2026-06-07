@@ -41,14 +41,14 @@ function TrackersPage() {
   );
   const totals = computeTrackerTotals(trackerRecords);
 
-  function createTracker(preset: CreateTrackerRecordOptions, blocksTitle = "Tracker notes") {
-    const item = provider.createItem(
+  async function createTracker(preset: CreateTrackerRecordOptions, blocksTitle = "Tracker notes") {
+    const item = await provider.createItem(
       createTrackerRecordInput({
         parentId: trackersSpace?.id,
         ...preset,
       }),
     );
-    provider.replaceBlocks(item.id, [
+    await provider.replaceBlocks(item.id, [
       { type: "heading1", content: blocksTitle },
       { type: "paragraph", content: "" },
       {
@@ -357,3 +357,5 @@ function searchableTrackerText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
+
+

@@ -319,11 +319,11 @@ export function ensureDatabaseRowPage(
 ) {
   const normalized = normalizeDatabaseModel(model, databaseItem.id, databaseItem.title);
   const row = normalized.rows.find((entry) => entry.id === rowId) ?? normalized.rows[0];
-  const existing = row?.pageId ? provider.getItem(row.pageId) : undefined;
+  const existing = row?.pageId ? await provider.getItem(row.pageId) : undefined;
   if (row && existing) return { page: existing, model: normalized };
 
   const title = rowTitle(row, normalized.columns);
-  const page = provider.createItem({
+  const page = await provider.createItem({
     title,
     category: "databases",
     type: "database-row",
@@ -337,8 +337,8 @@ export function ensureDatabaseRowPage(
       rowId: row?.id ?? rowId,
     },
   });
-  provider.createBlock(page.id, { type: "paragraph", content: `Row notes for ${title}` });
-  provider.createRelation({
+  await provider.createBlock(page.id, { type: "paragraph", content: `Row notes for ${title}` });
+  await provider.createRelation({
     sourceId: databaseItem.id,
     targetId: page.id,
     relationType: "database_to_row",
@@ -351,7 +351,7 @@ export function ensureDatabaseRowPage(
       entry.id === (row?.id ?? rowId) ? { ...entry, pageId: page.id, title } : entry,
     ),
   });
-  provider.updateItem(databaseItem.id, { metadata: { database: toDatabaseMetadata(nextModel) } });
+  await provider.updateItem(databaseItem.id, { metadata: { database: toDatabaseMetadata(nextModel) } });
   return { page, model: nextModel };
 }
 
@@ -530,3 +530,4 @@ export function filterAndSortRows(
 
   return result;
 }
+

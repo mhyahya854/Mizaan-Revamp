@@ -22,7 +22,7 @@ function DatabasesPage() {
     .filter((item) => !item.archivedAt && !item.deletedAt)
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 
-  function createDatabase(templateId: string) {
+  async function createDatabase(templateId: string) {
     const item = createPageFromTemplate(provider, templateId, { category: "databases" });
     navigate({ to: "/page/$id", params: { id: item.id } });
     setPickerOpen(false);
@@ -89,3 +89,4 @@ function DatabasesPage() {
     </div>
   );
 }
+

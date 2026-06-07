@@ -51,12 +51,12 @@ function DocumentsPage() {
     [q, snapshot.items],
   );
 
-  function createRecord() {
-    const item = provider.createItem({
+  async function createRecord() {
+    const item = await provider.createItem({
       ...createDocumentRecordInput(),
       parentId: documentSpace?.id,
     });
-    provider.replaceBlocks(item.id, [
+    await provider.replaceBlocks(item.id, [
       { type: "heading1", content: "Summary" },
       { type: "paragraph", content: "" },
       {
@@ -68,7 +68,7 @@ function DocumentsPage() {
     navigate({ to: "/page/$id", params: { id: item.id } });
   }
 
-  function createFromTemplate(templateId: string) {
+  async function createFromTemplate(templateId: string) {
     const item = createPageFromTemplate(provider, templateId, {
       parentId: documentSpace?.id,
     });
@@ -257,3 +257,5 @@ function searchableDocumentText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
+
+

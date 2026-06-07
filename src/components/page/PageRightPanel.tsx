@@ -163,7 +163,7 @@ function PageDataPanel({
   items: MizaanItem[];
 }) {
   const hasTags = model.item.tags && model.item.tags.length > 0;
-  const providerInfo = provider.getProviderInfo();
+  const providerInfo = await provider.getProviderInfo();
 
   return (
     <div className="space-y-4">
@@ -278,7 +278,7 @@ function RelationsTab({
               {link.target.title}
             </Link>
             <button
-              onClick={() => provider.deleteRelation(link.relation.id)}
+              onClick={async () => await provider.deleteRelation(link.relation.id)}
               className="rounded-sm border hairline bg-background px-1.5 py-0.5 text-[11px] text-faint hover:bg-muted hover:text-foreground transition-colors"
             >
               Remove
@@ -300,8 +300,7 @@ function RelationsTab({
           {eligibleTargets.map((target) => (
             <button
               key={target.id}
-              onClick={() =>
-                provider.createRelation({
+              onClick={async () => await provider.createRelation({
                   sourceId: model.item.id,
                   targetId: target.id,
                   relationType: `${model.item.type}_to_${target.type}`,
@@ -371,3 +370,6 @@ function HistoryTab() {
     </section>
   );
 }
+
+
+

@@ -72,7 +72,7 @@ function makeSnapshot(items: MizaanItem[] = []): VaultSnapshot {
 }
 
 describe("import/export manager helpers", () => {
-  it("creates browser archive text and validates a good archive", () => {
+  it(``, async () => {
     const current = makeSnapshot([makeItem("current")]);
     const archiveText = createBrowserArchiveText(makeSnapshot([makeItem("incoming")]), {
       createdAt: "2026-06-04T01:00:00.000Z",
@@ -93,7 +93,7 @@ describe("import/export manager helpers", () => {
     expect(state.statusMessage).toContain("Archive is valid");
   });
 
-  it("rejects bad JSON and wrong app archives", () => {
+  it(``, async () => {
     const badJsonState = evaluateArchiveManagerState(makeSnapshot(), "{", {
       validateNow: true,
     });
@@ -109,7 +109,7 @@ describe("import/export manager helpers", () => {
     expect(wrongAppState.statusMessage).toContain("wrong app");
   });
 
-  it("rejects unsupported newer archives", () => {
+  it(``, async () => {
     const archive = createVaultArchive(makeSnapshot([makeItem("future")]));
     const state = evaluateArchiveManagerState(
       makeSnapshot(),
@@ -121,7 +121,7 @@ describe("import/export manager helpers", () => {
     expect(state.statusMessage).toContain("newer archive version");
   });
 
-  it("previews restore plans without mutating current state", () => {
+  it(``, async () => {
     const current = makeSnapshot([makeItem("current")]);
     const before = JSON.stringify(current);
     const archiveText = createBrowserArchiveText(makeSnapshot([makeItem("incoming")]));
@@ -140,7 +140,7 @@ describe("import/export manager helpers", () => {
     expect(state.applyDisabledReason).toContain("merge");
   });
 
-  it("requires explicit replace confirmation before guarded replace", () => {
+  it(``, async () => {
     const archiveText = createBrowserArchiveText(makeSnapshot([makeItem("incoming")]));
 
     const blocked = evaluateArchiveManagerState(makeSnapshot([makeItem("current")]), archiveText, {
@@ -165,7 +165,7 @@ describe("import/export manager helpers", () => {
     expect(confirmed.canApplyReplace).toBe(true);
   });
 
-  it("keeps future native import and export features explicitly future-only", () => {
+  it(``, async () => {
     expect(futureImportExportFeatures).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "native-file-import", status: "future-only" }),
@@ -175,3 +175,4 @@ describe("import/export manager helpers", () => {
     );
   });
 });
+

@@ -32,7 +32,7 @@ export function GoalMetadataPanel({
 
   function persist(patch: Record<string, unknown>) {
     const next = updateGoalMetadata(metadata, patch);
-    provider.updateItem(item.id, {
+    await provider.updateItem(item.id, {
       title: next.goalTitle || "Untitled goal",
       status: getGoalStatusLabel(next.goalStatus),
       summary: next.notes || item.summary,
@@ -308,3 +308,5 @@ function splitCsv(value: string) {
     .map((entry) => entry.trim())
     .filter(Boolean);
 }
+
+

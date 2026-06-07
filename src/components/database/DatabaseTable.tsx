@@ -45,7 +45,7 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
   }, [model.rows, model.columns, sortColumnId, sortDirection, filterColumnId, filterQuery]);
 
   function save(next: typeof model) {
-    provider.updateItem(item.id, { metadata: { database: toDatabaseMetadata(next) } });
+    await provider.updateItem(item.id, { metadata: { database: toDatabaseMetadata(next) } });
   }
 
   function openRow(rowId: string) {
@@ -106,7 +106,7 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
           <span className="font-medium text-soft">Filter:</span>
           <select
             value={filterColumnId || ""}
-            onChange={(e) => {
+            onChange={async (e) => {
               setFilterColumnId(e.target.value || null);
             }}
             className="rounded-sm border hairline bg-background px-2 py-1 outline-none text-soft"
@@ -133,7 +133,7 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
           <span className="font-medium text-soft">Sort:</span>
           <select
             value={sortColumnId || ""}
-            onChange={(e) => {
+            onChange={async (e) => {
               setSortColumnId(e.target.value || null);
               if (!sortDirection && e.target.value) {
                 setSortDirection("asc");
@@ -160,7 +160,7 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
           )}
           {(sortColumnId || filterColumnId) && (
             <button
-              onClick={() => {
+              onClick={async () => {
                 setSortColumnId(null);
                 setSortDirection(null);
                 setFilterColumnId(null);
@@ -312,3 +312,5 @@ function DatabaseCell({
     />
   );
 }
+
+

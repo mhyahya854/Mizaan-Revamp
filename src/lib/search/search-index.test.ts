@@ -79,7 +79,7 @@ function snapshot(items: MizaanItem[], blocks: MizaanBlock[] = []): VaultSnapsho
 }
 
 describe("search index", () => {
-  it("finds provider items by block content and returns the matching snippet", () => {
+  it(``, async () => {
     const data = snapshot(
       [
         item({ id: "note-1", title: "Lecture Notes", category: "notes", type: "note" }),
@@ -102,7 +102,7 @@ describe("search index", () => {
     expect(results[0].snippet).toContain("chemical energy");
   });
 
-  it("applies category, status, and tag filters while preserving recent ordering", () => {
+  it(``, async () => {
     const data = snapshot([
       item({
         id: "old-note",
@@ -143,7 +143,7 @@ describe("search index", () => {
     expect(results.map((result) => result.item.id)).toEqual(["new-finance"]);
   });
 
-  it("returns recent active items when the query is blank", () => {
+  it(``, async () => {
     const data = snapshot([
       item({
         id: "older",
@@ -167,7 +167,7 @@ describe("search index", () => {
     ]);
   });
 
-  it("splits highlighted query matches for UI rendering", () => {
+  it(``, async () => {
     expect(highlightMatches("Mizaan design principles", "design")).toEqual([
       { text: "Mizaan ", match: false },
       { text: "design", match: true },
@@ -175,7 +175,7 @@ describe("search index", () => {
     ]);
   });
 
-  it("finds project and task metadata through existing metadata indexing", () => {
+  it(``, async () => {
     const projectInput = createProjectRecordInput({
       title: "Research Sprint",
       status: "active",
@@ -216,7 +216,7 @@ describe("search index", () => {
     ).toEqual(["task-1"]);
   });
 
-  it("finds person and interaction metadata through existing metadata indexing", () => {
+  it(``, async () => {
     const personInput = createPersonRecordInput({
       displayName: "Ada Lovelace",
       relationshipType: "mentor",
@@ -260,7 +260,7 @@ describe("search index", () => {
     ).toEqual(["interaction-1"]);
   });
 
-  it("finds finance metadata through existing metadata indexing", () => {
+  it(``, async () => {
     const financeInput = createFinanceRecordInput({
       title: "BrowserQA rent",
       kind: "transaction",
@@ -293,7 +293,7 @@ describe("search index", () => {
     ).toEqual(["finance-1"]);
   });
 
-  it("finds calendar metadata through existing metadata indexing", () => {
+  it(``, async () => {
     const calendarInput = createCalendarEventRecordInput({
       title: "Library finance review",
       type: "finance",
@@ -323,7 +323,7 @@ describe("search index", () => {
     ).toEqual(["calendar-1"]);
   });
 
-  it("finds tracker and goal metadata through existing metadata indexing", () => {
+  it(``, async () => {
     const trackerInput = createTrackerRecordInput({
       title: "Study minutes",
       type: "study",
@@ -371,3 +371,4 @@ describe("search index", () => {
     expect(buildSearchResults(data, { query: "credits" })[0]?.matchedFields).toContain("property");
   });
 });
+

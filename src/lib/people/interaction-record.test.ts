@@ -14,7 +14,7 @@ import {
 } from "./interaction-record";
 
 describe("interaction record model", () => {
-  it("creates default interaction metadata", () => {
+  it(``, async () => {
     const metadata = createDefaultInteractionMetadata();
 
     expect(metadata).toMatchObject({
@@ -37,7 +37,7 @@ describe("interaction record model", () => {
     expect(metadata.linkedCalendarEventIds).toEqual([]);
   });
 
-  it("normalizes minimal interaction metadata", () => {
+  it(``, async () => {
     const metadata = normalizeInteractionMetadata({
       interactionTitle: "  Coffee catch-up  ",
       interactionType: "meeting",
@@ -57,12 +57,12 @@ describe("interaction record model", () => {
     expect(metadata.followUpDate).toBe("2026-06-10");
   });
 
-  it("normalizes invalid interaction type and status safely", () => {
+  it(``, async () => {
     expect(normalizeInteractionType("lunch")).toBe("other");
     expect(normalizeInteractionStatus("pending")).toBe("logged");
   });
 
-  it("normalizes personId and date fields safely", () => {
+  it(``, async () => {
     const metadata = normalizeInteractionMetadata({
       personId: "bad id",
       interactionDate: "not-a-date",
@@ -74,7 +74,7 @@ describe("interaction record model", () => {
     expect(metadata.followUpDate).toBe("2026-06-30");
   });
 
-  it("trims strings, normalizes booleans, and preserves unknown safe fields", () => {
+  it(``, async () => {
     const metadata = normalizeInteractionMetadata({
       interactionTitle: "  Call  ",
       summary: "  Summary  ",
@@ -94,7 +94,7 @@ describe("interaction record model", () => {
     expect(metadata.unsafeFunction).toBeUndefined();
   });
 
-  it("updates metadata while preserving unrelated fields", () => {
+  it(``, async () => {
     const updated = updateInteractionMetadata(
       {
         interactionTitle: "Original",
@@ -113,7 +113,7 @@ describe("interaction record model", () => {
     expect(updated.customField).toBe("preserve");
   });
 
-  it("dedupes relation IDs and removes invalid relation IDs", () => {
+  it(``, async () => {
     const metadata = normalizeInteractionMetadata({
       linkedProjectIds: ["project-1", "project-1", "bad id"],
       linkedTaskIds: ["task-1", undefined, " task-2 "],
@@ -130,7 +130,7 @@ describe("interaction record model", () => {
     ]);
   });
 
-  it("creates provider-compatible interaction item input", () => {
+  it(``, async () => {
     const input = createInteractionRecordInput({
       title: "Call with Ada",
       type: "call",
@@ -170,7 +170,7 @@ describe("interaction record model", () => {
     });
   });
 
-  it("derives display and state summaries from normalized metadata", () => {
+  it(``, async () => {
     const metadata = normalizeInteractionMetadata({
       interactionTitle: "Meeting",
       interactionType: "meeting",
@@ -199,7 +199,7 @@ describe("interaction record model", () => {
     });
   });
 
-  it("extracts graph targets from person and linked relation IDs", () => {
+  it(``, async () => {
     const targets = getInteractionGraphTargets({
       personId: "person-1",
       linkedProjectIds: ["project-1"],
@@ -242,3 +242,4 @@ describe("interaction record model", () => {
     ]);
   });
 });
+

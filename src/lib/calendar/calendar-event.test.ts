@@ -41,7 +41,7 @@ function item(input: Partial<MizaanItem> = {}): MizaanItem {
 }
 
 describe("calendar event metadata", () => {
-  it("creates default event metadata with safe local-only flags", () => {
+  it(``, async () => {
     expect(createDefaultCalendarEventMetadata({ eventTitle: "  Class review  " })).toMatchObject({
       eventTitle: "Class review",
       eventType: "event",
@@ -55,7 +55,7 @@ describe("calendar event metadata", () => {
     });
   });
 
-  it("normalizes minimal and invalid event metadata predictably", () => {
+  it(``, async () => {
     const metadata = normalizeCalendarEventMetadata({
       eventType: "bad",
       eventStatus: "bad",
@@ -79,7 +79,7 @@ describe("calendar event metadata", () => {
     expect(metadata.extraSafe).toBe("preserved");
   });
 
-  it("normalizes type, status, all-day, timed, and invalid ranges", () => {
+  it(``, async () => {
     expect(normalizeCalendarEventType("Study")).toBe("study");
     expect(normalizeCalendarEventType("nonsense")).toBe("unknown");
     expect(normalizeCalendarEventStatus("Cancelled")).toBe("cancelled");
@@ -101,7 +101,7 @@ describe("calendar event metadata", () => {
     ).toBe(true);
   });
 
-  it("dedupes relation IDs and removes invalid relation IDs", () => {
+  it(``, async () => {
     const metadata = normalizeCalendarEventMetadata({
       linkedProjectIds: ["project-1", "project-1", "bad id"],
       linkedTaskIds: ["task-1", "", "task/2"],
@@ -117,7 +117,7 @@ describe("calendar event metadata", () => {
     expect(metadata.linkedFinanceIds).toEqual(["finance-1"]);
   });
 
-  it("updates metadata without wiping unrelated safe fields", () => {
+  it(``, async () => {
     const metadata = updateCalendarEventMetadata(
       { eventTitle: "Before", customKey: "keep", linkedProjectIds: ["project-1"] },
       { eventTitle: "After", linkedProjectIds: ["project-1", "project-2"] },
@@ -128,7 +128,7 @@ describe("calendar event metadata", () => {
     expect(metadata.linkedProjectIds).toEqual(["project-1", "project-2"]);
   });
 
-  it("creates provider-compatible record input with searchable metadata", () => {
+  it(``, async () => {
     const input = createCalendarEventRecordInput({
       title: "Budget appointment",
       type: "finance",
@@ -169,7 +169,7 @@ describe("calendar event metadata", () => {
     });
   });
 
-  it("filters date, month, and agenda ranges", () => {
+  it(``, async () => {
     const events = [
       item({
         id: "one",
@@ -195,7 +195,7 @@ describe("calendar event metadata", () => {
     ).toEqual(["one"]);
   });
 
-  it("exposes search fields, graph targets, display fields, and state summary", () => {
+  it(``, async () => {
     const metadata = createDefaultCalendarEventMetadata({
       eventTitle: "Private finance review",
       eventType: "finance",
@@ -254,8 +254,9 @@ describe("calendar event metadata", () => {
     });
   });
 
-  it("recognizes calendar event items and excludes legacy Calendar space records", () => {
+  it(``, async () => {
     expect(isCalendarEventItem(item())).toBe(true);
     expect(isCalendarEventItem(item({ metadata: { promotedAsSpace: true } }))).toBe(false);
   });
 });
+

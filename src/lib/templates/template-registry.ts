@@ -732,7 +732,7 @@ export function createItemFromTemplate(
   const type = template.universal ? typeForCategory(category) : template.type;
   const title = options.title ?? template.title;
   const metadata = normalizeTemplateMetadata(template, category, type, title);
-  const item = provider.createItem({
+  const item = await provider.createItem({
     title,
     category,
     type,
@@ -752,7 +752,7 @@ export function createItemFromTemplate(
           : block,
       )
     : template.blocks;
-  provider.replaceBlocks(
+  await provider.replaceBlocks(
     item.id,
     blocks.map((block) => ({ ...block })),
   );
@@ -760,7 +760,7 @@ export function createItemFromTemplate(
   if (item.type === "database") {
     const database = createDatabaseForTemplate(template.id, item.id, item.title);
     return (
-      provider.updateItem(item.id, {
+      await provider.updateItem(item.id, {
         metadata: {
           ...item.metadata,
           templateId: template.id,
@@ -1222,3 +1222,4 @@ function titleCase(value: string) {
 export function createSimpleTableBlock(): CreateBlockInput {
   return { type: "table", content: serializeTableData(createDefaultTableData()) };
 }
+

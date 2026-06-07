@@ -46,7 +46,7 @@ function TemplatesPage() {
     templates[0];
   const preview = selectedTemplate ? getTemplatePreview(selectedTemplate) : undefined;
 
-  function createFromTemplate(templateId: string) {
+  async function createFromTemplate(templateId: string) {
     const item = createItemFromTemplate(provider, templateId);
     navigate({ to: "/page/$id", params: { id: item.id } });
   }
@@ -350,3 +350,4 @@ function formatValue(value: unknown): string {
   if (typeof value === "object") return "Object";
   return String(value);
 }
+

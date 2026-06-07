@@ -44,7 +44,7 @@ export function ProjectMetadataPanel({
 
   function persist(patch: Record<string, unknown>) {
     const next = updateProjectMetadata(metadata, patch);
-    provider.updateItem(item.id, {
+    await provider.updateItem(item.id, {
       title: next.projectTitle || "Untitled project",
       status: getProjectStatusLabel(next.projectStatus),
       summary: next.projectDescription || item.summary,
@@ -59,7 +59,7 @@ export function ProjectMetadataPanel({
   }
 
   function createLinkedTask() {
-    const task = provider.createItem(
+    const task = await provider.createItem(
       createTaskRecordInput({
         title: "Untitled task",
         status: "todo",
@@ -225,7 +225,7 @@ export function TaskMetadataPanel({
 
   function persist(patch: Record<string, unknown>) {
     const next = updateTaskMetadata(metadata, patch);
-    provider.updateItem(item.id, {
+    await provider.updateItem(item.id, {
       title: next.taskTitle || "Untitled task",
       status: getTaskStatusLabel(next.taskStatus),
       parentId: next.taskProjectId || undefined,
@@ -324,7 +324,7 @@ function TaskInlineEditor({
 
   function persist(patch: Record<string, unknown>) {
     const next = updateTaskMetadata(metadata, { taskProjectId: projectId, ...patch });
-    provider.updateItem(task.id, {
+    await provider.updateItem(task.id, {
       title: next.taskTitle || "Untitled task",
       status: getTaskStatusLabel(next.taskStatus),
       parentId: projectId,
@@ -483,3 +483,5 @@ function uniqueStrings(values: string[]) {
 function todayDate() {
   return new Date().toISOString().slice(0, 10);
 }
+
+

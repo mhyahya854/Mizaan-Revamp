@@ -65,7 +65,7 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     if (model.state !== "ready") return;
 
     if (isDocumentRecordItem(model.item)) {
-      provider.updateItem(model.item.id, {
+      await provider.updateItem(model.item.id, {
         title: nextTitle,
         metadata: updateDocumentMetadata(normalizeDocumentMetadataForItem(model.item), {
           documentTitle: nextTitle,
@@ -75,7 +75,7 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     }
 
     if (isProjectRecordItem(model.item)) {
-      provider.updateItem(model.item.id, {
+      await provider.updateItem(model.item.id, {
         title: nextTitle,
         metadata: updateProjectMetadata(normalizeProjectMetadataForItem(model.item), {
           projectTitle: nextTitle,
@@ -85,7 +85,7 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     }
 
     if (isTaskRecordItem(model.item)) {
-      provider.updateItem(model.item.id, {
+      await provider.updateItem(model.item.id, {
         title: nextTitle,
         metadata: updateTaskMetadata(normalizeTaskMetadataForItem(model.item), {
           taskTitle: nextTitle,
@@ -95,7 +95,7 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     }
 
     if (isPersonRecordItem(model.item)) {
-      provider.updateItem(model.item.id, {
+      await provider.updateItem(model.item.id, {
         title: nextTitle,
         metadata: updatePersonMetadata(normalizePersonMetadataForItem(model.item), {
           displayName: nextTitle,
@@ -105,7 +105,7 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     }
 
     if (isInteractionRecordItem(model.item)) {
-      provider.updateItem(model.item.id, {
+      await provider.updateItem(model.item.id, {
         title: nextTitle,
         metadata: updateInteractionMetadata(normalizeInteractionMetadataForItem(model.item), {
           interactionTitle: nextTitle,
@@ -115,7 +115,7 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     }
 
     if (isFinanceRecordItem(model.item)) {
-      provider.updateItem(model.item.id, {
+      await provider.updateItem(model.item.id, {
         title: nextTitle,
         metadata: updateFinanceMetadata(normalizeFinanceMetadataForItem(model.item), {
           financeTitle: nextTitle,
@@ -124,7 +124,7 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
       return;
     }
 
-    provider.updateItem(model.item.id, { title: nextTitle });
+    await provider.updateItem(model.item.id, { title: nextTitle });
   }
 
   function handleCreateChild() {
@@ -175,8 +175,8 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
             title={draftTitle}
             onTitleChange={updateTitle}
             onCreateChild={handleCreateChild}
-            onArchive={() => provider.archiveItem(model.item.id)}
-            onRestore={() => provider.restoreItem(model.item.id)}
+            onArchive={() => await provider.archiveItem(model.item.id)}
+            onRestore={() => await provider.restoreItem(model.item.id)}
           />
           {model.item.type === "database" ? (
             <DatabaseTable item={model.item} provider={provider} />
@@ -203,3 +203,5 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     </div>
   );
 }
+
+

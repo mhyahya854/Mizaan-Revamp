@@ -44,7 +44,7 @@ function item(input: Partial<MizaanItem> = {}): MizaanItem {
 }
 
 describe("tracker record model", () => {
-  it("creates default tracker metadata without fake streaks or reminder claims", () => {
+  it(``, async () => {
     const metadata = createDefaultTrackerMetadata();
 
     expect(metadata.trackerTitle).toBe("Untitled tracker");
@@ -60,7 +60,7 @@ describe("tracker record model", () => {
     expect(metadata.sensitive).toBe(false);
   });
 
-  it("normalizes tracker type, status, frequency, numeric fields, and dates", () => {
+  it(``, async () => {
     expect(normalizeTrackerType("Study")).toBe("study");
     expect(normalizeTrackerType("not-real")).toBe("habit");
     expect(normalizeTrackerStatus("Completed")).toBe("completed");
@@ -92,7 +92,7 @@ describe("tracker record model", () => {
     expect(metadata.unknownSafeField).toBe("kept");
   });
 
-  it("updates metadata while preserving unrelated safe fields", () => {
+  it(``, async () => {
     const metadata = updateTrackerMetadata(
       {
         trackerTitle: "Old tracker",
@@ -110,7 +110,7 @@ describe("tracker record model", () => {
     expect(metadata.customSafeField).toBe("kept");
   });
 
-  it("dedupes relation IDs and exposes graph targets", () => {
+  it(``, async () => {
     expect(normalizeTrackerRelationIds(["project-1", " project-1 ", "bad id", "person:2"])).toEqual(
       ["project-1", "person:2"],
     );
@@ -157,7 +157,7 @@ describe("tracker record model", () => {
     ]);
   });
 
-  it("adds real check-ins without creating fake progress history", () => {
+  it(``, async () => {
     const metadata = createDefaultTrackerMetadata({
       trackerTitle: "Study tracker",
       unit: "minutes",
@@ -184,7 +184,7 @@ describe("tracker record model", () => {
     expect(next.fakeStreaks).toBe(false);
   });
 
-  it("creates provider-compatible tracker input", () => {
+  it(``, async () => {
     const input = createTrackerRecordInput({
       title: "Study minutes",
       type: "study",
@@ -210,7 +210,7 @@ describe("tracker record model", () => {
     expect(input.metadata?.targetValue).toBe(300);
   });
 
-  it("detects tracker records and normalizes older generic tracker pages at read time", () => {
+  it(``, async () => {
     expect(isTrackerRecordItem(item())).toBe(true);
     expect(
       isTrackerRecordItem(
@@ -236,7 +236,7 @@ describe("tracker record model", () => {
     expect(metadata.tags).toEqual(["reading"]);
   });
 
-  it("exposes display, state, privacy, and search metadata safely", () => {
+  it(``, async () => {
     const metadata = createDefaultTrackerMetadata({
       trackerTitle: "Quran reading",
       trackerType: "reading",
@@ -267,7 +267,7 @@ describe("tracker record model", () => {
     expect(getTrackerSearchMetadata(metadata).progress).toContain("pages");
   });
 
-  it("computes tracker totals only from real active tracker records", () => {
+  it(``, async () => {
     const records = [
       item({
         id: "tracker-active",
@@ -307,7 +307,7 @@ describe("tracker record model", () => {
     });
   });
 
-  it("keeps tracker enum exports stable for UI option lists", () => {
+  it(``, async () => {
     expect(TRACKER_TYPE_VALUES).toContain("habit");
     expect(TRACKER_TYPE_VALUES).toContain("study");
     expect(TRACKER_TYPE_VALUES).toContain("custom");
@@ -317,3 +317,4 @@ describe("tracker record model", () => {
     expect(TRACKER_FREQUENCY_VALUES).toContain("custom");
   });
 });
+

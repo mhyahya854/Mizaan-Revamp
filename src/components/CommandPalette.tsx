@@ -278,7 +278,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
           <input
             autoFocus
             value={query}
-            onChange={(event) => {
+            onChange={async (event) => {
               setQuery(event.target.value);
               setIndex(0);
             }}
@@ -382,3 +382,4 @@ function labelFor(category: ItemCategory) {
   };
   return labels[category];
 }
+

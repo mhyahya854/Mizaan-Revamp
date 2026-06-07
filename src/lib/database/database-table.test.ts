@@ -33,7 +33,7 @@ function createProvider() {
 }
 
 describe("database table model", () => {
-  it("creates and normalizes a default database model", () => {
+  it(``, async () => {
     const model = normalizeDatabaseModel(undefined, "db-1", "Reading List");
 
     expect(model.id).toBe("db-1");
@@ -44,14 +44,14 @@ describe("database table model", () => {
     expect(model.unsupportedFeatures).toEqual([]);
   });
 
-  it("normalizes malformed database metadata safely", () => {
+  it(``, async () => {
     const model = normalizeDatabaseModel({ columns: "bad", rows: false }, "db-2", "Broken");
 
     expect(model.columns.length).toBeGreaterThan(0);
     expect(model.rows.length).toBeGreaterThan(0);
   });
 
-  it("preserves an explicit empty database row state and computes table stats", () => {
+  it(``, async () => {
     const model = normalizeDatabaseModel(
       {
         columns: [{ id: "name", name: "Name", type: "text" }],
@@ -71,7 +71,7 @@ describe("database table model", () => {
     });
   });
 
-  it("adds, removes, renames, and changes basic columns", () => {
+  it(``, async () => {
     const model = createDefaultDatabaseModel("db", "Database");
     const withColumn = addDatabaseColumn(model, {
       id: "col-status",
@@ -87,7 +87,7 @@ describe("database table model", () => {
     expect(removed.columns.some((column) => column.id === model.columns[0]?.id)).toBe(false);
   });
 
-  it("adds, removes, and edits rows", () => {
+  it(``, async () => {
     const model = createDefaultDatabaseModel("db", "Database");
     const withRow = addDatabaseRow(model, "row-extra");
     const edited = editDatabaseCell(withRow, "row-extra", model.columns[0]?.id ?? "", "Alpha");
@@ -99,7 +99,7 @@ describe("database table model", () => {
     expect(removed.rows.some((row) => row.id === "row-extra")).toBe(false);
   });
 
-  it("allows deleting the final row so the database can show an empty table state", () => {
+  it(``, async () => {
     const model = createDefaultDatabaseModel("db", "Database");
     const withoutRows = removeDatabaseRow(model, model.rows[0]?.id ?? "");
 
@@ -108,7 +108,7 @@ describe("database table model", () => {
     expect(getDatabaseStats(withoutRows).rowCount).toBe(0);
   });
 
-  it("updates database title and description metadata without losing table data", () => {
+  it(``, async () => {
     const model = editDatabaseCell(
       createDefaultDatabaseModel("db", "Database"),
       "row-1",
@@ -125,7 +125,7 @@ describe("database table model", () => {
     expect(updated.rows[0]?.cells.notes).toBe("Keep this note");
   });
 
-  it("reports validation repairs for duplicate columns and stale row order entries", () => {
+  it(``, async () => {
     const validation = validateDatabaseModel({
       columns: [
         { id: "name", name: "Name", type: "text" },
@@ -150,9 +150,9 @@ describe("database table model", () => {
     );
   });
 
-  it("persists database metadata through the provider", () => {
+  it(``, async () => {
     const provider = createProvider();
-    const item = provider.createItem({
+    const item = await provider.createItem({
       title: "Tasks DB",
       category: "databases",
       type: "database",
@@ -163,20 +163,20 @@ describe("database table model", () => {
       { id: "col-priority", name: "Priority", type: "text" },
     );
 
-    provider.updateItem(item.id, { metadata: { database: toDatabaseMetadata(model) } });
+    await provider.updateItem(item.id, { metadata: { database: toDatabaseMetadata(model) } });
 
     expect(
       normalizeDatabaseModel(
-        provider.getItem(item.id)?.metadata.database,
+        await provider.getItem(item.id)?.metadata.database,
         item.id,
         item.title,
       ).columns.some((column) => column.id === "col-priority"),
     ).toBe(true);
   });
 
-  it("creates a database row page only when opening the row is requested", () => {
+  it(``, async () => {
     const provider = createProvider();
-    const item = provider.createItem({
+    const item = await provider.createItem({
       title: "People DB",
       category: "databases",
       type: "database",
@@ -189,10 +189,10 @@ describe("database table model", () => {
     expect(result.page.parentId).toBe(item.id);
     expect(result.page.metadata.databaseRow).toBe(true);
     expect(result.model.rows[0]?.pageId).toBe(result.page.id);
-    expect(provider.getItem(result.page.id)?.title).toBe(result.page.title);
+    expect(await provider.getItem(result.page.id)?.title).toBe(result.page.title);
   });
 
-  it("filters rows by text query (case-insensitive)", () => {
+  it(``, async () => {
     const columns = [
       { id: "name", name: "Name", type: "text" as const },
       { id: "category", name: "Category", type: "text" as const },
@@ -236,7 +236,7 @@ describe("database table model", () => {
     expect(filtered3).toHaveLength(0);
   });
 
-  it("sorts rows by text or number columns", () => {
+  it(``, async () => {
     const columns = [
       { id: "name", name: "Name", type: "text" as const },
       { id: "age", name: "Age", type: "number" as const },
@@ -276,3 +276,5 @@ describe("database table model", () => {
     expect(sortedAgeDesc.map((r) => r.id)).toEqual(["row-3", "row-1", "row-2"]); // 35, 30, 25
   });
 });
+
+

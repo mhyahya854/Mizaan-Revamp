@@ -21,14 +21,14 @@ export interface VaultLifecycleStatus {
 const SESSION_KEY = "mizaan.prototype.vault.session.v1";
 const RECENT_KEY = "mizaan.prototype.recentVaults.v1";
 
-function memorySession(): VaultSession {
+async function memorySession(): Promise<VaultSession> {
   const now = new Date().toISOString();
   return {
     vaultId: "prototype-local-vault",
     displayName: "Prototype Local Vault",
     mode: "prototype-local",
-    providerId: getVaultProvider().getProviderInfo().id,
-    storageLabel: getVaultProvider().getProviderInfo().storageLabel,
+    providerId: (await getVaultProvider().getProviderInfo()).id,
+    storageLabel: (await getVaultProvider().getProviderInfo()).storageLabel,
     createdAt: now,
     updatedAt: now,
   };
@@ -38,8 +38,8 @@ function canUseLocalStorage() {
   return typeof window !== "undefined" && Boolean(window.localStorage);
 }
 
-export function getCurrentVaultSession(): VaultSession {
-  if (!canUseLocalStorage()) return memorySession();
+export async function getCurrentVaultSession(): Promise<VaultSession> {
+  if (!canUseLocalStorage()) return await memorySession();
 
   const stored = window.localStorage.getItem(SESSION_KEY);
   if (stored) {
@@ -50,7 +50,7 @@ export function getCurrentVaultSession(): VaultSession {
     }
   }
 
-  const session = memorySession();
+  const session = await memorySession();
   window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   recordRecentVault(session);
   return session;
@@ -81,14 +81,15 @@ export function getRecentVaults(): VaultSession[] {
   }
 }
 
-export function getVaultLifecycleStatus(): VaultLifecycleStatus {
+export async function getVaultLifecycleStatus(): Promise<VaultLifecycleStatus> {
   const provider = getVaultProvider();
-  const session = getCurrentVaultSession();
+  const session = await getCurrentVaultSession();
 
   return {
     session,
-    providerInfo: provider.getProviderInfo(),
-    health: provider.getHealth(),
+    providerInfo: await provider.getProviderInfo(),
+    health: await provider.getHealth(),
     recentVaults: getRecentVaults(),
   };
 }
+

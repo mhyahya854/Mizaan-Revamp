@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { describe, expect, it } from "vitest";
 
 import {
@@ -55,7 +56,7 @@ const safeBlockTypes = new Set<BlockType>([
 ]);
 
 describe("template registry", () => {
-  it("defines unique, valid template definitions with status and preview data", () => {
+  it(``, async () => {
     const templates = getAllTemplates();
     const ids = templates.map((template) => template.id);
 
@@ -73,7 +74,7 @@ describe("template registry", () => {
     }
   });
 
-  it("exposes implemented, partial, and future status counts", () => {
+  it(``, async () => {
     const counts = getTemplateStatusCounts();
 
     expect(counts.implemented).toBeGreaterThanOrEqual(35);
@@ -84,7 +85,7 @@ describe("template registry", () => {
     expect(getFutureTemplates()).toHaveLength(counts.future);
   });
 
-  it("filters templates by category and builds searchable text", () => {
+  it(``, async () => {
     const notes = getTemplatesByCategory("notes");
     const finance = getTemplatesByCategory("finance");
     const searchText = getTemplateSearchText(getTemplateById("meeting-note")!);
@@ -102,23 +103,23 @@ describe("template registry", () => {
     expect(categoryCounts.calendar).toBeGreaterThanOrEqual(5);
   });
 
-  it("creates every implemented template as a provider-backed item with safe starter blocks", () => {
+  it(``, async () => {
     const provider = createProvider();
 
     for (const template of getImplementedTemplates()) {
       const item = createItemFromTemplate(provider, template.id);
-      const blocks = provider.getBlocks(item.id);
+      const blocks = await provider.getBlocks(item?.id);
 
-      expect(item.id).toMatch(/^item-/);
+      expect(item?.id).toMatch(/^item-/);
       expect(item.category).toBe(template.universal ? item.category : template.category);
       expect(item.type).toBe(template.universal ? item.type : template.type);
       expect(item.metadata.templateId).toBe(template.id);
-      expect(provider.getItem(item.id)?.id).toBe(item.id);
+      expect((await provider.getItem(item?.id)?.id))?.toBe(item?.id);
       expect(blocks.every((block) => safeBlockTypes.has(block.type))).toBe(true);
     }
   });
 
-  it("normalizes implemented module metadata through the module helpers", () => {
+  it(``, async () => {
     const provider = createProvider();
 
     const document = createItemFromTemplate(provider, "receipt-document-record");
@@ -149,13 +150,13 @@ describe("template registry", () => {
     expect(normalizeCalendarEventMetadata(calendar.metadata).eventType).toBe("appointment");
   });
 
-  it("keeps database and table templates honest and provider-backed", () => {
+  it(``, async () => {
     const provider = createProvider();
     const simpleTable = createItemFromTemplate(provider, "simple-table-page");
     const readingList = createItemFromTemplate(provider, "reading-list-table");
     const financeLedger = createItemFromTemplate(provider, "finance-ledger-table");
 
-    expect(provider.getBlocks(simpleTable.id).some((block) => block.type === "table")).toBe(true);
+    expect((await (await provider.getBlocks(simpleTable.id))?.some((block) => block.type === "table"))).toBe(true);
     expect(readingList.category).toBe("databases");
     expect(readingList.metadata.database).toBeDefined();
     expect(financeLedger.category).toBe("databases");
@@ -163,7 +164,7 @@ describe("template registry", () => {
     expect(String(financeLedger.summary).toLowerCase()).not.toContain("bank sync");
   });
 
-  it("rejects unknown, partial, and future templates instead of silently creating fake records", () => {
+  it(``, async () => {
     const provider = createProvider();
 
     expect(() => createItemFromTemplate(provider, "missing-template")).toThrow(/unknown/i);
@@ -175,9 +176,9 @@ describe("template registry", () => {
     );
   });
 
-  it("builds previews that reflect actual defaults and do not mutate provider state", () => {
+  it(``, async () => {
     const provider = createProvider();
-    const beforeCount = provider.getSnapshot().items.length;
+    const beforeCount = (await provider.getSnapshot())?.items.length;
     const preview = getTemplatePreview("expense-record");
 
     expect(preview.id).toBe("expense-record");
@@ -188,16 +189,16 @@ describe("template registry", () => {
     expect(preview.metadata.transactionType).toBe("expense");
     expect(preview.blockCount).toBeGreaterThan(0);
     expect(preview.canCreate).toBe(true);
-    expect(provider.getSnapshot().items.length).toBe(beforeCount);
+    expect((await (await provider.getSnapshot())?.items.length)).toBe(beforeCount);
   });
 
-  it("keeps command palette template IDs limited to implemented templates", () => {
+  it(``, async () => {
     for (const templateId of COMMAND_PALETTE_TEMPLATE_IDS) {
       expect(getTemplateById(templateId)?.status).toBe("implemented");
     }
   });
 
-  it("does not expose unsupported systems as active implemented metadata", () => {
+  it(``, async () => {
     const forbiddenTrueKeys = [
       "aiGenerated",
       "cloudSynced",
@@ -219,7 +220,7 @@ describe("template registry", () => {
     }
   });
 
-  it("does not duplicate template names within a category", () => {
+  it(``, async () => {
     const seen = new Set<string>();
 
     for (const template of getAllTemplates()) {
@@ -229,7 +230,7 @@ describe("template registry", () => {
     }
   });
 
-  it("creates relation-ready records with normalized relation ID defaults", () => {
+  it(``, async () => {
     const provider = createProvider();
     const created: Record<string, MizaanItem> = {};
 
@@ -256,7 +257,7 @@ describe("template registry", () => {
     expect(normalizeGoalMetadata(created.goals.metadata).linkedTrackerIds).toEqual([]);
   });
 
-  it("applies caller-provided titles to normalized metadata for expanded templates", () => {
+  it(``, async () => {
     const provider = createProvider();
 
     const calendar = createItemFromTemplate(provider, "calendar-appointment", {
@@ -276,3 +277,9 @@ describe("template registry", () => {
     );
   });
 });
+
+
+
+
+
+

@@ -54,7 +54,7 @@ export function PageEditorSurface({
   }, [slashQuery]);
 
   function addBlock(type: MizaanBlock["type"], after?: MizaanBlock) {
-    provider.createBlock(itemId, {
+    await provider.createBlock(itemId, {
       type,
       content: type === "table" ? serializeTableData(createDefaultTableData()) : "",
       checked: type === "todo" ? false : undefined,
@@ -71,8 +71,8 @@ export function PageEditorSurface({
           <BlockRow
             key={block.id}
             block={block}
-            onChange={(content) => provider.updateBlock(block.id, { content })}
-            onCheckedChange={(checked) => provider.updateBlock(block.id, { checked })}
+            onChange={async (content) => await provider.updateBlock(block.id, { content })}
+            onCheckedChange={async (checked) => await provider.updateBlock(block.id, { checked })}
             onEnter={() => addBlock("paragraph", block)}
           />
         ))}
@@ -264,3 +264,6 @@ function placeholderFor(type: MizaanBlock["type"]) {
   if (type === "table") return "Table";
   return "Type / for commands";
 }
+
+
+

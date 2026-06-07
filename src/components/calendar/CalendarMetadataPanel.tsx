@@ -28,7 +28,7 @@ export function CalendarMetadataPanel({
 
   function persist(patch: Record<string, unknown>) {
     const next = updateCalendarEventMetadata(metadata, patch);
-    provider.updateItem(item.id, {
+    await provider.updateItem(item.id, {
       title: next.eventTitle || "Untitled event",
       status: getCalendarStatusLabel(next.eventStatus),
       summary: next.notes || item.summary,
@@ -310,3 +310,5 @@ function splitCsv(value: string) {
 
 const fieldClassName =
   "w-full rounded-sm border hairline bg-background px-2 py-1.5 text-[12.5px] text-foreground outline-none focus:ring-1 focus:ring-ring";
+
+

@@ -37,7 +37,7 @@ export function TrackerMetadataPanel({
 
   function persist(patch: Record<string, unknown>) {
     const next = updateTrackerMetadata(metadata, patch);
-    provider.updateItem(item.id, {
+    await provider.updateItem(item.id, {
       title: next.trackerTitle || "Untitled tracker",
       status: getTrackerStatusLabel(next.trackerStatus),
       summary: next.notes || item.summary,
@@ -62,7 +62,7 @@ export function TrackerMetadataPanel({
       value: checkInValue,
       note: checkInNote,
     });
-    provider.updateItem(item.id, {
+    await provider.updateItem(item.id, {
       status: getTrackerStatusLabel(next.trackerStatus),
       properties: {
         ...item.properties,
@@ -368,3 +368,5 @@ function splitCsv(value: string) {
     .map((entry) => entry.trim())
     .filter(Boolean);
 }
+
+

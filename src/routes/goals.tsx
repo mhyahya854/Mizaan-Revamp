@@ -41,14 +41,14 @@ function GoalsPage() {
   );
   const totals = computeGoalTotals(goalRecords);
 
-  function createGoal(preset: CreateGoalRecordOptions, blocksTitle = "Goal notes") {
-    const item = provider.createItem(
+  async function createGoal(preset: CreateGoalRecordOptions, blocksTitle = "Goal notes") {
+    const item = await provider.createItem(
       createGoalRecordInput({
         parentId: goalsSpace?.id,
         ...preset,
       }),
     );
-    provider.replaceBlocks(item.id, [
+    await provider.replaceBlocks(item.id, [
       { type: "heading1", content: blocksTitle },
       { type: "paragraph", content: "" },
       {
@@ -323,3 +323,5 @@ function searchableGoalText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
+
+

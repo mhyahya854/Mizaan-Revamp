@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { getModuleStatusCounts, isFutureOnlyStatus, productModules } from "./product-map";
 
 describe("productModules", () => {
-  it("defines every module with stable core fields", () => {
+  it(``, async () => {
     expect(productModules.length).toBeGreaterThanOrEqual(24);
 
     productModules.forEach((module) => {
@@ -18,12 +18,12 @@ describe("productModules", () => {
     });
   });
 
-  it("does not contain duplicate module ids", () => {
+  it(``, async () => {
     const ids = productModules.map((module) => module.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("keeps future-only modules from exposing active routes", () => {
+  it(``, async () => {
     const invalid = productModules.filter(
       (module) => isFutureOnlyStatus(module.status) && module.route,
     );
@@ -31,7 +31,7 @@ describe("productModules", () => {
     expect(invalid).toEqual([]);
   });
 
-  it("classifies implemented and partial modules separately", () => {
+  it(``, async () => {
     const counts = getModuleStatusCounts(productModules);
 
     expect(counts.implemented).toBeGreaterThan(0);
@@ -39,7 +39,7 @@ describe("productModules", () => {
     expect(counts.blueprintOnly + counts.notStarted).toBeGreaterThan(0);
   });
 
-  it("keeps forbidden provider and cloud claims out of module copy", () => {
+  it(``, async () => {
     const text = productModules
       .map((module) => `${module.label} ${module.summary} ${module.futureReason ?? ""}`)
       .join(" ");
@@ -47,7 +47,7 @@ describe("productModules", () => {
     expect(text).not.toMatch(/OAuth|Firebase|Supabase|Clerk|Google Drive|cloud sync/i);
   });
 
-  it("marks platform storage and mobile work as future or not started", () => {
+  it(``, async () => {
     expect(productModules.find((module) => module.id === "tauri")?.status).toBe("future-native");
     expect(productModules.find((module) => module.id === "sqlite")?.status).toBe("future-native");
     expect(productModules.find((module) => module.id === "portable-vault")?.status).toBe(
@@ -58,12 +58,12 @@ describe("productModules", () => {
     );
   });
 
-  it("keeps calendar as a core module and documents as a workspace module", () => {
+  it(``, async () => {
     expect(productModules.find((module) => module.id === "calendar")?.category).toBe("core");
     expect(productModules.find((module) => module.id === "documents")?.category).toBe("workspace");
   });
 
-  it("keeps system tools grouped as system modules", () => {
+  it(``, async () => {
     const systemIds = [
       "templates",
       "vault",
@@ -79,7 +79,7 @@ describe("productModules", () => {
     });
   });
 
-  it("reports browser archive hardening without claiming native backups", () => {
+  it(``, async () => {
     const vault = productModules.find((module) => module.id === "vault");
     const backups = productModules.find((module) => module.id === "backups");
     const exportsModule = productModules.find((module) => module.id === "exports");
@@ -92,7 +92,7 @@ describe("productModules", () => {
     expect(exportsModule?.currentTruth).toContain("Browser archive JSON export exists");
   });
 
-  it("reports import/export and repair manager routes without native claims", () => {
+  it(``, async () => {
     const imports = productModules.find((module) => module.id === "imports");
     const repair = productModules.find((module) => module.id === "repair-center");
 
@@ -107,7 +107,7 @@ describe("productModules", () => {
     expect(repair?.currentTruth).toContain("not implemented");
   });
 
-  it("reports trackers and goals as bounded local foundations", () => {
+  it(``, async () => {
     const trackers = productModules.find((module) => module.id === "trackers");
     const goals = productModules.find((module) => module.id === "goals");
 
@@ -124,3 +124,4 @@ describe("productModules", () => {
     expect(goals?.currentTruth).toContain("future");
   });
 });
+

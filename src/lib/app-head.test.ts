@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { getAppHeadLinks } from "./app-head";
 
 describe("app head product law", () => {
-  it("does not load remote or Google-owned resources", () => {
+  it(``, async () => {
     const links = getAppHeadLinks("/assets/app.css");
     const hrefs = links.flatMap((link) => (typeof link.href === "string" ? [link.href] : []));
 
@@ -12,3 +12,4 @@ describe("app head product law", () => {
     expect(hrefs.join("\n").toLowerCase()).not.toMatch(/google|gstatic|fonts\.googleapis/);
   });
 });
+

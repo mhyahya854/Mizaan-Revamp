@@ -77,7 +77,7 @@ function makeSnapshot(overrides: Partial<VaultSnapshot> = {}): VaultSnapshot {
 }
 
 describe("createVaultHealthSummary", () => {
-  it("counts items, categories, archive support, and empty vault state", () => {
+  it(``, async () => {
     const snapshot = makeSnapshot({
       items: [
         makeItem("doc-1", { category: "documents" }),
@@ -114,7 +114,7 @@ describe("createVaultHealthSummary", () => {
     });
   });
 
-  it("detects duplicate ids, orphan records, and invalid metadata references", () => {
+  it(``, async () => {
     const blocks: MizaanBlock[] = [
       {
         id: "block-1",
@@ -194,7 +194,7 @@ describe("createVaultHealthSummary", () => {
     expect(getVaultHealthScore(summary)).toBe("attention");
   });
 
-  it("reports an empty vault without treating it as corrupt", () => {
+  it(``, async () => {
     const summary = createVaultHealthSummary(makeSnapshot());
 
     expect(summary.emptyVault).toBe(true);
@@ -209,3 +209,4 @@ describe("createVaultHealthSummary", () => {
     expect(getVaultHealthScore(summary)).toBe("empty");
   });
 });
+

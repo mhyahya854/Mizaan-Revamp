@@ -54,13 +54,13 @@ function FinancePage() {
     preset: NonNullable<Parameters<typeof createFinanceRecordInput>[0]>,
     blocksTitle = "Finance notes",
   ) {
-    const item = provider.createItem(
+    const item = await provider.createItem(
       createFinanceRecordInput({
         parentId: financeSpace?.id,
         ...preset,
       }),
     );
-    provider.replaceBlocks(item.id, [
+    await provider.replaceBlocks(item.id, [
       { type: "heading1", content: blocksTitle },
       { type: "paragraph", content: "" },
       {
@@ -77,7 +77,7 @@ function FinancePage() {
     transactionType: "expense" | "income",
     category: string,
   ) {
-    const item = provider.createItem(
+    const item = await provider.createItem(
       createTransactionRecordInput({
         parentId: financeSpace?.id,
         title,
@@ -86,7 +86,7 @@ function FinancePage() {
         category,
       }),
     );
-    provider.replaceBlocks(item.id, [
+    await provider.replaceBlocks(item.id, [
       { type: "heading1", content: "Transaction notes" },
       { type: "paragraph", content: "" },
       {
@@ -420,3 +420,5 @@ function searchableFinanceText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
+
+

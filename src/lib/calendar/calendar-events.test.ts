@@ -23,7 +23,7 @@ function createProvider() {
 }
 
 describe("calendar event model", () => {
-  it("creates provider input for timed events without promoting Calendar as a page", () => {
+  it(``, async () => {
     const input = createCalendarEventInput({
       title: "Planning review",
       date: "2026-06-02",
@@ -53,9 +53,9 @@ describe("calendar event model", () => {
     });
   });
 
-  it("normalizes legacy date/time events into the new event metadata shape", () => {
+  it(``, async () => {
     const provider = createProvider();
-    const event = provider.createItem({
+    const event = await provider.createItem({
       title: "Legacy review",
       category: "calendar",
       type: "calendar",
@@ -74,9 +74,9 @@ describe("calendar event model", () => {
     expect(normalized.tag).toBe("review");
   });
 
-  it("builds a day model with all-day events first and timed events sorted by start time", () => {
+  it(``, async () => {
     const provider = createProvider();
-    const allDay = provider.createItem(
+    const allDay = await provider.createItem(
       createCalendarEventInput({
         title: "All day review",
         date: "2026-06-02",
@@ -86,7 +86,7 @@ describe("calendar event model", () => {
         allDay: true,
       }),
     );
-    const late = provider.createItem(
+    const late = await provider.createItem(
       createCalendarEventInput({
         title: "Late event",
         date: "2026-06-02",
@@ -97,7 +97,7 @@ describe("calendar event model", () => {
         allDay: false,
       }),
     );
-    const early = provider.createItem(
+    const early = await provider.createItem(
       createCalendarEventInput({
         title: "Early event",
         date: "2026-06-02",
@@ -118,10 +118,12 @@ describe("calendar event model", () => {
     ]);
   });
 
-  it("creates a single-day date range and readable day label", () => {
+  it(``, async () => {
     const date = new Date(2026, 5, 2);
 
     expect(getCalendarDateRange("day", date).map((entry) => entry.dateKey)).toEqual(["2026-06-02"]);
     expect(buildCalendarRangeLabel("day", date)).toBe("Tuesday, June 2, 2026");
   });
 });
+
+

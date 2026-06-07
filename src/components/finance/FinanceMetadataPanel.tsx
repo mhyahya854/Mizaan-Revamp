@@ -35,7 +35,7 @@ export function FinanceMetadataPanel({
 
   function persist(patch: Record<string, unknown>) {
     const next = updateFinanceMetadata(metadata, patch);
-    provider.updateItem(item.id, {
+    await provider.updateItem(item.id, {
       title: next.financeTitle || "Untitled finance record",
       status: getFinanceStatusLabel(next.financeStatus),
       summary: next.notes || item.summary,
@@ -380,3 +380,5 @@ function splitCsv(value: string) {
     .map((entry) => entry.trim())
     .filter(Boolean);
 }
+
+

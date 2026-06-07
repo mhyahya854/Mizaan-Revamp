@@ -41,7 +41,7 @@ function TrashPage() {
                 : `archived ${formatDate(item.archivedAt)}`}
             </span>
             <button
-              onClick={() => provider.restoreItem(item.id)}
+              onClick={async () => await provider.restoreItem(item.id)}
               className="inline-flex items-center gap-1 rounded-sm border hairline px-2 py-1 text-[12px] hover:bg-muted"
             >
               <RotateCcw className="h-3.5 w-3.5" />
@@ -70,3 +70,5 @@ function formatDate(value: string | undefined) {
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
+
+

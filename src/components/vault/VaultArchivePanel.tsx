@@ -161,7 +161,7 @@ export function VaultArchivePanel({ provider, snapshot, surface }: VaultArchiveP
       return;
     }
 
-    provider.restoreSnapshotData({
+    await provider.restoreSnapshotData({
       mode,
       confirmedReplace: mode === "replace" ? true : undefined,
       items: result.snapshot.items,
@@ -222,7 +222,7 @@ export function VaultArchivePanel({ provider, snapshot, surface }: VaultArchiveP
         </label>
         <textarea
           value={archiveText}
-          onChange={(event) => {
+          onChange={async (event) => {
             setArchiveText(event.target.value);
             resetResults();
           }}
@@ -255,7 +255,7 @@ export function VaultArchivePanel({ provider, snapshot, surface }: VaultArchiveP
             <button
               type="button"
               key={nextMode}
-              onClick={() => {
+              onClick={async () => {
                 setMode(nextMode);
                 setPreview(undefined);
               }}
@@ -402,3 +402,5 @@ function readableError(error: ArchiveValidationError) {
   const path = error.path ? ` (${error.path})` : "";
   return `${error.code}${path}: ${error.message}`;
 }
+
+

@@ -11,9 +11,25 @@ function createHydrationSnapshot(): VaultSnapshot {
     items: [],
     blocks: [],
     relations: [],
-    providerInfo: getVaultProvider().getProviderInfo(),
+    providerInfo: {
+      id: "loading",
+      name: "Loading...",
+      mode: "prototype-local",
+      storageLabel: "Loading...",
+      warning: "Loading...",
+      capabilities: {
+        itemCrud: false,
+        blockCrud: false,
+        relations: false,
+        localStoragePrototype: false,
+        portableFolder: false,
+        sqlite: false,
+        tauriFilesystem: false,
+        markdownMirrors: false,
+      },
+    },
     health: {
-      providerId: getVaultProvider().getProviderInfo().id,
+      providerId: "loading",
       itemCount: 0,
       blockCount: 0,
       relationCount: 0,
@@ -57,7 +73,11 @@ export function useVaultSnapshot() {
   const [snapshot, setSnapshot] = useState<VaultSnapshot>(() => createHydrationSnapshot());
 
   useEffect(() => {
-    const update = () => setSnapshot(provider.getSnapshot());
+    let active = true;
+    const update = async () => {
+      const snap = await provider.getSnapshot();
+      if (active) setSnapshot(snap);
+    };
     update();
     return provider.subscribe(update);
   }, [provider]);
@@ -72,7 +92,15 @@ export function useVaultLifecycleStatus() {
   );
 
   useEffect(() => {
-    setStatus(getVaultLifecycleStatus());
+    let active = true;
+    const update = async () => {
+      const stat = await getVaultLifecycleStatus();
+      if (active) setStatus(stat);
+    };
+    update();
+    return () => {
+      active = false;
+    };
   }, [
     snapshot.health.itemCount,
     snapshot.health.blockCount,

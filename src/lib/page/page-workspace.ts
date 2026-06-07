@@ -974,27 +974,27 @@ export function getSpaceHref(category: ItemCategory) {
 export function buildPageWorkspaceModel(
   provider: VaultProvider,
   itemId: string,
-  snapshot: VaultSnapshot = provider.getSnapshot(),
+  snapshot: VaultSnapshot = await provider.getSnapshot(),
 ): PageWorkspaceModel {
   const matchedItem = snapshot.items.find((candidate) => candidate.id === itemId);
   const item = normalizeItem(matchedItem, itemId);
   const blocks = snapshot.blocks
-    .filter((block) => block.itemId === item.id)
+    .filter((block) => block.itemId === item?.id)
     .sort((a, b) => a.order - b.order);
   const childPages = snapshot.items
-    .filter((candidate) => candidate.parentId === item.id && !candidate.deletedAt)
+    .filter((candidate) => candidate.parentId === item?.id && !candidate.deletedAt)
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   const outgoingLinks = resolveRelations(
-    snapshot.relations.filter((relation) => relation.sourceId === item.id),
+    snapshot.relations.filter((relation) => relation.sourceId === item?.id),
     snapshot.items,
   );
   const backlinks = resolveRelations(
-    snapshot.relations.filter((relation) => relation.targetId === item.id),
+    snapshot.relations.filter((relation) => relation.targetId === item?.id),
     snapshot.items,
   );
   const database =
     item.type === "database"
-      ? normalizeDatabaseModel(item.metadata.database, item.id, item.title)
+      ? normalizeDatabaseModel(item.metadata.database, item?.id, item?.title)
       : undefined;
   const state = matchedItem ? "ready" : "missing";
 
@@ -1023,8 +1023,8 @@ export function buildPageWorkspaceModel(
       attachedFilesCount: item.attachedFiles.length,
       databaseColumnsCount: database?.columns.length ?? 0,
       databaseRowsCount: database?.rows.length ?? 0,
-      archived: Boolean(item.archivedAt),
-      deleted: Boolean(item.deletedAt),
+      archived: Boolean(item?.archivedAt),
+      deleted: Boolean(item?.deletedAt),
       providerMode: snapshot.providerInfo.mode,
     },
   };
@@ -1035,14 +1035,14 @@ export function createChildPage(
   parentId: string,
   title = "Untitled Subpage",
 ) {
-  const parent = provider.getItem(parentId);
+  const parent = await provider.getItem(parentId);
   const category = parent?.category ?? "notes";
   const child = createPageFromTemplate(provider, "blank-page", {
     category,
     parentId,
     title,
   });
-  provider.createRelation({
+  await provider.createRelation({
     sourceId: parentId,
     targetId: child.id,
     relationType: "parent_child",
@@ -1066,7 +1066,7 @@ export function createPageFromTemplate(
   const type = template.universal ? typeForCategory(category) : template.type;
   const title = options.title ?? template.title;
   const metadata = createTemplateMetadata(template, category, type, title);
-  const page = provider.createItem({
+  const page = await provider.createItem({
     title,
     category,
     type,
@@ -1086,12 +1086,12 @@ export function createPageFromTemplate(
           : block,
       )
     : template.blocks;
-  provider.replaceBlocks(page.id, blocks);
+  await provider.replaceBlocks(page.id, blocks);
 
   if (template.id === "basic-database") {
     const database = createDefaultDatabaseModel(page.id, page.title);
     return (
-      provider.updateItem(page.id, {
+      await provider.updateItem(page.id, {
         metadata: {
           ...page.metadata,
           templateId: template.id,
@@ -1191,8 +1191,8 @@ function normalizeItem(item: MizaanItem | undefined, requestedId: string): Mizaa
 function buildBreadcrumbs(item: MizaanItem, allItems: MizaanItem[]): Breadcrumb[] {
   const crumbs: Breadcrumb[] = [{ label: "Home", href: "/" }];
 
-  if (item.metadata?.promotedAsSpace === true || item.id.startsWith("space-")) {
-    crumbs.push({ label: item.title });
+  if (item.metadata?.promotedAsSpace === true || item?.id.startsWith("space-")) {
+    crumbs.push({ label: item?.title });
     return crumbs;
   }
 
@@ -1217,7 +1217,7 @@ function buildBreadcrumbs(item: MizaanItem, allItems: MizaanItem[]): Breadcrumb[
     crumbs.push({ label: parent.title, href: `/page/${parent.id}` });
   });
 
-  crumbs.push({ label: item.title });
+  crumbs.push({ label: item?.title });
   return crumbs;
 }
 
@@ -1240,9 +1240,11 @@ function typeForCategory(category: ItemCategory): ItemType {
 
 function resolveRelations(relations: MizaanRelation[], items: MizaanItem[]): ResolvedRelation[] {
   return relations.flatMap((relation) => {
-    const source = items.find((item) => item.id === relation.sourceId);
-    const target = items.find((item) => item.id === relation.targetId);
+    const source = items.find((item) => item?.id === relation.sourceId);
+    const target = items.find((item) => item?.id === relation.targetId);
     if (!source || !target) return [];
     return [{ relation, source, target }];
   });
 }
+
+

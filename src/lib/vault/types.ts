@@ -209,23 +209,24 @@ export interface ListRelationsFilter {
 }
 
 export interface VaultProvider {
-  getProviderInfo(): VaultProviderInfo;
-  getHealth(): VaultHealth;
-  getSnapshot(): VaultSnapshot;
-  listItems(filter?: ListItemsFilter): MizaanItem[];
-  getItem(id: string): MizaanItem | undefined;
-  createItem(input: CreateItemInput): MizaanItem;
-  updateItem(id: string, input: UpdateItemInput): MizaanItem | undefined;
-  archiveItem(id: string): MizaanItem | undefined;
-  trashItem(id: string): MizaanItem | undefined;
-  restoreItem(id: string): MizaanItem | undefined;
-  getBlocks(itemId: string): MizaanBlock[];
-  createBlock(itemId: string, input: CreateBlockInput): MizaanBlock;
-  updateBlock(blockId: string, input: UpdateBlockInput): MizaanBlock | undefined;
-  replaceBlocks(itemId: string, blocks: CreateBlockInput[]): MizaanBlock[];
-  listRelations(filter?: ListRelationsFilter): MizaanRelation[];
-  createRelation(input: CreateRelationInput): MizaanRelation;
-  deleteRelation(id: string): void;
-  restoreSnapshotData(input: RestoreSnapshotDataInput): VaultSnapshot;
+  getProviderInfo(): Promise<VaultProviderInfo>;
+  getHealth(): Promise<VaultHealth>;
+  getSnapshot(): Promise<VaultSnapshot>;
+  listItems(filter?: ListItemsFilter): Promise<MizaanItem[]>;
+  getItem(id: string): Promise<MizaanItem | undefined>;
+  createItem(input: CreateItemInput): Promise<MizaanItem>;
+  updateItem(id: string, input: UpdateItemInput): Promise<MizaanItem | undefined>;
+  archiveItem(id: string): Promise<MizaanItem | undefined>;
+  trashItem(id: string): Promise<MizaanItem | undefined>;
+  restoreItem(id: string): Promise<MizaanItem | undefined>;
+  getBlocks(itemId: string): Promise<MizaanBlock[]>;
+  createBlock(itemId: string, input: CreateBlockInput): Promise<MizaanBlock>;
+  updateBlock(blockId: string, input: UpdateBlockInput): Promise<MizaanBlock | undefined>;
+  replaceBlocks(itemId: string, blocks: CreateBlockInput[]): Promise<MizaanBlock[]>;
+  listRelations(filter?: ListRelationsFilter): Promise<MizaanRelation[]>;
+  createRelation(input: CreateRelationInput): Promise<MizaanRelation>;
+  deleteRelation(id: string): Promise<void>;
+  restoreSnapshotData(input: RestoreSnapshotDataInput): Promise<VaultSnapshot>;
   subscribe(listener: () => void): () => void;
 }
+

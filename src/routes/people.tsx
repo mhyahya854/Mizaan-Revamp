@@ -69,13 +69,13 @@ function PeoplePage() {
     return metadata.private || metadata.sensitive;
   }).length;
 
-  function createPerson() {
-    const item = provider.createItem(
+  async function createPerson() {
+    const item = await provider.createItem(
       createPersonRecordInput({
         parentId: peopleSpace?.id,
       }),
     );
-    provider.replaceBlocks(item.id, [
+    await provider.replaceBlocks(item.id, [
       { type: "heading1", content: "Relationship context" },
       { type: "paragraph", content: "" },
       {
@@ -87,7 +87,7 @@ function PeoplePage() {
     navigate({ to: "/page/$id", params: { id: item.id } });
   }
 
-  function createFromTemplate(templateId: string) {
+  async function createFromTemplate(templateId: string) {
     const item = createPageFromTemplate(provider, templateId, {
       parentId: templateId === "interaction-log" ? undefined : peopleSpace?.id,
     });
@@ -329,3 +329,5 @@ function searchablePersonText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
+
+

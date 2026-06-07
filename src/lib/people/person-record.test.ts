@@ -20,7 +20,7 @@ import {
 } from "./person-record";
 
 describe("person record model", () => {
-  it("creates default person metadata", () => {
+  it(``, async () => {
     const metadata = createDefaultPersonMetadata();
 
     expect(metadata).toMatchObject({
@@ -45,7 +45,7 @@ describe("person record model", () => {
     expect(metadata.tags).toEqual([]);
   });
 
-  it("normalizes minimal person metadata", () => {
+  it(``, async () => {
     const metadata = normalizePersonMetadata({
       displayName: "  Ada Lovelace  ",
       relationshipType: "mentor",
@@ -61,14 +61,14 @@ describe("person record model", () => {
     expect(metadata.followUpStatus).toBe("scheduled");
   });
 
-  it("normalizes invalid enum values safely", () => {
+  it(``, async () => {
     expect(normalizeRelationshipType("coworker")).toBe("unknown");
     expect(normalizeRelationshipStatus("pending")).toBe("unknown");
     expect(normalizePreferredContactMethod("fax")).toBe("unknown");
     expect(normalizeFollowUpStatus("later")).toBe("none");
   });
 
-  it("trims string fields and dedupes aliases/tags", () => {
+  it(``, async () => {
     const metadata = normalizePersonMetadata({
       displayName: "  Yahya  ",
       legalName: "  Yahya M.  ",
@@ -102,7 +102,7 @@ describe("person record model", () => {
     expect(metadata.tags).toEqual(["crm", "friend"]);
   });
 
-  it("preserves unknown safe metadata fields", () => {
+  it(``, async () => {
     const metadata = normalizePersonMetadata({
       displayName: "Person",
       customString: "kept",
@@ -119,7 +119,7 @@ describe("person record model", () => {
     expect(metadata.unsafeFunction).toBeUndefined();
   });
 
-  it("updates metadata while preserving unrelated fields", () => {
+  it(``, async () => {
     const updated = updatePersonMetadata(
       {
         displayName: "Original",
@@ -138,7 +138,7 @@ describe("person record model", () => {
     expect(updated.customField).toBe("preserve");
   });
 
-  it("dedupes relation IDs and removes invalid relation IDs", () => {
+  it(``, async () => {
     const metadata = normalizePersonMetadata({
       linkedProjectIds: ["project-1", "project-1", "bad id"],
       linkedTaskIds: ["task-1", undefined, " task-2 "],
@@ -157,7 +157,7 @@ describe("person record model", () => {
     expect(normalizePersonRelationIds(["person-1", "person-1", "bad id"])).toEqual(["person-1"]);
   });
 
-  it("normalizes date fields and private/sensitive flags", () => {
+  it(``, async () => {
     const metadata = normalizePersonMetadata({
       lastInteractionDate: "2026-06-01",
       nextFollowUpDate: "not-a-date",
@@ -175,7 +175,7 @@ describe("person record model", () => {
     expect(isPersonSensitive(metadata)).toBe(true);
   });
 
-  it("reports privacy as metadata-only, not encryption or hiding", () => {
+  it(``, async () => {
     const summary = getPersonPrivacySummary({ private: true, sensitive: true });
 
     expect(summary.private).toBe(true);
@@ -188,7 +188,7 @@ describe("person record model", () => {
     expect(summary.message).toContain("not encrypted");
   });
 
-  it("creates provider-compatible person item input", () => {
+  it(``, async () => {
     const input = createPersonRecordInput({
       displayName: "Ada Lovelace",
       relationshipType: "mentor",
@@ -223,7 +223,7 @@ describe("person record model", () => {
     });
   });
 
-  it("derives display and state summaries from normalized metadata", () => {
+  it(``, async () => {
     const metadata = normalizePersonMetadata({
       displayName: "Ada",
       relationshipType: "friend",
@@ -254,7 +254,7 @@ describe("person record model", () => {
     });
   });
 
-  it("extracts graph targets only from real metadata relation IDs", () => {
+  it(``, async () => {
     const targets = getPersonGraphTargets({
       linkedProjectIds: ["project-1", "project-1"],
       linkedTaskIds: ["task-1"],
@@ -304,7 +304,7 @@ describe("person record model", () => {
     ]);
   });
 
-  it("exposes searchable person metadata fields", () => {
+  it(``, async () => {
     const search = getPersonSearchMetadata({
       displayName: "Ada Lovelace",
       legalName: "Augusta Ada King",
@@ -328,3 +328,4 @@ describe("person record model", () => {
     expect(search.privacy).toContain("metadata-only");
   });
 });
+

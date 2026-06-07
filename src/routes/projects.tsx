@@ -84,13 +84,13 @@ function ProjectsPage() {
     return Boolean(metadata.taskProjectId);
   }).length;
 
-  function createProject() {
-    const item = provider.createItem(
+  async function createProject() {
+    const item = await provider.createItem(
       createProjectRecordInput({
         parentId: projectSpace?.id,
       }),
     );
-    provider.replaceBlocks(item.id, [
+    await provider.replaceBlocks(item.id, [
       { type: "heading1", content: "Project brief" },
       { type: "paragraph", content: "" },
       { type: "heading2", content: "Working notes" },
@@ -99,19 +99,19 @@ function ProjectsPage() {
     navigate({ to: "/page/$id", params: { id: item.id } });
   }
 
-  function createFromTemplate(templateId: string) {
+  async function createFromTemplate(templateId: string) {
     const item = createPageFromTemplate(provider, templateId, {
       parentId: projectSpace?.id,
     });
     navigate({ to: "/page/$id", params: { id: item.id } });
   }
 
-  function handleMoveProject(id: string, newStatus: ProjectStatus) {
+  async function handleMoveProject(id: string, newStatus: ProjectStatus) {
     const project = snapshot.items.find((entry) => entry.id === id);
     if (!project) return;
     const metadata = normalizeProjectMetadataForItem(project);
     const nextMetadata = updateProjectMetadata(metadata, { projectStatus: newStatus });
-    provider.updateItem(project.id, {
+    await provider.updateItem(project.id, {
       status: getProjectStatusLabel(newStatus),
       properties: {
         ...project.properties,
@@ -121,7 +121,7 @@ function ProjectsPage() {
     });
   }
 
-  function handleMoveTask(id: string, newStatus: TaskStatus) {
+  async function handleMoveTask(id: string, newStatus: TaskStatus) {
     const task = snapshot.items.find((entry) => entry.id === id);
     if (!task) return;
     const metadata = normalizeTaskMetadataForItem(task);
@@ -129,7 +129,7 @@ function ProjectsPage() {
       taskStatus: newStatus,
       taskCompletedAt: newStatus === "done" ? new Date().toISOString().slice(0, 10) : "",
     });
-    provider.updateItem(task.id, {
+    await provider.updateItem(task.id, {
       status: getTaskStatusLabel(newStatus),
       properties: {
         ...task.properties,
@@ -568,3 +568,5 @@ function searchableProjectText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
+
+

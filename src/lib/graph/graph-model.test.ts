@@ -49,7 +49,7 @@ function relation(input: Partial<MizaanRelation> & Pick<MizaanRelation, "sourceI
 }
 
 describe("graph model", () => {
-  it("creates graph nodes from active provider items with deterministic routes", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("note-1", { title: "Note" }),
@@ -90,7 +90,7 @@ describe("graph model", () => {
     },
   );
 
-  it("handles unknown categories safely", () => {
+  it(``, async () => {
     expect(
       getGraphNodeType(
         item("unknown-1", {
@@ -101,7 +101,7 @@ describe("graph model", () => {
     ).toBe("unknown");
   });
 
-  it("creates edges from document linkedPageIds and ignores invalid targets", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("doc-1", {
@@ -155,7 +155,7 @@ describe("graph model", () => {
     },
   );
 
-  it("dedupes duplicate document relation IDs and duplicate provider edges", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("doc-1", {
@@ -177,7 +177,7 @@ describe("graph model", () => {
     ]);
   });
 
-  it("marks orphan nodes and computes global graph summary", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [item("source"), item("target"), item("orphan")],
       relations: [relation({ sourceId: "source", targetId: "target" })],
@@ -197,7 +197,7 @@ describe("graph model", () => {
     expect(graph.summary.relationSourceCounts["provider-relations"]).toBe(1);
   });
 
-  it("builds a local graph around the selected item and excludes unrelated nodes", () => {
+  it(``, async () => {
     const graph = buildLocalGraph({
       selectedItemId: "center",
       items: [item("center"), item("outgoing"), item("incoming"), item("unrelated")],
@@ -213,7 +213,7 @@ describe("graph model", () => {
     expect(graph.edges).toHaveLength(2);
   });
 
-  it("handles empty item arrays and items with no edges without creating fake edges", () => {
+  it(``, async () => {
     const emptyGraph = buildGlobalGraph({ items: [], relations: [] });
     const orphanGraph = buildGlobalGraph({ items: [item("only")], relations: [] });
 
@@ -228,7 +228,7 @@ describe("graph model", () => {
     expect(orphanGraph.summary.hasOnlyOrphans).toBe(true);
   });
 
-  it("creates parent-child edges from real parentId hierarchy", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [item("parent"), item("child", { parentId: "parent" })],
       relations: [],
@@ -244,7 +244,7 @@ describe("graph model", () => {
     });
   });
 
-  it("creates project-task edges from project linkedTaskIds", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("project-1", {
@@ -269,7 +269,7 @@ describe("graph model", () => {
     );
   });
 
-  it("creates task-project edges from taskProjectId", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("project-1", { category: "projects", type: "project" }),
@@ -294,7 +294,7 @@ describe("graph model", () => {
     );
   });
 
-  it("creates project-document edges from project linkedDocumentIds", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("project-1", {
@@ -318,7 +318,7 @@ describe("graph model", () => {
     );
   });
 
-  it("dedupes duplicate project/task relation IDs and ignores invalid targets", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("project-1", {
@@ -341,7 +341,7 @@ describe("graph model", () => {
     ]);
   });
 
-  it("creates person-project and person-task edges from person metadata", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("person-1", {
@@ -389,7 +389,7 @@ describe("graph model", () => {
     );
   });
 
-  it("creates project-person and task-person edges from existing linkedPersonIds metadata", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("person-1", { category: "people", type: "person" }),
@@ -427,7 +427,7 @@ describe("graph model", () => {
     );
   });
 
-  it("creates interaction-person edges and recognizes interaction nodes", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("person-1", { category: "people", type: "person" }),
@@ -465,7 +465,7 @@ describe("graph model", () => {
     );
   });
 
-  it("dedupes duplicate person/interaction relation IDs and ignores invalid targets", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("person-1", {
@@ -489,7 +489,7 @@ describe("graph model", () => {
     ]);
   });
 
-  it("creates finance metadata edges to local documents, projects, people, tasks, and calendar items", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("finance-1", {
@@ -548,7 +548,7 @@ describe("graph model", () => {
     );
   });
 
-  it("creates calendar metadata edges to projects, tasks, people, documents, and finance records", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("calendar-1", {
@@ -607,7 +607,7 @@ describe("graph model", () => {
     );
   });
 
-  it("dedupes duplicate finance relation IDs and ignores invalid finance targets", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("finance-1", {
@@ -625,7 +625,7 @@ describe("graph model", () => {
     expect(graph.edges.map((edge) => edge.id)).toEqual(["finance-1->doc-1:document-link"]);
   });
 
-  it("creates tracker metadata edges to projects, tasks, people, documents, and finance records", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("tracker-1", {
@@ -684,7 +684,7 @@ describe("graph model", () => {
     );
   });
 
-  it("creates goal metadata edges including tracker links", () => {
+  it(``, async () => {
     const graph = buildGlobalGraph({
       items: [
         item("goal-1", {
@@ -734,3 +734,4 @@ describe("graph model", () => {
     );
   });
 });
+

@@ -52,7 +52,7 @@ export function PeopleMetadataPanel({
 
   function persist(patch: Record<string, unknown>) {
     const next = updatePersonMetadata(metadata, patch);
-    provider.updateItem(item.id, {
+    await provider.updateItem(item.id, {
       title: next.displayName || "Untitled person",
       status: getRelationshipStatusLabel(next.relationshipStatus),
       summary: next.context || next.notes || item.summary,
@@ -71,7 +71,7 @@ export function PeopleMetadataPanel({
   }
 
   function createLinkedInteraction() {
-    const interaction = provider.createItem(
+    const interaction = await provider.createItem(
       createInteractionRecordInput({
         title: "Interaction note",
         type: "note",
@@ -79,7 +79,7 @@ export function PeopleMetadataPanel({
         personId: item.id,
       }),
     );
-    provider.replaceBlocks(interaction.id, [
+    await provider.replaceBlocks(interaction.id, [
       { type: "heading1", content: "Interaction summary" },
       { type: "paragraph", content: "" },
       {
@@ -314,7 +314,7 @@ export function InteractionMetadataPanel({
 
   function persist(patch: Record<string, unknown>) {
     const next = updateInteractionMetadata(metadata, patch);
-    provider.updateItem(item.id, {
+    await provider.updateItem(item.id, {
       title: next.interactionTitle || "Untitled interaction",
       status: getInteractionStatusLabel(next.interactionStatus),
       parentId: next.personId || undefined,
@@ -426,7 +426,7 @@ function InteractionInlineEditor({
 
   function persist(patch: Record<string, unknown>) {
     const next = updateInteractionMetadata(metadata, { personId, ...patch });
-    provider.updateItem(interaction.id, {
+    await provider.updateItem(interaction.id, {
       title: next.interactionTitle || "Untitled interaction",
       status: getInteractionStatusLabel(next.interactionStatus),
       parentId: personId,
@@ -635,3 +635,5 @@ function splitCsv(value: string) {
     .map((entry) => entry.trim())
     .filter(Boolean);
 }
+
+

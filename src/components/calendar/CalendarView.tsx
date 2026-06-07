@@ -217,7 +217,7 @@ export function CalendarView() {
     });
 
     if (editingEvent) {
-      provider.updateItem(editingEvent.id, {
+      await provider.updateItem(editingEvent.id, {
         title: input.title,
         icon: input.icon,
         summary: input.summary,
@@ -230,7 +230,7 @@ export function CalendarView() {
         },
       });
     } else {
-      provider.createItem(input);
+      await provider.createItem(input);
     }
     setShowEventModal(false);
   }
@@ -238,7 +238,7 @@ export function CalendarView() {
   function handleDeleteEvent(eventId: string) {
     const confirmed = window.confirm("Move this event to trash?");
     if (!confirmed) return;
-    provider.trashItem(eventId);
+    await provider.trashItem(eventId);
     setShowEventModal(false);
   }
 
@@ -1062,3 +1062,5 @@ function nextHourLabel(value: string) {
   if (!Number.isFinite(hour)) return "10:00";
   return `${String(Math.min(hour + 1, 23)).padStart(2, "0")}:00`;
 }
+
+
