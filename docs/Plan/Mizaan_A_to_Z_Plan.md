@@ -22132,3 +22132,15 @@ Validation Results:
 
 Remaining Limitations:
 Mizaan is local-only and browser-bound. SQLite database, Tauri desktop packaging, native folder vaults, encryption, app lock, cloud sync, auth, backend, AI scheduling, and automatic database formulas remain future non-goals.
+
+## Append-Only Interactive Graph Foundation — 2026-06-07
+
+* Phase: Interactive Graph Foundation
+* Before hash: E555D3191649D39666F6956CB14A188A010F2B7B55F2F06971FAE68E91242949
+* Before length: 806058
+* Features implemented: Graph node interactive selection, Graph filters, Local neighborhood focus, Details panel, Route/open actions, Draggable visual node layout, Status honesty future labels.
+* Features deliberately future: Persistent graph layout, Manual graph/canvas, Custom nodes/arrows, AI graph clustering, Native storage.
+* Tests: Graph helper tests coverage and UI layout structure.
+* Browser QA: Passed with screenshot proofs.
+* Validation: Full baseline validation passed.
+* Next recommended phase: System and Settings hardening or native readiness.

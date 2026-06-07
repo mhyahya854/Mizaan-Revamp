@@ -161,3 +161,6 @@ Fix the existing ESLint/Fast Refresh warnings without changing product behavior.
 ### Limitations
 
 Added ESLint suppressions instead of massive refactoring to preserve the standard convention for Shadcn and React contexts without risking breaking behavior in a prototype.
+
+## Interactive Graph Foundation (2026-06-07)
+Implemented interactive browser foundation for the Graph module. Added local focus view, draggable nodes in-session, graph filters, and detailed selected node panels. Maintained strict boundaries on what is currently implemented, with manual canvas, custom arrows, and AI graph marked as future.

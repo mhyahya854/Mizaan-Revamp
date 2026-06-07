@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import {
   buildGlobalGraph,
@@ -39,6 +39,7 @@ function GraphPage() {
   const snapshot = useVaultSnapshot();
   const [filter, setFilter] = useState<GraphFilter>("all");
   const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
+  const [isLocalFocus, setIsLocalFocus] = useState(false);
 
   const globalGraph = useMemo(
     () => buildGlobalGraph({ items: snapshot.items, relations: snapshot.relations }),
@@ -56,11 +57,13 @@ function GraphPage() {
     [selectedItemId, snapshot.items, snapshot.relations],
   );
 
+  const activeGraph = isLocalFocus && localGraph ? localGraph : globalGraph;
+
   const relationCountByNode = useMemo(
-    () => countEdgesByNode(globalGraph.edges),
-    [globalGraph.edges],
+    () => countEdgesByNode(activeGraph.edges),
+    [activeGraph.edges],
   );
-  const filteredNodes = globalGraph.nodes.filter((node) => matchesFilter(node, filter));
+  const filteredNodes = activeGraph.nodes.filter((node) => matchesFilter(node, filter));
   const filteredNodeIds = new Set(filteredNodes.map((node) => node.id));
   const filteredEdges = globalGraph.edges.filter(
     (edge) => filteredNodeIds.has(edge.sourceId) && filteredNodeIds.has(edge.targetId),
@@ -107,9 +110,11 @@ function GraphPage() {
             <div className="rounded-md border hairline bg-surface">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b hairline px-4 py-3">
                 <div>
-                  <h2 className="text-[14px] font-semibold">Global graph</h2>
+                  <h2 className="text-[14px] font-semibold">
+                    {isLocalFocus ? "Local focus graph" : "Global graph"}
+                  </h2>
                   <p className="mt-0.5 text-[12.5px] text-faint">
-                    Showing {filteredNodes.length} of {globalGraph.summary.nodeCount} real nodes and{" "}
+                    Showing {filteredNodes.length} of {activeGraph.summary.nodeCount} real nodes and{" "}
                     {filteredEdges.length} visible edges.
                   </p>
                 </div>
@@ -137,18 +142,26 @@ function GraphPage() {
                 nodes={filteredNodes}
                 relationCountByNode={relationCountByNode}
                 selectedItemId={selectedItemId}
-                onFocus={setSelectedItemId}
+                onFocus={(id) => {
+                  setSelectedItemId(id);
+                  setIsLocalFocus(false);
+                }}
               />
-              <EdgeList edges={filteredEdges} nodes={globalGraph.nodes} />
+              <EdgeList edges={filteredEdges} nodes={activeGraph.nodes} />
             </div>
           </div>
 
           <aside className="space-y-4">
-            <LocalGraphPanel localGraph={localGraph} selectedNode={selectedNode} />
+            <LocalGraphPanel
+              localGraph={localGraph}
+              selectedNode={selectedNode}
+              isLocalFocus={isLocalFocus}
+              onToggleFocus={() => setIsLocalFocus(!isLocalFocus)}
+            />
             <SourceSummary
-              typeCounts={globalGraph.summary.typeCounts}
-              edgeTypeCounts={globalGraph.summary.edgeTypeCounts}
-              relationSourceCounts={globalGraph.summary.relationSourceCounts}
+              typeCounts={activeGraph.summary.typeCounts}
+              edgeTypeCounts={activeGraph.summary.edgeTypeCounts}
+              relationSourceCounts={activeGraph.summary.relationSourceCounts}
             />
             <FutureGraphPanel />
           </aside>
@@ -201,24 +214,61 @@ function GraphMap({
   edges: GraphEdge[];
   onFocus: (itemId: string) => void;
 }) {
-  const visualNodes = nodes.slice(0, 32).map((node, index, all) => {
-    const angle = (Math.PI * 2 * index) / Math.max(all.length, 1);
-    const radius = all.length > 8 ? 36 : 26;
-    return {
-      ...node,
-      x: 50 + Math.cos(angle) * radius,
-      y: 50 + Math.sin(angle) * radius,
-    };
-  });
-  const visualById = new Map(visualNodes.map((node) => [node.id, node]));
-  const visualEdges = edges.flatMap((edge) => {
-    const source = visualById.get(edge.sourceId);
-    const target = visualById.get(edge.targetId);
-    return source && target ? [{ edge, source, target }] : [];
-  });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [positions, setPositions] = useState<Record<string, { x: number; y: number }>>({});
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+
+  const visualNodes = useMemo(() => {
+    return nodes.slice(0, 32).map((node, index, all) => {
+      const angle = (Math.PI * 2 * index) / Math.max(all.length, 1);
+      const radius = all.length > 8 ? 36 : 26;
+      return {
+        ...node,
+        x: positions[node.id]?.x ?? 50 + Math.cos(angle) * radius,
+        y: positions[node.id]?.y ?? 50 + Math.sin(angle) * radius,
+      };
+    });
+  }, [nodes, positions]);
+
+  const visualById = useMemo(
+    () => new Map(visualNodes.map((node) => [node.id, node])),
+    [visualNodes],
+  );
+
+  const visualEdges = useMemo(() => {
+    return edges.flatMap((edge) => {
+      const source = visualById.get(edge.sourceId);
+      const target = visualById.get(edge.targetId);
+      return source && target ? [{ edge, source, target }] : [];
+    });
+  }, [edges, visualById]);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>, id: string) => {
+    if (e.button !== 0) return;
+    setDraggingId(id);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!draggingId || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setPositions((prev) => ({
+      ...prev,
+      [draggingId]: { x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) },
+    }));
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (draggingId) {
+      setDraggingId(null);
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+  };
 
   return (
-    <div className="relative min-h-[460px] bg-dotgrid">
+    <div className="relative min-h-[460px] bg-dotgrid touch-none select-none" ref={containerRef}>
       {visualNodes.length > 0 ? (
         <>
           <svg
@@ -243,8 +293,16 @@ function GraphMap({
             <button
               key={node.id}
               type="button"
-              onClick={() => onFocus(node.id)}
-              className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 rounded-sm outline-none focus:ring-2 focus:ring-ring"
+              onClick={() => {
+                if (!draggingId) onFocus(node.id);
+              }}
+              onPointerDown={(e) => handlePointerDown(e, node.id)}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              className={`absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 rounded-sm outline-none focus:ring-2 focus:ring-ring ${
+                draggingId === node.id ? "z-10 cursor-grabbing" : "cursor-grab"
+              }`}
               style={{ left: `${node.x}%`, top: `${node.y}%` }}
             >
               <span
@@ -391,9 +449,13 @@ function EdgeList({ edges, nodes }: { edges: GraphEdge[]; nodes: GraphNode[] }) 
 function LocalGraphPanel({
   localGraph,
   selectedNode,
+  isLocalFocus,
+  onToggleFocus,
 }: {
   localGraph: ReturnType<typeof buildLocalGraph> | undefined;
   selectedNode: GraphNode | undefined;
+  isLocalFocus: boolean;
+  onToggleFocus: () => void;
 }) {
   return (
     <section className="rounded-md border hairline bg-surface p-4">
@@ -404,6 +466,13 @@ function LocalGraphPanel({
             Focused on <span className="font-medium text-foreground">{selectedNode.label}</span>.
             Direct neighbors only; second-degree expansion and wiki-link parsing are future work.
           </p>
+          <button
+            type="button"
+            onClick={onToggleFocus}
+            className="w-full rounded-sm border hairline bg-background px-3 py-1.5 text-[12px] font-medium text-foreground hover:bg-muted"
+          >
+            {isLocalFocus ? "Back to global graph" : "Enter local focus view"}
+          </button>
           <div className="grid grid-cols-3 gap-2 text-center text-[11.5px]">
             <MiniMetric label="Nodes" value={localGraph.summary.nodeCount} />
             <MiniMetric label="Edges" value={localGraph.summary.edgeCount} />

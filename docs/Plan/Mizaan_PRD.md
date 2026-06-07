@@ -38,7 +38,7 @@ There is no cloud/account dependency in the current product law or implementatio
 | Search                               | Partial                            | Local provider search indexes titles, summaries, tags, properties, metadata, and block text. No saved searches or native index.                                                                                                                                                                                                                                                   |
 | Databases/tables                     | Partial                            | Basic provider-backed table model, stateful column sorting, cell filters, row/column/cell editing, stats, and validation helpers exist. No formulas, rollups, or SQLite.                                                                                                                                                                                                          |
 | Documents                            | Partial                            | Metadata-only document records, typed helpers, route/list, detail metadata panel, templates, search, relation IDs, tests, and QA exist. No real file import, preview, OCR, thumbnails, or native document storage.                                                                                                                                                                |
-| Graph                                | Partial                            | Provider graph helper, explicit relations, metadata-derived edges, parent hierarchy edges, filters, orphan summaries, and local focus exist. No manual canvas, wiki-link backlink index, clustering, export, or AI graph.                                                                                                                                                         |
+| Graph                                | Implemented browser interactive foundation | Provider graph helper, interactive node selection, graph filters, local neighborhood focus, drag-to-position visual nodes, explicit relations, metadata-derived edges, parent hierarchy edges, and orphan summaries exist. No manual canvas boards, custom nodes/arrows, persistent layouts, wiki-link backlink index, clustering, export, or AI graph. |
 | Projects/tasks                       | Partial                            | Typed project/task metadata, Projects/Tasks Kanban status tracking views with drag-and-drop, project route/list, task records, linked task editing, templates, and graph edges exist. No dedicated `/tasks` route, recurrence, reminders, or Gantt.                                                                                                                               |
 | People/CRM                           | Partial                            | Typed person and interaction metadata, route/list, linked interactions, detail panels, templates, search, graph edges, and metadata-only privacy flags exist. No contact sync/import, reminders, full timeline, or privacy enforcement.                                                                                                                                           |
 | Finance                              | Partial                            | Typed local finance records, route/list, detail panel, amount/currency/date/status normalization, summaries, templates, search, and graph edges exist. No bank sync/import, payment APIs, tax/accounting, OCR, or reminders.                                                                                                                                                      |
@@ -169,16 +169,16 @@ Each module below must be implemented through provider-backed data, tested helpe
 ### Graph
 
 - Purpose: local relationship layer from provider relations and typed metadata IDs.
-- User stories: see connected items, inspect edges, filter graph, open nodes.
-- Current status: partial.
+- User stories: see connected items, inspect edges, filter graph, open nodes, focus local neighborhood, drag to position.
+- Current status: implemented interactive browser foundation.
 - Required data model: graph nodes/edges from provider items, relations, parent links, metadata relation IDs.
-- Required UI: graph route, filters, summaries, local focus, orphan state.
-- Required persistence: relations and metadata live in provider data.
+- Required UI: graph route, filters, summaries, local focus view, draggable visual layout, orphan state.
+- Required persistence: relations and metadata live in provider data. Layouts do not persist yet.
 - Required graph/search/template integration: relation IDs must be normalized by module helpers.
-- Success criteria: no fake graph edges; invalid targets are ignored or reported.
+- Success criteria: no fake graph edges; invalid targets are ignored or reported; local focus filters visual map.
 - Test criteria: graph-model tests for nodes, edge extraction, orphans, duplicates, invalid targets.
-- Browser QA criteria: graph route loads and shows real module nodes/edges.
-- Limitations: no manual canvas, wiki-link parser, saved layout, clustering, export, local AI graph.
+- Browser QA criteria: graph route loads, filters work, nodes are draggable, local focus switches context, and shows real module nodes/edges.
+- Limitations: no manual canvas, custom nodes, custom arrows, wiki-link parser, saved layout, clustering, export, local AI graph.
 
 ### Projects/tasks
 
