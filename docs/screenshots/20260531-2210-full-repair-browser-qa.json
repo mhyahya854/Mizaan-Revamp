@@ -1,58 +1,58 @@
 ﻿[
-    {
-        "Route":  "/",
-        "Screenshot":  "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-home.png",
-        "ExitCode":  0,
-        "Exists":  true,
-        "Length":  62862
-    },
-    {
-        "Route":  "/",
-        "Screenshot":  "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-sidebar.png",
-        "ExitCode":  0,
-        "Exists":  true,
-        "Length":  62862
-    },
-    {
-        "Route":  "/page/note-principles",
-        "Screenshot":  "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-page-workspace.png",
-        "ExitCode":  0,
-        "Exists":  true,
-        "Length":  26764
-    },
-    {
-        "Route":  "/settings",
-        "Screenshot":  "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-settings.png",
-        "ExitCode":  0,
-        "Exists":  true,
-        "Length":  53633
-    },
-    {
-        "Route":  "/calendar",
-        "Screenshot":  "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-calendar.png",
-        "ExitCode":  0,
-        "Exists":  true,
-        "Length":  50591
-    },
-    {
-        "Route":  "/search",
-        "Screenshot":  "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-search.png",
-        "ExitCode":  0,
-        "Exists":  true,
-        "Length":  33666
-    },
-    {
-        "Route":  "/databases",
-        "Screenshot":  "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-database.png",
-        "ExitCode":  0,
-        "Exists":  true,
-        "Length":  35243
-    },
-    {
-        "Route":  "/vault",
-        "Screenshot":  "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-implementation-proof.png",
-        "ExitCode":  0,
-        "Exists":  true,
-        "Length":  65234
-    }
+  {
+    "Route": "/",
+    "Screenshot": "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-home.png",
+    "ExitCode": 0,
+    "Exists": true,
+    "Length": 62862
+  },
+  {
+    "Route": "/",
+    "Screenshot": "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-sidebar.png",
+    "ExitCode": 0,
+    "Exists": true,
+    "Length": 62862
+  },
+  {
+    "Route": "/page/note-principles",
+    "Screenshot": "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-page-workspace.png",
+    "ExitCode": 0,
+    "Exists": true,
+    "Length": 26764
+  },
+  {
+    "Route": "/settings",
+    "Screenshot": "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-settings.png",
+    "ExitCode": 0,
+    "Exists": true,
+    "Length": 53633
+  },
+  {
+    "Route": "/calendar",
+    "Screenshot": "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-calendar.png",
+    "ExitCode": 0,
+    "Exists": true,
+    "Length": 50591
+  },
+  {
+    "Route": "/search",
+    "Screenshot": "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-search.png",
+    "ExitCode": 0,
+    "Exists": true,
+    "Length": 33666
+  },
+  {
+    "Route": "/databases",
+    "Screenshot": "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-database.png",
+    "ExitCode": 0,
+    "Exists": true,
+    "Length": 35243
+  },
+  {
+    "Route": "/vault",
+    "Screenshot": "E:\\Github\\Mizaan-Revamp\\docs\\screenshots\\20260531-2210-full-repair-implementation-proof.png",
+    "ExitCode": 0,
+    "Exists": true,
+    "Length": 65234
+  }
 ]

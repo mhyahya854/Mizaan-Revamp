@@ -5,7 +5,7 @@
 **Canonical audience:** Built first for Mohammad Yahya's personal life, but understandable and usable by friends/family after explanation  
 **Canonical document type:** Self-contained master implementation file for humans, Codex, Claude, Gemini, or any future AI agent  
 **Current baseline source:** Uploaded `Mizaan-Revamp.zip`, inspected on 2026-05-31  
-**Plan mode:** Zero-to-100 product plan, while acknowledging current codebase state  
+**Plan mode:** Zero-to-100 product plan, while acknowledging current codebase state
 
 ---
 
@@ -111,7 +111,6 @@ Both must exist.
 ```
 
 Mizaan must be designed so a user can open the vault folder in File Explorer and still understand the broad structure of their pages, files, metadata, history, and backups without needing Mizaan to run.
-
 
 ---
 
@@ -814,6 +813,7 @@ Validation status for this baseline:
 `npm run typecheck` passed. `npm test` passed with 6 files and 37 tests. `npm run lint` passed with 0 errors and 10 existing Fast Refresh warnings. `npm run build` passed with existing bundle-size and TanStack external-unused warnings. Browser QA passed for the route smoke checks and Calendar event persistence. Browser screenshot capture was attempted but failed with `Page.captureScreenshot` timeouts, so no new screenshot files are claimed for this run.
 
 Spaghetti cleanup notes:
+
 - Moved date range, event normalization, agenda sorting, day grouping, and provider input creation into `src/lib/calendar/calendar-events.ts` instead of duplicating event filtering inside the Calendar route component. (spaghetti code cleared)
 - Removed Calendar Space from new seed/template creation and soft-deprecated legacy `space-calendar` records instead of keeping Calendar as both a core module and a promoted page. (spaghetti code cleared)
 
@@ -1509,7 +1509,6 @@ Local-only is not the same as locked/private content.]
 
 [How it is implemented:
 No private-content model, app lock, search exclusion, graph redaction, screenshot warning, or security code exists.]
-
 
 ## 4. Contradictions Resolved
 
@@ -4061,7 +4060,6 @@ Mizaan owns the vault, metadata, page structure, versions, backups, graph, searc
 No helper engine is allowed to become the source of truth.
 ```
 
-
 ### 4.4 Edited Media Replacement, Undo, and Original Preservation
 
 #### 4.4.1 Core rule
@@ -4414,7 +4412,6 @@ Version history shows the edit.
 Edit history records time, country, device, operation, input, and output.
 Restarting Mizaan does not lose the active edited version or undo/version history.
 ```
-
 
 ### 4.5 USB removal and autosave
 
@@ -5633,7 +5630,6 @@ Calendar events may be page-like records and should use calendar-event.md.
 A study calendar page may exist as a planning page if created by a template, but it must not replace the Calendar module.
 ```
 
-
 ## 10. ID Translation and Human-Readable Mapping
 
 Mizaan must use stable internal IDs while exposing human-readable mapping files.
@@ -6583,6 +6579,7 @@ readable mirrors can be rebuilt from the database
 database can be partly rebuilt from readable mirrors
 tests cover create/read/update/delete for pages, blocks, files, relations, backups, and recovery-critical tables
 ```
+
 ## 13. Human-Readable Mirrors
 
 Human-readable mirrors are required.
@@ -8148,6 +8145,7 @@ OCR is clearly marked as later until implemented.
 Vault Health reports document/helper/preview/indexing issues.
 Tests cover import, preview, edit, failed preview, failed snapshot, changed checksum, unchanged checksum, locked file, and missing file.
 ```
+
 ### 18.16 Template System, Built-In Template Library, Template Implementation Contract, and Notion-Inspired Page Systems
 
 Templates are a core Mizaan system.
@@ -14437,7 +14435,7 @@ Selected app folder: E:\Github\Mizaan-Revamp
 App-code-location audit: root folder contains package.json and src; no nested app folder was selected.
 Git status: Git verification unavailable because selected app folder is not a Git repository.
 Storage truth: current runtime is a React/TanStack/Vite browser prototype backed by LocalStorageVaultProvider, not a lifetime SQLite/Tauri/portable-vault implementation.
-Known immediate red flag before repair: src/routes/__root.tsx loads Google Fonts from fonts.googleapis.com/fonts.gstatic.com; this violates zero external Google dependency and must be removed in the repair pass.
+Known immediate red flag before repair: src/routes/\_\_root.tsx loads Google Fonts from fonts.googleapis.com/fonts.gstatic.com; this violates zero external Google dependency and must be removed in the repair pass.
 
 ### Append-Only Contradiction Correction Block 20260531-215910
 
@@ -20327,4 +20325,3 @@ Total audited features in this appended baseline: 345
 
 - Do not begin feature implementation until this append is proven append-only, a phase report exists, and the work log DOCX is updated or an honest fallback is created.
 - After this gate, run typecheck, lint, tests, build, red-flag scans, browser QA, and then implement the highest-priority safe batch.
-

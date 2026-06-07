@@ -164,4 +164,3 @@ Why selected: The user explicitly changed strategy from deep feature implementat
 ## Next Recommended Phase
 
 Phase B - Documents foundation should be next because the blueprint and UI map now make module statuses explicit, and Documents still needs a typed metadata-only record foundation before any future native file import, preview, OCR, or vault-file work can be honest.
-

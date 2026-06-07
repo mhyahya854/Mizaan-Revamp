@@ -22,12 +22,18 @@ import {
   formatDateKey,
   normalizeCalendarEvent,
   shiftCalendarDate,
+  createDefaultCalendarEventMetadata,
   type CalendarViewMode,
   type NormalizedCalendarEvent,
 } from "@/lib/calendar/calendar-events";
 import { useVaultProvider, useVaultSnapshot } from "@/lib/vault/use-vault";
 import type { MizaanItem } from "@/lib/vault/types";
 import { cn } from "@/lib/utils";
+import { normalizeTaskMetadataForItem, isTaskRecordItem } from "@/lib/tasks/task-record";
+import {
+  normalizeProjectMetadataForItem,
+  isProjectRecordItem,
+} from "@/lib/projects/project-record";
 
 const TAG_OPTIONS = [
   "event",
@@ -64,7 +70,80 @@ export function CalendarView() {
   const [formStatus, setFormStatus] = useState("Planned");
   const [formAllDay, setFormAllDay] = useState(false);
 
-  const events = useMemo(() => filterActiveCalendarEvents(snapshot.items), [snapshot.items]);
+  const events = useMemo(() => {
+    const activeCalendar = filterActiveCalendarEvents(snapshot.items);
+    const virtualList: NormalizedCalendarEvent[] = [];
+
+    snapshot.items.forEach((item) => {
+      if (item.archivedAt || item.deletedAt) return;
+
+      // Tasks
+      if (isTaskRecordItem(item)) {
+        const metadata = normalizeTaskMetadataForItem(item);
+        if (metadata.taskDueDate) {
+          virtualList.push({
+            item: {
+              ...item,
+              title: `[Task] ${item.title}`,
+            },
+            metadata: createDefaultCalendarEventMetadata({
+              eventTitle: `[Task] ${item.title}`,
+              eventType: "task-deadline",
+              eventStatus: metadata.taskStatus === "done" ? "completed" : "planned",
+              startDate: metadata.taskDueDate,
+              endDate: metadata.taskDueDate,
+              allDay: true,
+              notes: metadata.notes,
+            }),
+            startDate: metadata.taskDueDate,
+            endDate: metadata.taskDueDate,
+            startTime: "",
+            endTime: "",
+            allDay: true,
+            tag: "task-deadline",
+            status: metadata.taskStatus === "done" ? "Completed" : "Planned",
+            eventType: "task-deadline",
+            eventStatus: metadata.taskStatus === "done" ? "completed" : "planned",
+            invalidRange: false,
+          });
+        }
+      }
+
+      // Projects
+      if (isProjectRecordItem(item)) {
+        const metadata = normalizeProjectMetadataForItem(item);
+        if (metadata.projectDeadline) {
+          virtualList.push({
+            item: {
+              ...item,
+              title: `[Proj] ${item.title}`,
+            },
+            metadata: createDefaultCalendarEventMetadata({
+              eventTitle: `[Proj] ${item.title}`,
+              eventType: "project-milestone",
+              eventStatus: metadata.projectStatus === "completed" ? "completed" : "planned",
+              startDate: metadata.projectDeadline,
+              endDate: metadata.projectDeadline,
+              allDay: true,
+              notes: metadata.projectDescription,
+            }),
+            startDate: metadata.projectDeadline,
+            endDate: metadata.projectDeadline,
+            startTime: "",
+            endTime: "",
+            allDay: true,
+            tag: "project-milestone",
+            status: metadata.projectStatus === "completed" ? "Completed" : "Planned",
+            eventType: "project-milestone",
+            eventStatus: metadata.projectStatus === "completed" ? "completed" : "planned",
+            invalidRange: false,
+          });
+        }
+      }
+    });
+
+    return [...activeCalendar, ...virtualList];
+  }, [snapshot.items]);
   const allTags = useMemo(() => {
     const tags = new Set(TAG_OPTIONS);
     events.forEach((event) => tags.add(event.tag));

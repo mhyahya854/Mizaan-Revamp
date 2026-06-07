@@ -5,7 +5,7 @@
 **Canonical audience:** Built first for Mohammad Yahya's personal life, but understandable and usable by friends/family after explanation  
 **Canonical document type:** Self-contained master implementation file for humans, Codex, Claude, Gemini, or any future AI agent  
 **Current baseline source:** Uploaded `Mizaan-Revamp.zip`, inspected on 2026-05-31  
-**Plan mode:** Zero-to-100 product plan, while acknowledging current codebase state  
+**Plan mode:** Zero-to-100 product plan, while acknowledging current codebase state
 
 ---
 
@@ -111,7 +111,6 @@ Both must exist.
 ```
 
 Mizaan must be designed so a user can open the vault folder in File Explorer and still understand the broad structure of their pages, files, metadata, history, and backups without needing Mizaan to run.
-
 
 ---
 
@@ -814,6 +813,7 @@ Validation status for this baseline:
 `npm run typecheck` passed. `npm test` passed with 6 files and 37 tests. `npm run lint` passed with 0 errors and 10 existing Fast Refresh warnings. `npm run build` passed with existing bundle-size and TanStack external-unused warnings. Browser QA passed for the route smoke checks and Calendar event persistence. Browser screenshot capture was attempted but failed with `Page.captureScreenshot` timeouts, so no new screenshot files are claimed for this run.
 
 Spaghetti cleanup notes:
+
 - Moved date range, event normalization, agenda sorting, day grouping, and provider input creation into `src/lib/calendar/calendar-events.ts` instead of duplicating event filtering inside the Calendar route component. (spaghetti code cleared)
 - Removed Calendar Space from new seed/template creation and soft-deprecated legacy `space-calendar` records instead of keeping Calendar as both a core module and a promoted page. (spaghetti code cleared)
 
@@ -1509,7 +1509,6 @@ Local-only is not the same as locked/private content.]
 
 [How it is implemented:
 No private-content model, app lock, search exclusion, graph redaction, screenshot warning, or security code exists.]
-
 
 ## 4. Contradictions Resolved
 
@@ -4061,7 +4060,6 @@ Mizaan owns the vault, metadata, page structure, versions, backups, graph, searc
 No helper engine is allowed to become the source of truth.
 ```
 
-
 ### 4.4 Edited Media Replacement, Undo, and Original Preservation
 
 #### 4.4.1 Core rule
@@ -4414,7 +4412,6 @@ Version history shows the edit.
 Edit history records time, country, device, operation, input, and output.
 Restarting Mizaan does not lose the active edited version or undo/version history.
 ```
-
 
 ### 4.5 USB removal and autosave
 
@@ -5633,7 +5630,6 @@ Calendar events may be page-like records and should use calendar-event.md.
 A study calendar page may exist as a planning page if created by a template, but it must not replace the Calendar module.
 ```
 
-
 ## 10. ID Translation and Human-Readable Mapping
 
 Mizaan must use stable internal IDs while exposing human-readable mapping files.
@@ -6583,6 +6579,7 @@ readable mirrors can be rebuilt from the database
 database can be partly rebuilt from readable mirrors
 tests cover create/read/update/delete for pages, blocks, files, relations, backups, and recovery-critical tables
 ```
+
 ## 13. Human-Readable Mirrors
 
 Human-readable mirrors are required.
@@ -8148,6 +8145,7 @@ OCR is clearly marked as later until implemented.
 Vault Health reports document/helper/preview/indexing issues.
 Tests cover import, preview, edit, failed preview, failed snapshot, changed checksum, unchanged checksum, locked file, and missing file.
 ```
+
 ### 18.16 Template System, Built-In Template Library, Template Implementation Contract, and Notion-Inspired Page Systems
 
 Templates are a core Mizaan system.
@@ -14437,7 +14435,7 @@ Selected app folder: E:\Github\Mizaan-Revamp
 App-code-location audit: root folder contains package.json and src; no nested app folder was selected.
 Git status: Git verification unavailable because selected app folder is not a Git repository.
 Storage truth: current runtime is a React/TanStack/Vite browser prototype backed by LocalStorageVaultProvider, not a lifetime SQLite/Tauri/portable-vault implementation.
-Known immediate red flag before repair: src/routes/__root.tsx loads Google Fonts from fonts.googleapis.com/fonts.gstatic.com; this violates zero external Google dependency and must be removed in the repair pass.
+Known immediate red flag before repair: src/routes/\_\_root.tsx loads Google Fonts from fonts.googleapis.com/fonts.gstatic.com; this violates zero external Google dependency and must be removed in the repair pass.
 
 ### Append-Only Contradiction Correction Block 20260531-215910
 
@@ -20328,7 +20326,6 @@ Total audited features in this appended baseline: 345
 - Do not begin feature implementation until this append is proven append-only, a phase report exists, and the work log DOCX is updated or an honest fallback is created.
 - After this gate, run typecheck, lint, tests, build, red-flag scans, browser QA, and then implement the highest-priority safe batch.
 
-
 ---
 
 ## Append-Only Full-Repair Implementation Update 20260531-223100
@@ -20338,14 +20335,16 @@ Implementation batch selected: Batch B - Search System Hardening.
 Why selected: Calendar already had provider-backed event creation, editing, delete/archive, month/week/day/agenda views, date labels, all-day/timed normalization, tests, and browser screenshots in this run. Search was still a narrower inline route search with no block-content indexing, no filters, weak result context, and no dedicated tests.
 
 Red flags fixed:
-- Removed remote Google Fonts and all third-party http/https head links from src/routes/__root.tsx by routing head links through src/lib/app-head.ts. (spaghetti code cleared)
+
+- Removed remote Google Fonts and all third-party http/https head links from src/routes/\_\_root.tsx by routing head links through src/lib/app-head.ts. (spaghetti code cleared)
 - Added src/lib/app-head.test.ts so remote/Google head links fail tests if reintroduced. (spaghetti code cleared)
 - Removed unused TanStack example server function/config files that referenced backend/cloud/env patterns but were not used by Mizaan runtime. (spaghetti code cleared)
 
 Files changed:
+
 - src/lib/app-head.ts
 - src/lib/app-head.test.ts
-- src/routes/__root.tsx
+- src/routes/\_\_root.tsx
 - src/lib/api/example.functions.ts removed
 - src/lib/config.server.ts removed
 - src/lib/search/search-index.ts
@@ -20354,21 +20353,19 @@ Files changed:
 - docs/Plan/Mizaan_A_to_Z_Plan.md
 - docs/Plan/Mizaan Work Log.docx
 - docs/Phases/phase-full-repair-audit-and-implementation-report.md
-- docs/screenshots/*full-repair*.png and JSON evidence files
+- docs/screenshots/_full-repair_.png and JSON evidence files
 
 Tests run:
-- 
-pm run typecheck passed after implementation.
-- 
-pm run lint passed with 0 errors and 10 existing Fast Refresh warnings.
-- 
-pm test passed with 8 files and 42 tests.
-- 
-pm run build passed with Vite chunk-size/vendor warnings only.
+
+- pm run typecheck passed after implementation.
+- pm run lint passed with 0 errors and 10 existing Fast Refresh warnings.
+- pm test passed with 8 files and 42 tests.
+- pm run build passed with Vite chunk-size/vendor warnings only.
 
 Browser QA result: Browser plugin backend iab was unavailable and gent.browsers.list() returned no backends. Fallback headless Chrome QA opened home, settings, vault, trash, templates, calendar, search, databases, graph, and /page/note-principles; hydrated screenshots were captured; a CDP pass reported 0 console errors. Search implementation proof used query provider boundaries, returned the seeded Mizaan design principles page from block content, displayed the Block match badge, and highlighted the matching phrase.
 
 Screenshots captured:
+
 - docs/screenshots/20260531-2215-full-repair-home.png
 - docs/screenshots/20260531-2215-full-repair-sidebar.png
 - docs/screenshots/20260531-2215-full-repair-page-workspace.png
@@ -20393,8 +20390,9 @@ The app must not silently fetch Google or cloud resources while presenting itsel
 The root head now gets only local stylesheet and data-URI favicon links from getAppHeadLinks. The prior Google Fonts preconnect/stylesheet links were removed. The unused example server function/config files were removed.]
 
 [Evidence:
-src/lib/app-head.ts, src/lib/app-head.test.ts, src/routes/__root.tsx, final g -n "fonts\.googleapis|fonts\.gstatic|https://|http://" src returned no hits, 
-pm test passed, 
+src/lib/app-head.ts, src/lib/app-head.test.ts, src/routes/__root.tsx, final
+g -n "fonts\.googleapis|fonts\.gstatic|https://|http://" src returned no hits,
+pm test passed,
 pm run build passed.]
 
 [Next required work:
@@ -20429,7 +20427,7 @@ Universal search means one search path over provider data, not a cloud search or
 The search index scans all active provider items and their blocks, and filters by category/type/status/tag. It is still limited to current provider snapshot data and does not yet include file OCR, binary document contents, graph indexes, saved searches, or advanced conditions.]
 
 [Evidence:
-src/lib/search/search-index.ts, /search, 
+src/lib/search/search-index.ts, /search,
 pm test, and headless Chrome search proof.]
 
 [Next required work:
@@ -20556,6 +20554,7 @@ DOCX entry verification showed the work-log entry exists; Get-Command soffice/li
 Render the DOCX on a machine with LibreOffice or install a renderer before claiming visual DOCX QA.]
 
 Remaining limitations:
+
 - Current app is still a browser/localStorage prototype, not Tauri, SQLite, portable folder vault, lock-file, markdown mirror, or native filesystem storage.
 - Browser plugin backend was unavailable; headless Chrome fallback was used instead.
 - Git metadata is missing, so no local commit can be made truthfully.
@@ -20571,6 +20570,7 @@ Next recommended step: harden database/table or document foundation next, while 
 Date/time: 2026-06-01 05:40 +08:00
 
 Repo repair status:
+
 - Canonical repo root is `E:\Github\Mizaan-Revamp`.
 - Current branch before work was `main`.
 - Remote was `https://github.com/mhyahya854/Mizaan-Revamp.git`.
@@ -20580,6 +20580,7 @@ Repo repair status:
 - Worktree was clean before screenshots and implementation files were created.
 
 Validation status:
+
 - Before implementation, `npm run typecheck` passed.
 - Before implementation, `npm run lint` passed with 0 errors and 10 existing Fast Refresh warnings.
 - Before implementation, `npm test` passed with 8 files and 42 tests.
@@ -20591,6 +20592,7 @@ Validation status:
 - After implementation, `npm run build` passed with existing Vite chunk-size and TanStack unused-external warnings.
 
 Red-flag scan status:
+
 - `rg -n "localStorage" src` found expected prototype storage, theme, right-panel, vault-session, vault-provider, test, and honest UI label references.
 - `rg -n "Google|Drive|OAuth|Firebase|Supabase|Clerk|auth|cloud" src` found icon names, `class-variance-authority`, documentation-safe local-first wording, and the head-link regression test. No runtime cloud/auth provider was found.
 - `rg -n "portable vault ready|SQLite ready|Tauri ready|folder picker ready|USB vault ready" src docs` found no active fake readiness claim beyond historical phase-report notes saying no matches.
@@ -20599,6 +20601,7 @@ Red-flag scan status:
 - `rg -n "https://|http://|fonts.googleapis|fonts.gstatic" src` found no runtime source matches.
 
 Browser QA status:
+
 - In-app Browser backend was attempted first and failed because `iab` was unavailable.
 - Chrome DevTools fallback initially failed because Chrome was not running on `127.0.0.1:9222`.
 - An isolated Chrome profile was started with remote debugging, without touching the user's normal browser storage.
@@ -20608,14 +20611,17 @@ Browser QA status:
 - Console checks during the successful final browser flow found no warnings or errors.
 
 Selected implementation batch:
+
 - Database/Table Hardening.
 
 Why selected:
+
 - Calendar had already received a focused hardening batch.
 - Search had already received a focused hardening batch.
 - The database/table foundation existed but still needed stronger helper coverage, explicit empty table states, stats, metadata, validation, and browser proof before deeper graph, document, native storage, or backup work.
 
 What was implemented:
+
 - Added database stats helper for row/property counts and empty-state booleans.
 - Added simple-table stats helper for row/column counts and empty-state booleans.
 - Preserved explicit empty row states instead of silently refilling rows during normalization.
@@ -20629,6 +20635,7 @@ What was implemented:
 - Kept database/table writes provider-backed through existing item metadata/block content paths.
 
 Files changed:
+
 - `src/lib/database/database-table.ts`
 - `src/lib/database/database-table.test.ts`
 - `src/lib/table/simple-table.ts`
@@ -20641,12 +20648,14 @@ Files changed:
 - screenshot files under `docs/screenshots`
 
 Tests added/updated:
+
 - Added database tests for explicit empty row normalization, stats, final-row deletion, title/description metadata preservation, and validation repair reporting.
 - Added simple-table tests for explicit empty row normalization, stats, and final-row deletion.
 - Existing database tests still cover add row, delete row, add column, rename column, delete column, edit cell, provider persistence, and row-as-page creation.
 - Existing simple-table tests still cover add/delete rows, add/rename/delete columns, edit cell, serialization, and preserving data after structure changes.
 
 Screenshots captured:
+
 - `docs/screenshots/20260601-0529-repair-check-home.png`
 - `docs/screenshots/20260601-0529-repair-check-sidebar.png`
 - `docs/screenshots/20260601-0529-repair-check-search.png`
@@ -20657,11 +20666,13 @@ Screenshots captured:
 - `docs/screenshots/20260601-0529-bounded-batch-proof.png`
 
 Spaghetti cleanup notes:
+
 - Moved database count/empty-state logic into shared helpers instead of making the route and table UI infer counts independently. (spaghetti code cleared)
 - Preserved explicit empty row arrays in database and simple-table normalizers instead of silently creating fake rows after the user deletes the last row. (spaghetti code cleared)
 - Added validation helper reporting for duplicate/stale database structures instead of leaving malformed metadata repairs invisible. (spaghetti code cleared)
 
 Remaining limitations:
+
 - Database/Table hardening remains partial relative to a full Notion-like database engine.
 - Formulas, rollups, relations as properties, grouping, board/gallery/timeline views, CSV import/export, filters, sorting UI, and full schema designer are not implemented.
 - The app remains a browser localStorage prototype, not Tauri, SQLite, portable vault folders, native filesystem storage, or a backup/restore engine.
@@ -20669,6 +20680,7 @@ Remaining limitations:
 - DOCX visual render QA remains dependent on a local renderer if LibreOffice/soffice is unavailable.
 
 Next recommended step:
+
 - Document System Foundation, because database/table now has stronger helper coverage and browser proof, while documents still need a real record/detail foundation without pretending filesystem import or preview is implemented.
 
 ### Feature: Database/Table hardening [• PARTIAL]
@@ -20746,14 +20758,17 @@ Surface validation warnings in the database UI only when doing so will not creat
 Date/time: 2026-06-01 15:18 +08:00
 
 Blueprint file:
+
 - `docs/Plan/Mizaan_Product_Blueprint.md`
 
 Purpose:
+
 - A new clean, current product blueprint layer now exists for the full Mizaan app.
 - The blueprint covers product definition, current implementation truth, product laws, information architecture, feature status matrix, module blueprints, UI blueprint, route map, data model blueprint, implementation roadmap, testing standard, and future prompt standard.
 - The blueprint is not an implementation claim. It is a planning and traceability layer.
 
 How future prompts should use it:
+
 - Read `docs/Plan/Mizaan_Product_Blueprint.md` first.
 - Read this historical master Markdown second.
 - Implement one bounded roadmap phase at a time.
@@ -20761,12 +20776,14 @@ How future prompts should use it:
 - Append this master Markdown when a phase changes the implementation state.
 
 Current UI baseline goal:
+
 - The app now exposes a Product Map / Blueprint UI at `/blueprint`.
 - The sidebar includes a `Product Map` system-tool link.
 - Home includes a Product Map summary.
 - Future-only modules are shown as planned/status-only areas, not as fake working routes.
 
 Current implementation status remains:
+
 - Browser/localStorage prototype.
 - `LocalStorageVaultProvider` remains the active provider.
 - Tauri remains not implemented.
@@ -20777,6 +20794,7 @@ Current implementation status remains:
 - Real document import, preview, OCR, thumbnails, and native document vault storage remain not implemented.
 
 Next prompt should start from:
+
 - The Phase Roadmap in `docs/Plan/Mizaan_Product_Blueprint.md`.
 - The next recommended bounded phase is Phase B - Documents foundation.
 
@@ -20787,23 +20805,28 @@ Next prompt should start from:
 Date/time: 2026-06-01 16:00 +08:00
 
 Selected phase:
+
 - Phase B - Documents foundation.
 
 Blueprint file read:
+
 - `docs/Plan/Mizaan_Product_Blueprint.md`
 
 Blueprint updated:
+
 - Yes. Documents remains [• PARTIAL] overall.
 - Document metadata model, record creation, route/list foundation, detail metadata UI, template defaults, metadata search coverage, and relation-id normalization helpers were updated accurately.
 - Real filesystem import, PDF/DOCX/image preview, OCR, thumbnails, duplicate detection, native vault storage, SQLite, Tauri commands, encryption, cloud sync, Google Drive sync, and mobile capture remain not implemented.
 
 Validation before work:
+
 - `npm run typecheck`: passed.
 - `npm run lint`: passed with 10 known Fast Refresh warnings.
 - `npm test`: passed with 9 files and 56 tests.
 - `npm run build`: passed with existing build warnings.
 
 Red-flag scans:
+
 - `localStorage` hits remained the expected prototype/provider/theme/session/right-panel references.
 - Cloud/auth/provider hits remained documentation/product-law language, icon names, and `class-variance-authority`; no runtime provider integration was added.
 - Fake readiness phrases remained historical report text only.
@@ -20811,10 +20834,12 @@ Red-flag scans:
 - Runtime URL/font scan in `src`: no matches.
 
 Browser QA before work:
+
 - Checked `/`, `/blueprint`, `/documents`, `/search`, `/settings`, `/templates`, `/databases`, `/calendar`, `/graph`, `/trash`, and `/page/note-principles`.
 - Screenshots captured before implementation.
 
 Implementation summary:
+
 - Added typed document metadata helpers and tests.
 - Replaced the generic `/documents` space view with a dedicated metadata-only document record route.
 - Added a real provider-backed New document record action.
@@ -20824,6 +20849,7 @@ Implementation summary:
 - Kept import, preview, OCR, thumbnails, native vault files, SQLite, Tauri, cloud, and mobile future-only.
 
 Files changed:
+
 - `src/lib/documents/document-record.ts`
 - `src/lib/documents/document-record.test.ts`
 - `src/routes/documents.tsx`
@@ -20837,10 +20863,12 @@ Files changed:
 - Document implementation screenshots under `docs/screenshots`
 
 Tests added/updated:
+
 - Added `src/lib/documents/document-record.test.ts`.
 - Covered defaults, enum normalization, trimming, unknown safe field preservation, update preservation, relation ID normalization, metadata-only/import/preview honesty, create input defaults, display labels, template defaults, and metadata search coverage.
 
 Screenshots:
+
 - `docs/screenshots/20260601-1531-doc-impl-before-home.png`
 - `docs/screenshots/20260601-1531-doc-impl-before-blueprint.png`
 - `docs/screenshots/20260601-1531-doc-impl-before-documents.png`
@@ -20853,6 +20881,7 @@ Screenshots:
 - `docs/screenshots/20260601-1558-doc-impl-search-if-implemented.png`
 
 Browser QA after work:
+
 - Created a new metadata-only document record.
 - Edited title, kind, status, source, document date, file name, file type, extension, and notes.
 - Refreshed the page and verified metadata persisted.
@@ -20861,10 +20890,12 @@ Browser QA after work:
 - Console warnings/errors: none found in checked routes.
 
 Remaining limitations:
+
 - Documents is still a browser/localStorage prototype feature.
 - The Documents module remains [• PARTIAL] because real file import, real previews, OCR, thumbnails, duplicate detection, native vault files, SQLite, Tauri, and mobile capture are not implemented.
 
 Next recommended blueprint phase:
+
 - Phase C - Graph relation foundation, because Documents now has normalized metadata relation IDs and the next system dependency is stronger relation/graph behavior.
 
 ### Feature: Documents module [• PARTIAL]
@@ -21070,27 +21101,33 @@ No OCR engine, extracted text index, local AI runtime, cloud AI, or remote servi
 
 [Next required work:
 Local AI planning after document storage exists.]
+
 ## Append-Only Graph Relation Foundation Implementation - 2026-06-01
 
 Date/time: 2026-06-01 22:05 +08:00
 
 Selected phase:
+
 - Phase C - Graph Relation Foundation.
 
 Blueprint file read:
+
 - `docs/Plan/Mizaan_Product_Blueprint.md`
 
 Blueprint updated:
+
 - Yes. Graph remains [PARTIAL] overall.
 - The bounded graph model/helper, provider-backed global graph foundation, route filters, direct local focus, source summaries, orphan state, and open-node behavior were recorded as implemented for the browser prototype.
 
 Validation before work:
+
 - `npm run typecheck`: passed.
 - `npm run lint`: passed with 0 errors and 10 existing Fast Refresh warnings.
 - `npm test`: passed with 10 files and 67 tests.
 - `npm run build`: passed with existing Vite chunk-size and TanStack external-unused warnings.
 
 Red-flag scans before work:
+
 - `localStorage`: expected prototype/provider/theme/session/right-panel references only.
 - Cloud/auth/provider hits: documentation/product-law text, historical notes, `class-variance-authority`, and `HardDrive` icon names only.
 - Fake readiness phrases: historical report text only.
@@ -21099,11 +21136,13 @@ Red-flag scans before work:
 - Runtime URL/font scan in `src`: no matches.
 
 Browser QA before work:
+
 - Checked `/`, `/blueprint`, `/graph`, `/documents`, `/search`, `/settings`, `/templates`, `/databases`, `/calendar`, `/trash`, and `/page/note-principles`.
 - In-app Browser route smoke passed with meaningful DOM, no framework overlay, and 0 console warnings/errors.
 - In-app Browser screenshots initially timed out, so isolated headless Chrome captured before screenshots.
 
 Graph code inspection summary:
+
 - `src/routes/graph.tsx` used route-local circular SVG logic from the first 24 `snapshot.items` and explicit provider `snapshot.relations`.
 - `VaultProvider` already exposes real provider-backed items and relations.
 - Page workspace/right panel already resolves outgoing and incoming provider relations.
@@ -21112,6 +21151,7 @@ Graph code inspection summary:
 - No reusable graph helper or graph test module existed before this phase.
 
 Implementation summary:
+
 - Added `src/lib/graph/graph-model.ts`.
 - Added `src/lib/graph/graph-model.test.ts`.
 - Rebuilt `/graph` to use the helper instead of route-local ad hoc graph construction.
@@ -21119,6 +21159,7 @@ Implementation summary:
 - Kept manual canvas, editable standalone graph nodes, saved layouts, graph export, clustering, embeddings, OCR-derived edges, and semantic/local-AI graph as future-only text, not active controls.
 
 What was implemented:
+
 - Graph model/helper.
 - Provider-backed global graph foundation.
 - Relation edge extraction from provider relations.
@@ -21133,6 +21174,7 @@ What was implemented:
 - Node focus and open actions.
 
 What was deliberately not implemented:
+
 - Tauri.
 - SQLite.
 - Native filesystem storage.
@@ -21153,6 +21195,7 @@ What was deliberately not implemented:
 - Native graph persistence.
 
 Files changed:
+
 - `src/lib/graph/graph-model.ts`
 - `src/lib/graph/graph-model.test.ts`
 - `src/routes/graph.tsx`
@@ -21171,10 +21214,12 @@ Files changed:
 - `docs/screenshots/20260601-2155-graph-foundation-proof.png`
 
 Tests added/updated:
+
 - Added `src/lib/graph/graph-model.test.ts`.
 - Coverage includes node creation, category/type mapping, document relation arrays, invalid target skipping, duplicate edge dedupe, orphan detection, global summaries, direct local graph, empty graph behavior, no fake edges, unknown categories, deterministic IDs, edge type counts, and parent-child hierarchy.
 
 Validation after implementation before documentation:
+
 - `npx vitest run src/lib/graph/graph-model.test.ts`: failed first because `./graph-model` did not exist, then passed with 20 tests after implementation.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed with 0 errors and 10 existing Fast Refresh warnings after formatting touched graph files.
@@ -21182,6 +21227,7 @@ Validation after implementation before documentation:
 - `npm run build`: passed with existing Vite chunk-size and TanStack external-unused warnings.
 
 Browser QA after implementation:
+
 - In-app Browser verified `/graph` identity, nonblank DOM, future notices, 0 console warnings/errors, Connected filter behavior, direct local focus behavior, and open-node navigation to `/page/doc-architecture`.
 - In-app Browser click-by-role was flaky, so DOM CUA and isolated headless Chrome were used for interaction/screenshot proof without clearing user storage.
 - Verified filter: Connected changed the graph to 13 of 14 real nodes.
@@ -21190,6 +21236,7 @@ Browser QA after implementation:
 - Verified open action: Open navigated to the real `Architecture Notes` document record page.
 
 Screenshots:
+
 - `docs/screenshots/20260601-2130-graph-foundation-before-home.png`
 - `docs/screenshots/20260601-2130-graph-foundation-before-graph.png`
 - `docs/screenshots/20260601-2130-graph-foundation-before-documents.png`
@@ -21201,6 +21248,7 @@ Screenshots:
 - `docs/screenshots/20260601-2155-graph-foundation-proof.png`
 
 Remaining limitations:
+
 - Graph remains a browser/localStorage prototype.
 - No backlink index or wiki-link parser exists.
 - No manual canvas/editor exists.
@@ -21210,6 +21258,7 @@ Remaining limitations:
 - No semantic/local-AI graph exists.
 
 Next recommended blueprint phase:
+
 - Calendar completion or Projects/tasks foundation. Calendar remains a core module with recurrence/reminders/ICS still missing; Projects/tasks would make graph relations more useful by adding stronger typed project/task entities.
 
 ### Feature: Graph module [PARTIAL]
@@ -21459,6 +21508,7 @@ Implementation summary:
 Added typed project and task metadata helpers, provider-compatible record inputs, project/task templates, provider vocabulary for task items, dedicated Projects route/list, project detail metadata panel, linked-task creation/list/editing, task metadata panel, title synchronization, graph metadata edges, search metadata tests, and browser QA proof.
 
 What was implemented:
+
 - [IMPLEMENTED] Projects module foundation: dedicated `/projects` route lists real provider-backed project records.
 - [IMPLEMENTED] Project metadata model: status, priority, area, start date, deadline, description, notes, and relation id arrays are normalized and tested.
 - [IMPLEMENTED] Project record creation: creates real provider-backed `projects/project` items.
@@ -21915,6 +21965,7 @@ Implementation summary:
 Added `src/lib/calendar/calendar-event.ts` with typed Calendar event metadata, default factory, normalization, update helper, provider-compatible record input, type/status normalization, relation ID dedupe, display/state helpers, date/month/agenda helpers, search metadata, graph targets, and range validation. `src/lib/calendar/calendar-events.ts` now re-exports the new helper for compatibility. Added Calendar helper tests, graph edge tests, and search metadata tests. Added `CalendarMetadataPanel` for Calendar event page context. Wired Calendar event template metadata and command-palette Calendar event creation. Added Calendar-owned graph edges to projects, tasks, people, documents, and finance records. Updated PRD, Product Blueprint, this master append, and the phase report.
 
 Implemented features:
+
 - Typed Calendar event metadata model.
 - Event type/status normalization.
 - All-day and timed event normalization.
@@ -21930,6 +21981,7 @@ Implemented features:
 - Existing provider-backed Calendar route CRUD remains the route foundation.
 
 Partially implemented:
+
 - Calendar route modal still has the earlier compact create/edit controls; the new metadata panel provides the richer typed relation/privacy editing on Calendar event pages.
 - Browser QA and screenshot capture were still pending at the time of this append and are recorded in the phase report after final attempts.
 
@@ -22002,6 +22054,7 @@ Template Expansion and Template QA, because Calendar event template metadata now
 This section records the bounded Template Expansion and Template QA phase. It was appended after the existing Calendar closeout content without rewriting historical master-plan text.
 
 Original master Markdown access gate:
+
 - File: `docs/Plan/Mizaan_A_to_Z_Plan.md`
 - Before hash: `BE025E69A21BCDD4698E2AAB9C19945F25AFA05ABC08AC6B63FEC7826689C26C`
 - Before length: `804989`
@@ -22011,6 +22064,7 @@ Phase interpretation:
 Templates are creation sources for real provider-backed local records, not fake starter cards. The bounded implementation could safely expand static built-in templates, add a registry/status model, add template QA tests, and improve the `/templates` route. It could not honestly implement editable user templates, template import/export, AI generation, template marketplace, sync, native template packs, or template version history.
 
 Implementation summary:
+
 - Added `src/lib/templates/template-registry.ts` with implemented/partial/future status, category metadata, search text, preview derivation, status/category counts, safe starter block validation, metadata normalization, future guards, and provider-backed creation.
 - Added `src/lib/templates/template-registry.test.ts` with registry coverage for uniqueness, counts, search, safe starter blocks, provider-backed creation, typed metadata normalization, database/table honesty, partial/future rejection, previews, command-palette template IDs, forbidden capability flags, duplicate names, relation defaults, and caller-provided title propagation.
 - Expanded safe built-in templates for notes, documents, project/task records, finance records, tracker records, goal records, calendar event records, and database/table variants.
@@ -22018,6 +22072,7 @@ Implementation summary:
 - Updated `src/lib/blueprint/product-map.ts`, `docs/Plan/Mizaan_PRD.md`, `docs/Plan/Mizaan_Product_Blueprint.md`, `docs/Plan/Mizaan Work Log - fallback.md`, and `docs/Phases/phase-template-expansion-and-qa.md`.
 
 Validation evidence:
+
 - `npm run mizaan:preflight`: passed before implementation.
 - Baseline `npm run mizaan:verify:fast`: passed.
 - Baseline `npm run mizaan:red-scan`: passed blocking checks.
@@ -22032,6 +22087,7 @@ Validation evidence:
 - `npm run mizaan:browser-qa`: passed route checks and screenshots.
 
 Browser QA evidence:
+
 - Browser QA route sweep passed for `/`, `/settings`, `/vault`, `/import-export`, `/repair`, `/finance`, `/people`, `/projects`, `/trackers`, `/goals`, `/graph`, `/search`, `/templates`, and `/calendar`.
 - Final templates screenshot: `docs/screenshots/20260605-182705-browser-qa-templates.png`
 - Final Browser QA log: `docs/logs/browser-qa-20260605-182705.md`
@@ -22047,3 +22103,32 @@ Template editor, custom template storage, template import/export, template versi
 
 Next recommended phase:
 Version history or scoped template management data-model design. Editable templates should not start until provider storage rules, migration rules, validation tests, and unsupported-future guards are defined.
+
+---
+
+## Append-Only Gemini Web Core Remaining Features Pass — 2026-06-07
+
+Date/time: 2026-06-07 16:34 +08:00
+
+Why Gemini was used:
+Gemini was used for a safe high-output implementation pass while Codex limits refresh, focusing only on browser/localStorage scope and preserving all safety rules.
+
+Before plan hash: F361336285069B5AAC96EA6136C3C3EF99F8F395BE2E02197E3DA2D8E4409975
+Before plan length: 804270
+
+Implemented Features:
+- **Sidebar Tree Subpage Creation**: Added subpage creation button in `AppSidebar.tsx` to prompt and create child pages directly.
+- **Database Table Sorting/Filtering**: Implemented case-insensitive text filtering and column-based sorting (text/number/checkbox/date) inside a pure helper function `filterAndSortRows` within `src/lib/database/database-table.ts`, and updated `DatabaseTable.tsx` to consume it.
+- **Projects & Tasks Kanban**: Verified status columns and drag-and-drop capability in `/projects` projects and tasks boards.
+- **Calendar Deadline Integration**: Integrated virtual deadlines dynamically from tasks and projects as event pills inside `CalendarView.tsx`.
+
+Test Additions:
+- Added `filterAndSortRows` tests to `src/lib/database/database-table.test.ts` for text filtering, text sorting, and number sorting.
+- Verified that all unit tests run and pass serially.
+
+Validation Results:
+- All fast/full verification tests, red scans, typecheck, lint, and build checks successfully pass.
+- Browser QA route tests passed and generated new screenshots verifying page states and layout parity.
+
+Remaining Limitations:
+Mizaan is local-only and browser-bound. SQLite database, Tauri desktop packaging, native folder vaults, encryption, app lock, cloud sync, auth, backend, AI scheduling, and automatic database formulas remain future non-goals.

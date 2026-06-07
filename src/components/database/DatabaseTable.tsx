@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ExternalLink, Plus, Trash2 } from "lucide-react";
+import { useState, useMemo } from "react";
 
 import {
   addDatabaseColumn,
@@ -14,6 +15,7 @@ import {
   renameDatabaseColumn,
   toDatabaseMetadata,
   updateDatabaseDetails,
+  filterAndSortRows,
   type DatabaseCellValue,
   type DatabaseColumnType,
 } from "@/lib/database/database-table";
@@ -25,6 +27,22 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
   const navigate = useNavigate();
   const model = normalizeDatabaseModel(item.metadata.database, item.id, item.title);
   const stats = getDatabaseStats(model);
+
+  const [sortColumnId, setSortColumnId] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc" | null>(null);
+  const [filterColumnId, setFilterColumnId] = useState<string | null>(null);
+  const [filterQuery, setFilterQuery] = useState<string>("");
+
+  const processedRows = useMemo(() => {
+    return filterAndSortRows(
+      model.rows,
+      model.columns,
+      filterColumnId,
+      filterQuery,
+      sortColumnId,
+      sortDirection,
+    );
+  }, [model.rows, model.columns, sortColumnId, sortDirection, filterColumnId, filterQuery]);
 
   function save(next: typeof model) {
     provider.updateItem(item.id, { metadata: { database: toDatabaseMetadata(next) } });
@@ -82,6 +100,79 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
           placeholder="Describe what this local database tracks."
         />
       </label>
+
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-md border hairline bg-surface-muted/30 p-2.5 text-[12px]">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-medium text-soft">Filter:</span>
+          <select
+            value={filterColumnId || ""}
+            onChange={(e) => {
+              setFilterColumnId(e.target.value || null);
+            }}
+            className="rounded-sm border hairline bg-background px-2 py-1 outline-none text-soft"
+          >
+            <option value="">No filter</option>
+            {model.columns.map((col) => (
+              <option key={col.id} value={col.id}>
+                {col.name}
+              </option>
+            ))}
+          </select>
+          {filterColumnId && (
+            <input
+              type="text"
+              value={filterQuery}
+              onChange={(e) => setFilterQuery(e.target.value)}
+              placeholder="Contains text..."
+              className="rounded-sm border hairline bg-background px-2 py-1 outline-none text-foreground placeholder:text-faint w-40"
+            />
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 sm:ml-auto">
+          <span className="font-medium text-soft">Sort:</span>
+          <select
+            value={sortColumnId || ""}
+            onChange={(e) => {
+              setSortColumnId(e.target.value || null);
+              if (!sortDirection && e.target.value) {
+                setSortDirection("asc");
+              }
+            }}
+            className="rounded-sm border hairline bg-background px-2 py-1 outline-none text-soft"
+          >
+            <option value="">No sort</option>
+            {model.columns.map((col) => (
+              <option key={col.id} value={col.id}>
+                {col.name}
+              </option>
+            ))}
+          </select>
+          {sortColumnId && (
+            <select
+              value={sortDirection || "asc"}
+              onChange={(e) => setSortDirection(e.target.value as "asc" | "desc")}
+              className="rounded-sm border hairline bg-background px-2 py-1 outline-none text-soft"
+            >
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          )}
+          {(sortColumnId || filterColumnId) && (
+            <button
+              onClick={() => {
+                setSortColumnId(null);
+                setSortDirection(null);
+                setFilterColumnId(null);
+                setFilterQuery("");
+              }}
+              className="rounded-sm border border-dashed hairline px-2 py-1 hover:bg-muted text-faint hover:text-foreground"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+      </div>
 
       <div className="overflow-x-auto rounded-md border hairline bg-surface">
         <table className="min-w-[760px] w-full border-collapse text-[13px]">
@@ -142,7 +233,7 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
             </tr>
           </thead>
           <tbody>
-            {model.rows.map((row) => (
+            {processedRows.map((row) => (
               <tr key={row.id} className="border-b hairline last:border-b-0 hover:bg-muted/30">
                 <td className="w-12 px-2 py-2 align-top">
                   <button
@@ -175,9 +266,11 @@ export function DatabaseTable({ item, provider }: { item: MizaanItem; provider: 
             ))}
           </tbody>
         </table>
-        {!model.rows.length && (
+        {!processedRows.length && (
           <div className="px-4 py-8 text-center text-[13px] text-faint">
-            No rows yet. Add a row to start this local database table.
+            {filterColumnId && filterQuery.trim() !== ""
+              ? "No rows match this filter query."
+              : "No rows yet. Add a row to start this local database table."}
           </div>
         )}
       </div>

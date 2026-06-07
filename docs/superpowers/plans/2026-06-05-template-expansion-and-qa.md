@@ -13,6 +13,7 @@
 ### Task 1: Baseline And Red Tests
 
 **Files:**
+
 - Create: `src/lib/templates/template-registry.test.ts`
 - Read: `src/lib/page/page-workspace.ts`
 - Read: module metadata helper files under `src/lib/*/*-record.ts`
@@ -46,6 +47,7 @@ Expected: fail because `src/lib/templates/template-registry.ts` does not exist y
 ### Task 2: Registry Implementation
 
 **Files:**
+
 - Create: `src/lib/templates/template-registry.ts`
 - Modify: `src/lib/page/page-workspace.ts`
 - Test: `src/lib/templates/template-registry.test.ts`
@@ -83,6 +85,7 @@ Expected: template registry tests pass.
 ### Task 3: Templates Route UI
 
 **Files:**
+
 - Modify: `src/routes/templates.tsx`
 - Optional: `src/components/page/PageTemplatePicker.tsx`
 
@@ -101,6 +104,7 @@ Enable create only for implemented templates. Partial/future templates must be v
 ### Task 4: Targeted Verification
 
 **Files:**
+
 - Test: `src/lib/templates/template-registry.test.ts`
 - Test: existing page-workspace tests
 
@@ -127,6 +131,7 @@ Expected: fast validation passes.
 ### Task 5: Docs, Browser QA, Closeout
 
 **Files:**
+
 - Modify: `docs/Plan/Mizaan_PRD.md`
 - Modify: `docs/Plan/Mizaan_Product_Blueprint.md`
 - Append: `docs/Plan/Mizaan_A_to_Z_Plan.md`

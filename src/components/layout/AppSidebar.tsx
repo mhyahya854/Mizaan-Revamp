@@ -597,6 +597,23 @@ function TreeNode({
           </button>
         )}
 
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const subTitle = window.prompt("Enter subpage title:");
+            if (subTitle && subTitle.trim()) {
+              const child = createChildPage(provider, node.id, subTitle.trim());
+              onForceOpen(node.id);
+              navigate({ to: "/page/$id", params: { id: child.id } });
+            }
+          }}
+          className="grid h-5 w-5 place-items-center rounded-sm text-sidebar-muted hover:bg-sidebar-accent-foreground/10 hover:text-sidebar-accent-foreground opacity-0 group-hover:opacity-100 focus:opacity-100 shrink-0 mr-0.5 transition-opacity"
+          aria-label="Add subpage"
+        >
+          <Plus className="h-3.5 w-3.5" />
+        </button>
+
         <PageRowActionsMenu node={node} active={active} onForceOpen={onForceOpen} />
       </div>
       {open && node.children.length > 0 && (

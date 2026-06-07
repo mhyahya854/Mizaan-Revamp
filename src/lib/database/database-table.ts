@@ -483,3 +483,50 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function toNonEmptyString(value: unknown, fallback: string) {
   return typeof value === "string" && value.trim() ? value.trim() : fallback;
 }
+
+export function filterAndSortRows(
+  rows: DatabaseRow[],
+  columns: DatabaseColumn[],
+  filterColumnId: string | null,
+  filterQuery: string,
+  sortColumnId: string | null,
+  sortDirection: "asc" | "desc" | null,
+): DatabaseRow[] {
+  let result = [...rows];
+
+  // Filter
+  if (filterColumnId && filterQuery.trim() !== "") {
+    const q = filterQuery.toLowerCase().trim();
+    result = result.filter((row) => {
+      const value = row.cells[filterColumnId];
+      if (value === null || value === undefined) return false;
+      return String(value).toLowerCase().includes(q);
+    });
+  }
+
+  // Sort
+  if (sortColumnId && sortDirection) {
+    const column = columns.find((c) => c.id === sortColumnId);
+    const isNumber = column?.type === "number";
+
+    result.sort((a, b) => {
+      let valA = a.cells[sortColumnId];
+      let valB = b.cells[sortColumnId];
+
+      if (valA === null || valA === undefined) valA = isNumber ? -Infinity : "";
+      if (valB === null || valB === undefined) valB = isNumber ? -Infinity : "";
+
+      if (isNumber) {
+        const numA = Number(valA);
+        const numB = Number(valB);
+        return sortDirection === "asc" ? numA - numB : numB - numA;
+      } else {
+        const strA = String(valA).toLowerCase();
+        const strB = String(valB).toLowerCase();
+        return sortDirection === "asc" ? strA.localeCompare(strB) : strB.localeCompare(strA);
+      }
+    });
+  }
+
+  return result;
+}

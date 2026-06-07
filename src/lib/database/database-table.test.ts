@@ -15,6 +15,7 @@ import {
   toDatabaseMetadata,
   updateDatabaseDetails,
   validateDatabaseModel,
+  filterAndSortRows,
 } from "./database-table";
 import {
   LocalStorageVaultProvider,
@@ -189,5 +190,59 @@ describe("database table model", () => {
     expect(result.page.metadata.databaseRow).toBe(true);
     expect(result.model.rows[0]?.pageId).toBe(result.page.id);
     expect(provider.getItem(result.page.id)?.title).toBe(result.page.title);
+  });
+
+  it("filters rows by text query (case-insensitive)", () => {
+    const columns = [
+      { id: "name", name: "Name", type: "text" as const },
+      { id: "category", name: "Category", type: "text" as const },
+    ];
+    const rows = [
+      { id: "row-1", title: "Apple", cells: { name: "Apple", category: "Fruit" }, createdAt: "", updatedAt: "" },
+      { id: "row-2", title: "Banana", cells: { name: "Banana", category: "Fruit" }, createdAt: "", updatedAt: "" },
+      { id: "row-3", title: "Carrot", cells: { name: "Carrot", category: "Vegetable" }, createdAt: "", updatedAt: "" },
+    ];
+
+    // Filter by Fruit
+    const filtered1 = filterAndSortRows(rows, columns, "category", "fruit", null, null);
+    expect(filtered1).toHaveLength(2);
+    expect(filtered1.map(r => r.id)).toEqual(["row-1", "row-2"]);
+
+    // Filter by apple
+    const filtered2 = filterAndSortRows(rows, columns, "name", "APPLE", null, null);
+    expect(filtered2).toHaveLength(1);
+    expect(filtered2[0]?.id).toBe("row-1");
+
+    // Filter with no matches
+    const filtered3 = filterAndSortRows(rows, columns, "name", "Donut", null, null);
+    expect(filtered3).toHaveLength(0);
+  });
+
+  it("sorts rows by text or number columns", () => {
+    const columns = [
+      { id: "name", name: "Name", type: "text" as const },
+      { id: "age", name: "Age", type: "number" as const },
+    ];
+    const rows = [
+      { id: "row-1", title: "Charlie", cells: { name: "Charlie", age: 30 }, createdAt: "", updatedAt: "" },
+      { id: "row-2", title: "Alice", cells: { name: "Alice", age: 25 }, createdAt: "", updatedAt: "" },
+      { id: "row-3", title: "Bob", cells: { name: "Bob", age: 35 }, createdAt: "", updatedAt: "" },
+    ];
+
+    // Sort by name asc
+    const sortedNameAsc = filterAndSortRows(rows, columns, null, "", "name", "asc");
+    expect(sortedNameAsc.map(r => r.id)).toEqual(["row-2", "row-3", "row-1"]); // Alice, Bob, Charlie
+
+    // Sort by name desc
+    const sortedNameDesc = filterAndSortRows(rows, columns, null, "", "name", "desc");
+    expect(sortedNameDesc.map(r => r.id)).toEqual(["row-1", "row-3", "row-2"]); // Charlie, Bob, Alice
+
+    // Sort by age asc
+    const sortedAgeAsc = filterAndSortRows(rows, columns, null, "", "age", "asc");
+    expect(sortedAgeAsc.map(r => r.id)).toEqual(["row-2", "row-1", "row-3"]); // 25, 30, 35
+
+    // Sort by age desc
+    const sortedAgeDesc = filterAndSortRows(rows, columns, null, "", "age", "desc");
+    expect(sortedAgeDesc.map(r => r.id)).toEqual(["row-3", "row-1", "row-2"]); // 35, 30, 25
   });
 });

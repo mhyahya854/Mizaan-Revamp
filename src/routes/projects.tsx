@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Briefcase, FilePlus2, Search } from "lucide-react";
 import { useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 
 import {
   createProjectRecordInput,
@@ -8,12 +9,20 @@ import {
   getProjectStateSummary,
   isProjectRecordItem,
   normalizeProjectMetadataForItem,
+  PROJECT_STATUS_VALUES,
+  getProjectStatusLabel,
+  updateProjectMetadata,
+  type ProjectStatus,
 } from "@/lib/projects/project-record";
 import { createPageFromTemplate, getImplementedTemplates } from "@/lib/page/page-workspace";
 import {
   getTaskDisplayFields,
   isTaskRecordItem,
   normalizeTaskMetadataForItem,
+  TASK_STATUS_VALUES,
+  getTaskStatusLabel,
+  updateTaskMetadata,
+  type TaskStatus,
 } from "@/lib/tasks/task-record";
 import { useVaultProvider, useVaultSnapshot } from "@/lib/vault/use-vault";
 import type { MizaanItem } from "@/lib/vault/types";
@@ -35,6 +44,7 @@ function ProjectsPage() {
   const snapshot = useVaultSnapshot();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"list" | "projects-kanban" | "tasks-kanban">("list");
   const q = query.trim().toLowerCase();
   const projectSpace = snapshot.items.find(
     (item) =>
@@ -49,6 +59,15 @@ function ProjectsPage() {
       ),
     [snapshot.items],
   );
+  const filteredTaskRecords = useMemo(() => {
+    const qText = query.trim().toLowerCase();
+    if (!qText) return taskRecords;
+    return taskRecords.filter(
+      (task) =>
+        task.title.toLowerCase().includes(qText) ||
+        (task.summary || "").toLowerCase().includes(qText),
+    );
+  }, [taskRecords, query]);
   const projectRecords = useMemo(
     () =>
       snapshot.items
@@ -85,6 +104,39 @@ function ProjectsPage() {
       parentId: projectSpace?.id,
     });
     navigate({ to: "/page/$id", params: { id: item.id } });
+  }
+
+  function handleMoveProject(id: string, newStatus: ProjectStatus) {
+    const project = snapshot.items.find((entry) => entry.id === id);
+    if (!project) return;
+    const metadata = normalizeProjectMetadataForItem(project);
+    const nextMetadata = updateProjectMetadata(metadata, { projectStatus: newStatus });
+    provider.updateItem(project.id, {
+      status: getProjectStatusLabel(newStatus),
+      properties: {
+        ...project.properties,
+        status: getProjectStatusLabel(newStatus),
+      },
+      metadata: nextMetadata,
+    });
+  }
+
+  function handleMoveTask(id: string, newStatus: TaskStatus) {
+    const task = snapshot.items.find((entry) => entry.id === id);
+    if (!task) return;
+    const metadata = normalizeTaskMetadataForItem(task);
+    const nextMetadata = updateTaskMetadata(metadata, {
+      taskStatus: newStatus,
+      taskCompletedAt: newStatus === "done" ? new Date().toISOString().slice(0, 10) : "",
+    });
+    provider.updateItem(task.id, {
+      status: getTaskStatusLabel(newStatus),
+      properties: {
+        ...task.properties,
+        status: getTaskStatusLabel(newStatus),
+      },
+      metadata: nextMetadata,
+    });
   }
 
   return (
@@ -156,36 +208,234 @@ function ProjectsPage() {
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search projects, status, priority, area"
+            placeholder={
+              viewMode === "tasks-kanban"
+                ? "Search tasks..."
+                : "Search projects, status, priority..."
+            }
             className="w-64 bg-transparent text-[12.5px] outline-none placeholder:text-faint"
           />
         </div>
-        <span className="rounded-sm border-b-2 border-foreground px-2 py-1 text-foreground -mb-[9px] pb-[9px]">
-          Project records
+        <button
+          onClick={() => setViewMode("list")}
+          className={cn(
+            "rounded-sm px-2.5 py-1 -mb-[9px] pb-[9px] border-b-2 font-medium transition-colors",
+            viewMode === "list"
+              ? "border-foreground text-foreground animate-in fade-in duration-200"
+              : "border-transparent text-sidebar-muted hover:text-foreground",
+          )}
+        >
+          Project List
+        </button>
+        <button
+          onClick={() => setViewMode("projects-kanban")}
+          className={cn(
+            "rounded-sm px-2.5 py-1 -mb-[9px] pb-[9px] border-b-2 font-medium transition-colors",
+            viewMode === "projects-kanban"
+              ? "border-foreground text-foreground animate-in fade-in duration-200"
+              : "border-transparent text-sidebar-muted hover:text-foreground",
+          )}
+        >
+          Projects Kanban
+        </button>
+        <button
+          onClick={() => setViewMode("tasks-kanban")}
+          className={cn(
+            "rounded-sm px-2.5 py-1 -mb-[9px] pb-[9px] border-b-2 font-medium transition-colors",
+            viewMode === "tasks-kanban"
+              ? "border-foreground text-foreground animate-in fade-in duration-200"
+              : "border-transparent text-sidebar-muted hover:text-foreground",
+          )}
+        >
+          Tasks Kanban
+        </button>
+        <span className="ml-auto text-faint">
+          {viewMode === "tasks-kanban"
+            ? `${filteredTaskRecords.length} tasks`
+            : `${projectRecords.length} projects`}
         </span>
-        <span className="text-faint">{projectRecords.length} local records</span>
       </div>
 
-      {projectRecords.length > 0 ? (
-        <div className="mt-5 grid gap-3 lg:grid-cols-2">
-          {projectRecords.map((item) => (
-            <ProjectCard key={item.id} item={item} taskRecords={taskRecords} />
-          ))}
+      {viewMode === "list" && (
+        <>
+          {projectRecords.length > 0 ? (
+            <div className="mt-5 grid gap-3 lg:grid-cols-2">
+              {projectRecords.map((item) => (
+                <ProjectCard key={item.id} item={item} taskRecords={taskRecords} />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-5 rounded-md border border-dashed hairline bg-surface px-5 py-8 text-center">
+              <h2 className="font-editorial text-[24px]">No project records yet</h2>
+              <p className="mx-auto mt-2 max-w-xl text-[13px] leading-relaxed text-soft">
+                Create a provider-backed project record now.
+              </p>
+              <button
+                onClick={createProject}
+                className="mt-4 rounded-sm bg-foreground px-3 py-1.5 text-[12.5px] text-background hover:opacity-90"
+              >
+                New project
+              </button>
+            </div>
+          )}
+        </>
+      )}
+
+      {viewMode === "projects-kanban" && (
+        <div className="mt-5 flex gap-4 overflow-x-auto pb-4 scrollbar-thin">
+          {PROJECT_STATUS_VALUES.map((status) => {
+            const cols = projectRecords.filter((item) => {
+              const meta = normalizeProjectMetadataForItem(item);
+              return meta.projectStatus === status;
+            });
+            return (
+              <div
+                key={status}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  const id = e.dataTransfer.getData("mizaan-project-id");
+                  if (id) handleMoveProject(id, status);
+                }}
+                className="w-72 shrink-0 rounded-md bg-muted/15 border hairline p-3 flex flex-col min-h-[500px]"
+              >
+                <div className="flex items-center justify-between border-b hairline pb-2 mb-3">
+                  <h3 className="text-[13px] font-semibold capitalize text-foreground">
+                    {getProjectStatusLabel(status)}
+                  </h3>
+                  <span className="rounded-full bg-background border hairline px-2 py-0.5 text-[10.5px] text-faint font-medium">
+                    {cols.length}
+                  </span>
+                </div>
+                <div className="flex-1 space-y-2.5 overflow-y-auto">
+                  {cols.map((item) => {
+                    const meta = normalizeProjectMetadataForItem(item);
+                    return (
+                      <div
+                        key={item.id}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("mizaan-project-id", item.id);
+                        }}
+                        className="rounded-md border hairline bg-surface p-3 cursor-grab active:cursor-grabbing hover:shadow-sm transition-shadow relative group"
+                      >
+                        <Link
+                          to="/page/$id"
+                          params={{ id: item.id }}
+                          className="block text-[13.5px] font-semibold hover:underline truncate"
+                        >
+                          {item.title}
+                        </Link>
+                        <p className="mt-1 text-[11.5px] text-soft line-clamp-2">
+                          {meta.projectDescription || item.summary || "No description"}
+                        </p>
+                        <div className="mt-3 flex items-center justify-between">
+                          <span className="text-[10px] text-faint uppercase tracking-wider font-semibold">
+                            {meta.projectPriority || "none"}
+                          </span>
+                          <select
+                            value={meta.projectStatus}
+                            onChange={(e) =>
+                              handleMoveProject(item.id, e.target.value as ProjectStatus)
+                            }
+                            className="text-[11px] rounded bg-muted/50 border border-transparent px-1 py-0.5 text-soft outline-none hover:border-input"
+                          >
+                            {PROJECT_STATUS_VALUES.map((opt) => (
+                              <option key={opt} value={opt}>
+                                {getProjectStatusLabel(opt)}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {!cols.length && (
+                    <div className="py-8 text-center text-[12px] text-faint border border-dashed hairline rounded-md">
+                      Drop projects here
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
-      ) : (
-        <div className="mt-5 rounded-md border border-dashed hairline bg-surface px-5 py-8 text-center">
-          <h2 className="font-editorial text-[24px]">No project records yet</h2>
-          <p className="mx-auto mt-2 max-w-xl text-[13px] leading-relaxed text-soft">
-            Create a provider-backed project record now. Full kanban, timeline, recurring tasks,
-            reminders, scheduling, and project dashboards are intentionally not shown as working
-            controls in this phase.
-          </p>
-          <button
-            onClick={createProject}
-            className="mt-4 rounded-sm bg-foreground px-3 py-1.5 text-[12.5px] text-background hover:opacity-90"
-          >
-            New project
-          </button>
+      )}
+
+      {viewMode === "tasks-kanban" && (
+        <div className="mt-5 flex gap-4 overflow-x-auto pb-4 scrollbar-thin">
+          {TASK_STATUS_VALUES.filter((s) => s !== "archived").map((status) => {
+            const cols = filteredTaskRecords.filter((item) => {
+              const meta = normalizeTaskMetadataForItem(item);
+              return meta.taskStatus === status;
+            });
+            return (
+              <div
+                key={status}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  const id = e.dataTransfer.getData("mizaan-task-id");
+                  if (id) handleMoveTask(id, status);
+                }}
+                className="w-72 shrink-0 rounded-md bg-muted/15 border hairline p-3 flex flex-col min-h-[500px]"
+              >
+                <div className="flex items-center justify-between border-b hairline pb-2 mb-3">
+                  <h3 className="text-[13px] font-semibold capitalize text-foreground">
+                    {getTaskStatusLabel(status)}
+                  </h3>
+                  <span className="rounded-full bg-background border hairline px-2 py-0.5 text-[10.5px] text-faint font-medium">
+                    {cols.length}
+                  </span>
+                </div>
+                <div className="flex-1 space-y-2.5 overflow-y-auto">
+                  {cols.map((item) => {
+                    const meta = normalizeTaskMetadataForItem(item);
+                    return (
+                      <div
+                        key={item.id}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("mizaan-task-id", item.id);
+                        }}
+                        className="rounded-md border hairline bg-surface p-3 cursor-grab active:cursor-grabbing hover:shadow-sm transition-shadow relative group"
+                      >
+                        <Link
+                          to="/page/$id"
+                          params={{ id: item.id }}
+                          className="block text-[13.5px] font-semibold hover:underline truncate"
+                        >
+                          {item.title}
+                        </Link>
+                        <p className="mt-1 text-[11.5px] text-soft line-clamp-2">
+                          {meta.notes || item.summary || "No description"}
+                        </p>
+                        <div className="mt-3 flex items-center justify-between">
+                          <span className="text-[10px] text-faint uppercase tracking-wider font-semibold">
+                            {meta.taskPriority || "none"}
+                          </span>
+                          <select
+                            value={meta.taskStatus}
+                            onChange={(e) => handleMoveTask(item.id, e.target.value as TaskStatus)}
+                            className="text-[11px] rounded bg-muted/50 border border-transparent px-1 py-0.5 text-soft outline-none hover:border-input"
+                          >
+                            {TASK_STATUS_VALUES.map((opt) => (
+                              <option key={opt} value={opt}>
+                                {getTaskStatusLabel(opt)}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {!cols.length && (
+                    <div className="py-8 text-center text-[12px] text-faint border border-dashed hairline rounded-md">
+                      Drop tasks here
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

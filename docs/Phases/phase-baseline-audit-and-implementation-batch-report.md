@@ -15,6 +15,7 @@ Selected app folder: `E:\Github\Mizaan-Revamp`
 Git repo found: no.
 
 Evidence:
+
 - `Get-ChildItem -Recurse -Directory -Filter ".git"` found no `.git` directory outside excluded dependency/build folders.
 - `git status --short`, `git branch --show-current`, `git log -10 --oneline`, and `git diff --check` all failed because the selected folder is not a Git repository.
 
@@ -34,18 +35,22 @@ Code was treated as stronger evidence than phase reports or work-log claims.
 ## App Code Inspected
 
 Package paths found:
+
 - `E:\Github\Mizaan-Revamp\package.json`
 
 Source paths found:
+
 - `E:\Github\Mizaan-Revamp\src`
 
 Git paths found:
+
 - none
 
 Reason selected:
 The root folder is the only non-dependency folder with `package.json` and `src`, and it contains the current routes and recent page/sidebar/calendar/database/search code.
 
 Framework and tooling:
+
 - React 19
 - Vite 7
 - TanStack Router/Start
@@ -168,6 +173,7 @@ Calendar already existed and was the highest-priority partial feature that could
 ## What Was Implemented
 
 Calendar hardening:
+
 - Day view added.
 - Month/week/agenda event rendering now uses shared normalized Calendar models.
 - Provider-backed event creation now writes normalized metadata/properties.
@@ -181,6 +187,7 @@ Calendar hardening:
 - Calendar route remains direct `/calendar`, not `PageWorkspace`.
 
 Runtime hardening:
+
 - Root shell now uses `suppressHydrationWarning` on `<html>` to avoid the expected React hydration mismatch from the pre-hydration theme script.
 
 ## Files Changed
@@ -211,12 +218,15 @@ Runtime hardening:
 ## Browser QA
 
 Dev server:
+
 - `http://127.0.0.1:4177/`
 
 Browser plugin availability:
+
 - Browser plugin was available and used first.
 
 Checked:
+
 - Home rendered.
 - Sidebar rendered with PINNED and PAGES.
 - Page workspace opened at `/page/note-getting-started` with Page data visible.

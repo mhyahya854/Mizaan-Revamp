@@ -12,7 +12,10 @@ $failures = New-Object System.Collections.Generic.List[string]
 function Require-Rg {
   $rg = Get-Command rg -ErrorAction SilentlyContinue
   if (-not $rg) {
-    throw "ripgrep (rg) is required for Mizaan red scans."
+    $git = Get-Command git -ErrorAction SilentlyContinue
+    if (-not $git) {
+      throw "Either ripgrep (rg) or git is required for Mizaan red scans."
+    }
   }
 }
 
@@ -22,15 +25,28 @@ function Invoke-RgScan {
     [string[]]$Paths
   )
 
-  $output = & rg -n $Pattern @Paths 2>$null
-  $code = $LASTEXITCODE
-  if ($code -eq 1) {
-    return @()
+  $rg = Get-Command rg -ErrorAction SilentlyContinue
+  if ($rg) {
+    $output = & rg -n $Pattern @Paths 2>$null
+    $code = $LASTEXITCODE
+    if ($code -eq 1) {
+      return @()
+    }
+    if ($code -ne 0) {
+      throw "rg scan failed for pattern: $Pattern"
+    }
+    return @($output)
+  } else {
+    $output = & git grep -n --no-index -E $Pattern -- @Paths 2>$null
+    $code = $LASTEXITCODE
+    if ($code -eq 1) {
+      return @()
+    }
+    if ($code -ne 0) {
+      throw "git grep scan failed for pattern: $Pattern"
+    }
+    return @($output)
   }
-  if ($code -ne 0) {
-    throw "rg scan failed for pattern: $Pattern"
-  }
-  return @($output)
 }
 
 function Write-Section {

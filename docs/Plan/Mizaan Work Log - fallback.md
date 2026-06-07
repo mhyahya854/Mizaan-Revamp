@@ -100,8 +100,38 @@ The stopped run had Calendar implementation work in place and was about to start
 
 ### Limitations
 
-Mizaan remains a browser/localStorage prototype. Calendar is an implemented local foundation, not a complete scheduling system. Recurrence, reminder engine, native notifications, push notifications, Google Calendar sync, ICS import/export, cloud sync, automatic scheduling, AI scheduling, mobile capture, encrypted private calendar, app lock/privacy lock, Tauri, SQLite, native filesystem, and portable vault folders are not implemented.
+Mizaan remains a browser/localStorage prototype. Calendar is an implemented local foundation, not a complete scheduling system. Recurrence, reminder engine, native notifications, push notifications, Google Calendar sync, ICS import/export, cloud sync, automatic scheduling, AI scheduling, mobile calendar capture, encrypted private calendar, app lock/privacy lock, Tauri, SQLite, native filesystem, and portable vault folders are not implemented.
 
 ### Next Phase
 
 Template Expansion and Template QA is the recommended next phase because Calendar event template metadata now exists and the next bounded work can expand provider-backed templates without native/cloud scope.
+
+## Gemini Web Core Remaining Features Pass - 2026-06-07
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally unparsable by automated scripts due to namespace XML syntax errors.
+
+### What Was Requested
+
+While Codex limits refresh, implement the remaining safe web/browser features from the current web-core scope (nested subpages, stateful database sorting/filtering, Kanban board status columns/drag-and-drop, calendar project/task deadline integration). Add/update tests, run browser QA, update documentation (PRD, blueprint, fallback log, master plan append), and commit/push.
+
+### What Was Finished
+
+- **Sidebar Tree Subpages**: TreeNode "+ subpage" hover button created to easily instantiate child pages via `createChildPage` prompts.
+- **Database Table Sorting/Filtering**: Extracted database sort & filter row logic into a clean `filterAndSortRows` helper inside `src/lib/database/database-table.ts`. Integrated it back into `DatabaseTable.tsx`.
+- **Kanban Boards**: Projects Kanban and Tasks Kanban views implemented with drag-and-drop capability and provider status updates persistence.
+- **Calendar Integration**: Task due dates and project deadlines are dynamically mapped as virtual calendar event pills.
+- **Unit Tests**: Added comprehensive database tests for case-insensitive filtering and sorting of multiple column types (text, number).
+- **Documentation**: Updated PRD, Product Blueprint, phase report, fallback log, and appended to the master plan.
+
+### Validation Evidence
+
+- `npm run mizaan:preflight`: Passed.
+- `npm run mizaan:red-scan`: Passed.
+- `npm run mizaan:verify:fast`: Passed.
+- `npm run mizaan:verify:full`: Passed.
+- Targeted Vitest tests: `npx vitest run src/lib/database/database-table.test.ts` passed with 12 tests.
+- `npm run mizaan:browser-qa`: Passed all route checks and captured screenshots.
+
+### Limitations
+
+Mizaan remains a local-only browser localStorage prototype. Tauri, SQLite, native filesystem, portable vaults, encryption, app lock, cloud/auth/sync, AI scheduling, and automatic database formulas remain future non-goals.
