@@ -350,4 +350,3 @@ function formatValue(value: unknown): string {
   if (typeof value === "object") return "Object";
   return String(value);
 }
-

@@ -329,6 +329,3 @@ function searchablePersonText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
-
-
-

@@ -420,6 +420,3 @@ function searchableFinanceText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
-
-
-

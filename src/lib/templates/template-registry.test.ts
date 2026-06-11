@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, it } from "vitest";
 
 import {
@@ -156,7 +155,9 @@ describe("template registry", () => {
     const readingList = await createItemFromTemplate(provider, "reading-list-table");
     const financeLedger = await createItemFromTemplate(provider, "finance-ledger-table");
 
-    expect((await provider.getBlocks(simpleTable.id)).some((block) => block.type === "table")).toBe(true);
+    expect((await provider.getBlocks(simpleTable.id)).some((block) => block.type === "table")).toBe(
+      true,
+    );
     expect(readingList.category).toBe("databases");
     expect(readingList.metadata.database).toBeDefined();
     expect(financeLedger.category).toBe("databases");
@@ -189,7 +190,7 @@ describe("template registry", () => {
     expect(preview.metadata.transactionType).toBe("expense");
     expect(preview.blockCount).toBeGreaterThan(0);
     expect(preview.canCreate).toBe(true);
-    expect((await (await provider.getSnapshot())?.items.length)).toBe(beforeCount);
+    expect(await (await provider.getSnapshot())?.items.length).toBe(beforeCount);
   });
 
   it(``, async () => {
@@ -277,9 +278,3 @@ describe("template registry", () => {
     );
   });
 });
-
-
-
-
-
-

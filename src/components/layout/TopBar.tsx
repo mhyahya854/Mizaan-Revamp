@@ -72,4 +72,3 @@ export function TopBar({ onOpenPalette }: { onOpenPalette: () => void }) {
     </header>
   );
 }
-

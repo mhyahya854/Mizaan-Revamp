@@ -568,6 +568,3 @@ function searchableProjectText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
-
-
-

@@ -12,4 +12,3 @@ describe("app head product law", () => {
     expect(hrefs.join("\n").toLowerCase()).not.toMatch(/google|gstatic|fonts\.googleapis/);
   });
 });
-

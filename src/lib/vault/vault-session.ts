@@ -92,4 +92,3 @@ export async function getVaultLifecycleStatus(): Promise<VaultLifecycleStatus> {
     recentVaults: getRecentVaults(),
   };
 }
-

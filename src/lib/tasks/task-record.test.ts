@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, it } from "vitest";
 
 import type { MizaanItem } from "../vault/types";
@@ -292,7 +291,9 @@ describe("task metadata helpers", () => {
     expect(task.metadata.taskStatus).toBe("todo");
     expect(task.metadata.taskPriority).toBe("none");
     expect(task.metadata.taskProjectId).toBe("");
-    expect((await provider.getBlocks(task.id)).some((block) => block.type === "callout")).toBe(true);
+    expect((await provider.getBlocks(task.id)).some((block) => block.type === "callout")).toBe(
+      true,
+    );
   });
 });
 
@@ -312,7 +313,3 @@ function item(input: Partial<MizaanItem> & Pick<MizaanItem, "id" | "title">): Mi
     ...input,
   };
 }
-
-
-
-

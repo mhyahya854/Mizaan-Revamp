@@ -264,6 +264,3 @@ function placeholderFor(type: MizaanBlock["type"]) {
   if (type === "table") return "Table";
   return "Type / for commands";
 }
-
-
-

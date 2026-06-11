@@ -222,5 +222,3 @@ function StateRow({ label, value, active }: { label: string; value: string; acti
     </div>
   );
 }
-
-

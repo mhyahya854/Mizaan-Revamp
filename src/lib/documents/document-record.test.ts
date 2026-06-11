@@ -257,8 +257,8 @@ describe("document metadata helpers", () => {
     expect(invoice.metadata.importState).toBe("record-only");
     expect(invoice.metadata.previewState).toBe("unavailable");
     expect(invoice.metadata.storageState).toBe("browser-record");
-    expect((await provider.getBlocks(invoice.id)).some((block) => block.type === "callout")).toBe(true);
+    expect((await provider.getBlocks(invoice.id)).some((block) => block.type === "callout")).toBe(
+      true,
+    );
   });
 });
-
-

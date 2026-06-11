@@ -351,7 +351,9 @@ export async function ensureDatabaseRowPage(
       entry.id === (row?.id ?? rowId) ? { ...entry, pageId: page.id, title } : entry,
     ),
   });
-  await provider.updateItem(databaseItem.id, { metadata: { database: toDatabaseMetadata(nextModel) } });
+  await provider.updateItem(databaseItem.id, {
+    metadata: { database: toDatabaseMetadata(nextModel) },
+  });
   return { page, model: nextModel };
 }
 
@@ -530,5 +532,3 @@ export function filterAndSortRows(
 
   return result;
 }
-
-

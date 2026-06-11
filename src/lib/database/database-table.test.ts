@@ -276,5 +276,3 @@ describe("database table model", () => {
     expect(sortedAgeDesc.map((r) => r.id)).toEqual(["row-3", "row-1", "row-2"]); // 35, 30, 25
   });
 });
-
-

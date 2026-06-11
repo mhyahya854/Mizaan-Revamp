@@ -760,13 +760,13 @@ export async function createItemFromTemplate(
   if (item.type === "database") {
     const database = createDatabaseForTemplate(template.id, item.id, item.title);
     return (
-      await provider.updateItem(item.id, {
+      (await provider.updateItem(item.id, {
         metadata: {
           ...item.metadata,
           templateId: template.id,
           database: toDatabaseMetadata(database),
         },
-      }) ?? item
+      })) ?? item
     );
   }
 
@@ -1222,7 +1222,3 @@ function titleCase(value: string) {
 export function createSimpleTableBlock(): CreateBlockInput {
   return { type: "table", content: serializeTableData(createDefaultTableData()) };
 }
-
-
-
-

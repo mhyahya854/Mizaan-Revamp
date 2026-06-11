@@ -382,5 +382,3 @@ function labelFor(category: ItemCategory) {
   };
   return labels[category];
 }
-
-

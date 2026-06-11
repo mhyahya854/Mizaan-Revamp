@@ -173,3 +173,31 @@ Hardened Settings page UI to truthfully represent the browser/localStorage proto
 
 ## Native Windows Tauri Readiness Probe
 Assessed current web build state and provider boundaries. Confirmed 100% build pass. Blockers identified: Tauri CLI missing, and VaultProvider uses a strictly synchronous API that must be refactored before native storage logic can be added. No actual native code was scaffolded.
+
+## Async Provider Refactor Stabilization Continuation - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Validated `feature/async-provider-refactor` directly because `npm run mizaan:preflight` is hard-coded for `main`.
+- Removed manual `// @ts-nocheck` suppressions from async-refactor test files and fixed the real nullable provider lookup errors exposed by typecheck.
+- Fixed async `useVaultSnapshot` cleanup so an in-flight provider snapshot update cannot set state after unmount.
+- Normalized source formatting and configured Prettier `endOfLine: "auto"` so lint works reliably in the Windows checkout.
+- Confirmed Tauri CLI remains unavailable; no native scaffold, dependency install, SQLite provider, filesystem provider, or portable vault work was performed.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- Focused tests: 6 touched test files, 94 tests passed.
+- `npm run lint`: passed.
+- `npm run mizaan:verify:full`: passed.
+- Full serial Vitest in full verify: 23 files, 238 tests, 0 failed.
+- `npm run build`: passed inside full verify.
+- `git diff --check`: passed inside full verify.
+- `npm run mizaan:red-scan`: passed blocking checks inside full verify.
+- `npm run mizaan:browser-qa`: passed all configured routes and captured `docs/screenshots/20260611-193109-browser-qa-*.png`.
+
+### Limitations
+
+Mizaan remains a browser/localStorage prototype. Async provider boundaries are ready for future native work, but Tauri, SQLite, native filesystem, portable vault folders, packaging, encryption, and app lock are not implemented.

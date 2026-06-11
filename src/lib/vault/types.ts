@@ -229,4 +229,3 @@ export interface VaultProvider {
   restoreSnapshotData(input: RestoreSnapshotDataInput): Promise<VaultSnapshot>;
   subscribe(listener: () => void): () => void;
 }
-

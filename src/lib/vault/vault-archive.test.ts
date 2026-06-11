@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, it } from "vitest";
 
 import {
@@ -532,7 +531,11 @@ describe("vault archive helpers", () => {
       now: () => now,
       idFactory: (prefix) => `${prefix}-1`,
     });
-    const created = await provider.createItem({ title: "Keep me", category: "notes", type: "note" });
+    const created = await provider.createItem({
+      title: "Keep me",
+      category: "notes",
+      type: "note",
+    });
     const current = await provider.getSnapshot();
     const before = storage.getItem("mizaan.prototype.vault.v1");
     const archive = createVaultArchive(snapshot({ items: [item("incoming-1")] }), {
@@ -644,9 +647,3 @@ describe("vault archive helpers", () => {
     expect(summary).toContain("2 relations");
   });
 });
-
-
-
-
-
-

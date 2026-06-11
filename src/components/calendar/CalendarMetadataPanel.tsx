@@ -310,5 +310,3 @@ function splitCsv(value: string) {
 
 const fieldClassName =
   "w-full rounded-sm border hairline bg-background px-2 py-1.5 text-[12.5px] text-foreground outline-none focus:ring-1 focus:ring-ring";
-
-

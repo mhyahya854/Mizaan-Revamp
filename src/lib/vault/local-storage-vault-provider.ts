@@ -954,6 +954,3 @@ export function getVaultProvider() {
   singleton ??= new LocalStorageVaultProvider();
   return singleton;
 }
-
-
-

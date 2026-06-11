@@ -420,4 +420,3 @@ describe("finance record model", () => {
     expect(getFinanceStatusLabel("cleared")).toBe("Cleared");
   });
 });
-

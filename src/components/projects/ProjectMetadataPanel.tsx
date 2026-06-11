@@ -483,5 +483,3 @@ function uniqueStrings(values: string[]) {
 function todayDate() {
   return new Date().toISOString().slice(0, 10);
 }
-
-

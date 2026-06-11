@@ -89,5 +89,3 @@ function DatabasesPage() {
     </div>
   );
 }
-
-

@@ -1062,5 +1062,3 @@ function nextHourLabel(value: string) {
   if (!Number.isFinite(hour)) return "10:00";
   return `${String(Math.min(hour + 1, 23)).padStart(2, "0")}:00`;
 }
-
-

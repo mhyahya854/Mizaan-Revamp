@@ -1666,7 +1666,7 @@ Report honestly with implemented, partial, not implemented, deliberately not imp
 ```
 
 ## Native Tauri Readiness Probe
-- **Native Windows/Tauri readiness status:** PROBED (Blocker: async provider refactor needed)
+- **Native Windows/Tauri readiness status:** PROBED (async provider refactor completed on feature branch; Tauri CLI still missing)
 - **Tauri shell status:** NOT STARTED
 - **SQLite status:** NOT STARTED
 - **Native filesystem status:** NOT STARTED

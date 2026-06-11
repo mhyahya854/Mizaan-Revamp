@@ -163,7 +163,10 @@ function PageDataPanel({
   items: MizaanItem[];
 }) {
   const hasTags = model.item.tags && model.item.tags.length > 0;
-  const [providerInfo, setProviderInfo] = useState({ name: "Loading...", storageLabel: "Loading..." });
+  const [providerInfo, setProviderInfo] = useState({
+    name: "Loading...",
+    storageLabel: "Loading...",
+  });
   useEffect(() => {
     provider.getProviderInfo().then(setProviderInfo);
   }, [provider]);
@@ -303,7 +306,8 @@ function RelationsTab({
           {eligibleTargets.map((target) => (
             <button
               key={target.id}
-              onClick={async () => await provider.createRelation({
+              onClick={async () =>
+                await provider.createRelation({
                   sourceId: model.item.id,
                   targetId: target.id,
                   relationType: `${model.item.type}_to_${target.type}`,
@@ -373,6 +377,3 @@ function HistoryTab() {
     </section>
   );
 }
-
-
-

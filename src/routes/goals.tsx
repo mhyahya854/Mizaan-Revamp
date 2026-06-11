@@ -323,5 +323,3 @@ function searchableGoalText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
-
-

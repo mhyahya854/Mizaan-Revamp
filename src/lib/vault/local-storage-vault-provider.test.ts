@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, it } from "vitest";
 
 import { LocalStorageVaultProvider, createMemoryStorage } from "./local-storage-vault-provider";
@@ -43,12 +42,16 @@ describe("LocalStorageVaultProvider", () => {
     await provider.updateBlock(block.id, { content: "Updated block text" });
 
     expect((await provider.getItem(item?.id))?.title).toBe("Renamed Lecture Notes");
-    expect((await (await provider.getBlocks(item?.id))[0]?.content)).toBe("Updated block text");
+    expect(await (await provider.getBlocks(item?.id))[0]?.content).toBe("Updated block text");
   });
 
   it(``, async () => {
     const provider = createProvider();
-    const source = await provider.createItem({ title: "Project", category: "projects", type: "project" });
+    const source = await provider.createItem({
+      title: "Project",
+      category: "projects",
+      type: "project",
+    });
     const target = await provider.createItem({
       title: "Document",
       category: "documents",
@@ -62,13 +65,17 @@ describe("LocalStorageVaultProvider", () => {
       label: "Reference",
     });
 
-    expect((await provider.listRelations({ sourceId: source.id }))).toHaveLength(1);
-    expect((await provider.listRelations({ targetId: target.id }))).toHaveLength(1);
+    expect(await provider.listRelations({ sourceId: source.id })).toHaveLength(1);
+    expect(await provider.listRelations({ targetId: target.id })).toHaveLength(1);
   });
 
   it(``, async () => {
     const provider = createProvider();
-    const item = await provider.createItem({ title: "Archive me", category: "notes", type: "note" });
+    const item = await provider.createItem({
+      title: "Archive me",
+      category: "notes",
+      type: "note",
+    });
 
     await provider.archiveItem(item?.id);
     expect((await provider.getItem(item?.id))?.archivedAt).toBe("2026-05-29T00:00:00.000Z");
@@ -80,7 +87,11 @@ describe("LocalStorageVaultProvider", () => {
 
   it(``, async () => {
     const provider = createProvider();
-    const existing = await provider.createItem({ title: "Existing", category: "notes", type: "note" });
+    const existing = await provider.createItem({
+      title: "Existing",
+      category: "notes",
+      type: "note",
+    });
 
     await provider.restoreSnapshotData({
       mode: "merge",
@@ -118,14 +129,20 @@ describe("LocalStorageVaultProvider", () => {
 
     expect((await provider.getItem(existing.id))?.title).toBe("Existing from archive");
     expect((await provider.getItem("archive-note"))?.metadata.custom).toBe("kept");
-    expect((await (await provider.getBlocks("archive-note"))[0]?.id)).toBe("archive-block");
+    expect(await (await provider.getBlocks("archive-note"))[0]?.id).toBe("archive-block");
   });
 
   it(``, async () => {
     const provider = createProvider();
-    const existing = await provider.createItem({ title: "Existing", category: "notes", type: "note" });
+    const existing = await provider.createItem({
+      title: "Existing",
+      category: "notes",
+      type: "note",
+    });
 
-    await expect(provider.restoreSnapshotData({ mode: "replace", items: [], blocks: [], relations: [] })).rejects.toThrow(/requires explicit confirmation/i);
+    await expect(
+      provider.restoreSnapshotData({ mode: "replace", items: [], blocks: [], relations: [] }),
+    ).rejects.toThrow(/requires explicit confirmation/i);
 
     await provider.restoreSnapshotData({
       mode: "replace",
@@ -135,12 +152,7 @@ describe("LocalStorageVaultProvider", () => {
       relations: [],
     });
 
-    expect((await provider.getItem(existing.id))).toBeUndefined();
+    expect(await provider.getItem(existing.id)).toBeUndefined();
     expect((await provider.getSnapshot()).items).toHaveLength(0);
   });
 });
-
-
-
-
-

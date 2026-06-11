@@ -122,4 +122,3 @@ function TemplateSection({
 function unique(values: string[]) {
   return values.filter((value, index) => values.indexOf(value) === index);
 }
-

@@ -312,6 +312,3 @@ function DatabaseCell({
     />
   );
 }
-
-
-

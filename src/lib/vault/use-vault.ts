@@ -78,8 +78,12 @@ export function useVaultSnapshot() {
       const snap = await provider.getSnapshot();
       if (active) setSnapshot(snap);
     };
+    const unsubscribe = provider.subscribe(update);
     update();
-    return provider.subscribe(update);
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, [provider]);
 
   return snapshot;

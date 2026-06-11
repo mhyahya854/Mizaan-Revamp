@@ -328,4 +328,3 @@ describe("person record model", () => {
     expect(search.privacy).toContain("metadata-only");
   });
 });
-

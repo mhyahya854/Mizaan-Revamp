@@ -125,5 +125,3 @@ describe("calendar event model", () => {
     expect(buildCalendarRangeLabel("day", date)).toBe("Tuesday, June 2, 2026");
   });
 });
-
-

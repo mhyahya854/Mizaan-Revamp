@@ -114,4 +114,3 @@ export function SimpleTableBlock({
     </div>
   );
 }
-

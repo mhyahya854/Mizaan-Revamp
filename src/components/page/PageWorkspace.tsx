@@ -203,6 +203,3 @@ export function PageWorkspace({ itemId }: { itemId: string }) {
     </div>
   );
 }
-
-
-

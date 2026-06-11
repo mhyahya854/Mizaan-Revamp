@@ -209,4 +209,3 @@ describe("createVaultHealthSummary", () => {
     expect(getVaultHealthScore(summary)).toBe("empty");
   });
 });
-

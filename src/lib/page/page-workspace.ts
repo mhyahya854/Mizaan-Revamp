@@ -1091,13 +1091,13 @@ export async function createPageFromTemplate(
   if (template.id === "basic-database") {
     const database = createDefaultDatabaseModel(page.id, page.title);
     return (
-      await provider.updateItem(page.id, {
+      (await provider.updateItem(page.id, {
         metadata: {
           ...page.metadata,
           templateId: template.id,
           database: toDatabaseMetadata(database),
         },
-      }) ?? page
+      })) ?? page
     );
   }
 
@@ -1246,10 +1246,3 @@ function resolveRelations(relations: MizaanRelation[], items: MizaanItem[]): Res
     return [{ relation, source, target }];
   });
 }
-
-
-
-
-
-
-

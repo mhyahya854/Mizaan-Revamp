@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, it } from "vitest";
 
 import {
@@ -27,7 +26,11 @@ function createProvider() {
 describe("page workspace model", () => {
   it(``, async () => {
     const provider = createProvider();
-    const item = await provider.createItem({ title: "Plain page", category: "notes", type: "note" });
+    const item = await provider.createItem({
+      title: "Plain page",
+      category: "notes",
+      type: "note",
+    });
 
     const model = buildPageWorkspaceModel(provider, item?.id, await provider.getSnapshot());
 
@@ -59,13 +62,19 @@ describe("page workspace model", () => {
 
   it(``, async () => {
     const provider = createProvider();
-    const parent = await provider.createItem({ title: "Parent", category: "projects", type: "project" });
+    const parent = await provider.createItem({
+      title: "Parent",
+      category: "projects",
+      type: "project",
+    });
 
     const child = await createChildPage(provider, parent.id, "Subpage");
 
     expect(child.parentId).toBe(parent.id);
     expect((await provider.getItem(child.id))?.title).toBe("Subpage");
-    expect(buildPageWorkspaceModel(provider, parent.id, await provider.getSnapshot()).childPages[0]?.id).toBe(child.id);
+    expect(
+      buildPageWorkspaceModel(provider, parent.id, await provider.getSnapshot()).childPages[0]?.id,
+    ).toBe(child.id);
   });
 
   it(``, async () => {
@@ -83,10 +92,14 @@ describe("page workspace model", () => {
       label: "Evidence",
     });
 
-    expect(buildPageWorkspaceModel(provider, source.id, await provider.getSnapshot()).outgoingLinks[0]?.target.title).toBe(
-      "Target",
-    );
-    expect(buildPageWorkspaceModel(provider, target.id, await provider.getSnapshot()).backlinks[0]?.source.title).toBe("Source");
+    expect(
+      buildPageWorkspaceModel(provider, source.id, await provider.getSnapshot()).outgoingLinks[0]
+        ?.target.title,
+    ).toBe("Target");
+    expect(
+      buildPageWorkspaceModel(provider, target.id, await provider.getSnapshot()).backlinks[0]
+        ?.source.title,
+    ).toBe("Source");
   });
 
   it(``, async () => {
@@ -106,7 +119,9 @@ describe("page workspace model", () => {
     const database = await createPageFromTemplate(provider, "basic-database");
 
     expect(blank.metadata.templateId).toBe("blank-page");
-    expect((await provider.getBlocks(tablePage.id)).some((block) => block.type === "table")).toBe(true);
+    expect((await provider.getBlocks(tablePage.id)).some((block) => block.type === "table")).toBe(
+      true,
+    );
     expect(database.category).toBe("databases");
     expect(database.type).toBe("database");
     expect(database.metadata.database).toBeDefined();
@@ -138,8 +153,12 @@ describe("page workspace model", () => {
     const item = await provider.createItem({ title: "Removed", category: "notes", type: "note" });
     await provider.archiveItem(item?.id);
 
-    expect(buildPageWorkspaceModel(provider, item?.id, await provider.getSnapshot()).item?.archivedAt).toBeDefined();
-    expect(buildPageWorkspaceModel(provider, "missing-id", await provider.getSnapshot()).state).toBe("missing");
+    expect(
+      buildPageWorkspaceModel(provider, item?.id, await provider.getSnapshot()).item?.archivedAt,
+    ).toBeDefined();
+    expect(
+      buildPageWorkspaceModel(provider, "missing-id", await provider.getSnapshot()).state,
+    ).toBe("missing");
   });
 
   it(``, async () => {
@@ -156,7 +175,11 @@ describe("page workspace model", () => {
 describe("sidebar actions and pinning logic", () => {
   it(``, async () => {
     const provider = createProvider();
-    const item = await provider.createItem({ title: "Page to pin", category: "notes", type: "note" });
+    const item = await provider.createItem({
+      title: "Page to pin",
+      category: "notes",
+      type: "note",
+    });
 
     // Pin
     const pinnedAt = new Date().toISOString();
@@ -238,7 +261,11 @@ describe("sidebar actions and pinning logic", () => {
 
   it(``, async () => {
     const provider = createProvider();
-    const item = await provider.createItem({ title: "Original Page", category: "notes", type: "note" });
+    const item = await provider.createItem({
+      title: "Original Page",
+      category: "notes",
+      type: "note",
+    });
     await provider.createBlock(item?.id, { type: "paragraph", content: "Original content" });
 
     // Rename
@@ -246,15 +273,17 @@ describe("sidebar actions and pinning logic", () => {
     expect((await provider.getItem(item?.id))?.title).toBe("Renamed Page");
 
     // Duplicate logic
-    const original = await provider.getItem(item?.id)!;
+    const original = await provider.getItem(item.id);
+    if (!original) throw new Error("Expected original item to exist before duplication");
+
     const duplicated = await provider.createItem({
-      title: `${original?.title} (Copy)`,
+      title: `${original.title} (Copy)`,
       category: original.category,
       type: original.type,
       icon: original.icon,
-      metadata: { ...original?.metadata, sidebarPinned: false, sidebarPinnedAt: null },
+      metadata: { ...original.metadata, sidebarPinned: false, sidebarPinnedAt: null },
     });
-    const blocks = await provider.getBlocks(original?.id);
+    const blocks = await provider.getBlocks(original.id);
     await provider.replaceBlocks(
       duplicated.id,
       blocks.map((b) => ({ type: b.type, content: b.content, order: b.order })),
@@ -294,8 +323,10 @@ describe("unified sidebar pages and spaces model", () => {
       type: "note",
     });
 
-    const spaceItem = await provider.getItem(space.id)!;
-    const pageItem = await provider.getItem(page.id)!;
+    const spaceItem = await provider.getItem(space.id);
+    const pageItem = await provider.getItem(page.id);
+    if (!spaceItem) throw new Error("Expected space item to exist");
+    if (!pageItem) throw new Error("Expected page item to exist");
 
     expect(spaceItem.metadata.promotedAsSpace).toBe(true);
     expect(spaceItem.metadata.itemRole).toBe("space");
@@ -421,8 +452,3 @@ describe("unified sidebar pages and spaces model", () => {
     expect(pinnedTree[1].id).toBe(item1.id);
   });
 });
-
-
-
-
-

@@ -9,4 +9,3 @@ describe("root theme hydration", () => {
     expect(rootRoute).toContain('<html lang="en" suppressHydrationWarning>');
   });
 });
-

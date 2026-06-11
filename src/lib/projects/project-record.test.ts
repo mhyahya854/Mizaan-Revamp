@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, it } from "vitest";
 
 import type { MizaanItem } from "../vault/types";
@@ -281,7 +280,9 @@ describe("project metadata helpers", () => {
     expect(project.metadata.projectStatus).toBe("planning");
     expect(project.metadata.projectPriority).toBe("medium");
     expect(project.metadata.projectArea).toBe("Research");
-    expect((await provider.getBlocks(project.id)).some((block) => block.type === "heading1")).toBe(true);
+    expect((await provider.getBlocks(project.id)).some((block) => block.type === "heading1")).toBe(
+      true,
+    );
   });
 });
 
@@ -301,7 +302,3 @@ function item(input: Partial<MizaanItem> & Pick<MizaanItem, "id" | "title">): Mi
     ...input,
   };
 }
-
-
-
-

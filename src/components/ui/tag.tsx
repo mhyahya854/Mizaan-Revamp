@@ -41,4 +41,3 @@ export function Dot({ color = "stone", className }: { color?: TagColor; classNam
     />
   );
 }
-

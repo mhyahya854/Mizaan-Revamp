@@ -357,5 +357,3 @@ function searchableTrackerText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
-
-

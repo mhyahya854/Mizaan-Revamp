@@ -42,7 +42,12 @@ function Home() {
   const trackers = activeItems.filter((item) => item.category === "trackers").slice(0, 4);
   const blueprintCounts = getModuleStatusCounts(productModules);
 
-  async function createPage(templateId: string, category?: ItemCategory, content = "", title?: string) {
+  async function createPage(
+    templateId: string,
+    category?: ItemCategory,
+    content = "",
+    title?: string,
+  ) {
     const item = await createPageFromTemplate(provider, templateId, {
       category,
       initialContent: content,
@@ -323,5 +328,3 @@ function formatDate(value: string) {
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
-
-

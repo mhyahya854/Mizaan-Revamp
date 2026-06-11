@@ -259,4 +259,3 @@ describe("calendar event metadata", () => {
     expect(isCalendarEventItem(item({ metadata: { promotedAsSpace: true } }))).toBe(false);
   });
 });
-

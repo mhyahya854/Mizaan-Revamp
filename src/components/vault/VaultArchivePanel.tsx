@@ -402,5 +402,3 @@ function readableError(error: ArchiveValidationError) {
   const path = error.path ? ` (${error.path})` : "";
   return `${error.code}${path}: ${error.message}`;
 }
-
-

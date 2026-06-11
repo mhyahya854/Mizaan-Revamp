@@ -257,6 +257,3 @@ function searchableDocumentText(item: MizaanItem) {
     .join(" ")
     .toLowerCase();
 }
-
-
-

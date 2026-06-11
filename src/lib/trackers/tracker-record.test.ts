@@ -317,4 +317,3 @@ describe("tracker record model", () => {
     expect(TRACKER_FREQUENCY_VALUES).toContain("custom");
   });
 });
-

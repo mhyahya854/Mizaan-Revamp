@@ -371,4 +371,3 @@ describe("search index", () => {
     expect(buildSearchResults(data, { query: "credits" })[0]?.matchedFields).toContain("property");
   });
 });
-

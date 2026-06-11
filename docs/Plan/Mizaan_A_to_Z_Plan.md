@@ -22193,3 +22193,53 @@ Mizaan is local-only and browser-bound. SQLite database, Tauri desktop packaging
     * All 23 test suites and 188 tests pass.
     * TypeScript types show 0 errors (	sc --noEmit).
     * Build passes successfully.
+
+## Append-Only Async Provider Refactor Stabilization Continuation - 2026-06-11
+
+Selected phase:
+Async Provider Refactor Stabilization continuation on `feature/async-provider-refactor`.
+
+Before append proof:
+- Before hash: `E37EB75E227AA3D4BA2B3EC252B1B0139B73AA5A8D78858CE651CEAE243F400E`
+- Before length: `810395`
+
+Branch and preflight truth:
+- Active branch was `feature/async-provider-refactor`, two commits ahead of `main` and fast-forwardable.
+- `npm run mizaan:preflight` failed only because the script requires `main`. This was treated as a branch-state blocker, not a product failure.
+- The feature branch was validated directly before any merge decision.
+
+Blockers found and resolved:
+- Manual `// @ts-nocheck` suppressions existed in async-refactor test files. They were removed from template, page workspace, project, task, local-storage provider, and vault archive tests.
+- Typecheck then exposed nullable provider lookup errors in `page-workspace.test.ts`; those tests now narrow missing items explicitly before use.
+- Lint failed from Windows line-ending/formatting drift. `.prettierrc` now sets `endOfLine: "auto"` and source files were formatted with Prettier.
+- `useVaultSnapshot` cleanup now prevents an in-flight async snapshot update from setting state after unmount and unsubscribes from the provider.
+
+Native/Tauri result:
+- Node, npm, Rust, and Cargo were available.
+- `npx tauri --version` failed because Tauri CLI is not installed or not executable from the project.
+- No Tauri scaffold, dependency install, Rust code, SQLite provider, native filesystem provider, portable vault folder, installer, encryption, or app lock was created.
+
+Validation evidence:
+- `npm run typecheck`: passed.
+- Focused tests for touched async-refactor test files: 6 files and 94 tests passed.
+- `npm run lint`: passed.
+- `npm run mizaan:verify:full`: passed.
+- Full serial Vitest inside full verify: 23 files, 238 tests, 0 failed.
+- `npm run build`: passed inside full verify with existing Vite/TanStack warnings only.
+- `git diff --check`: passed inside full verify.
+- `npm run mizaan:red-scan`: passed blocking checks inside full verify.
+- `npm run mizaan:browser-qa`: passed route checks for `/`, `/settings`, `/vault`, `/import-export`, `/repair`, `/finance`, `/people`, `/projects`, `/trackers`, `/goals`, `/graph`, `/search`, `/templates`, and `/calendar`.
+
+Browser QA evidence:
+- Screenshot set: `docs/screenshots/20260611-193109-browser-qa-*.png`
+- Log path: `docs/logs/browser-qa-20260611-193109.md`
+- JSON path: `docs/logs/browser-qa-20260611-193109.json`
+
+Current product truth:
+Async provider boundaries are implemented and validated for the current browser/localStorage prototype. Mizaan is not yet a native Windows app. SQLite, native filesystem, portable vault folders, markdown mirrors, real vault folders, lock files, native backup, packaging, encryption, app lock, cloud sync, auth, mobile, and AI features remain not implemented or future-only.
+
+Next dependency-safe queue:
+1. Commit this stabilization cleanup on `feature/async-provider-refactor`.
+2. If the branch remains validated and fast-forwardable, merge to `main` and rerun the full gates there.
+3. Phase N2 Tauri Shell Scaffold remains blocked by missing Tauri CLI unless a controlled dev dependency install is intentionally accepted.
+4. Safe next implementation alternatives are native provider contract tests, native path/file capability boundary helpers, or an Obsidian/Notion parity audit with browser-safe gaps only.

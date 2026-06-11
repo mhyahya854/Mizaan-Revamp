@@ -80,4 +80,3 @@ describe("simple table block model", () => {
     expect(getTableStats(withoutRows).rowCount).toBe(0);
   });
 });
-

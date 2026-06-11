@@ -19,11 +19,13 @@ export async function createLocalItem(input: CreateItemInput): Promise<MizaanIte
   return getVaultProvider().createItem(input);
 }
 
-export async function updateLocalItem(id: string, input: UpdateItemInput): Promise<MizaanItem | undefined> {
+export async function updateLocalItem(
+  id: string,
+  input: UpdateItemInput,
+): Promise<MizaanItem | undefined> {
   return getVaultProvider().updateItem(id, input);
 }
 
 export async function getLocalItemBlocks(itemId: string): Promise<MizaanBlock[]> {
   return getVaultProvider().getBlocks(itemId);
 }
-

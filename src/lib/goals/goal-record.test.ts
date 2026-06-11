@@ -290,4 +290,3 @@ describe("goal record model", () => {
     expect(GOAL_PRIORITY_VALUES).toContain("urgent");
   });
 });
-
