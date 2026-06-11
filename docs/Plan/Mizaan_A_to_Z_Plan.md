@@ -22297,3 +22297,44 @@ After the initial implementation append, broader validation was completed:
 - In-app Browser plugin smoke was attempted, but the `iab` browser was unavailable in this session. This was classified as a tooling blocker and the scripted browser QA route/screenshot evidence was used as the safe fallback.
 
 No native/Tauri/SQLite/filesystem/portable-vault/encryption/app-lock/cloud/mobile/plugin/AI capability was implemented or claimed.
+---
+
+## 2026-06-11 Autonomous Daily Notes and Capture Template Slice
+
+### Status
+
+PARTIAL IMPLEMENTED - browser/provider workspace templates only.
+
+### Queue items addressed
+
+The master queue listed Daily notes, Journal pages, Quick capture, Research notes, and Brainstorm as not implemented. The template registry already had standalone definitions, but the workspace page picker and command palette did not create those note types through the main workspace template path.
+
+### Implemented
+
+- Promoted Daily Note, Journal Page, Quick Capture, Research Notes, and Brainstorm into the workspace template list in `src/lib/page/page-workspace.ts`.
+- Removed duplicate registry-only definitions from `src/lib/templates/template-registry.ts`.
+- Kept template registry enrichment and limitation text for the promoted workspace templates.
+- Added command-palette create actions for Daily Note, Quick Capture, and Journal Page.
+- Added tests proving each promoted template creates a real provider-backed note page with the expected `templateId`, `noteKind`, category/type, and starter block.
+
+### Validation at append time
+
+- Red-first page workspace test failed before implementation because `daily-note` fell back to `notes-space`.
+- Targeted tests passed after implementation: page workspace 24/24 and template registry 13/13.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+
+### Honest remaining gaps
+
+- Daily notes do not recur automatically and do not create reminders.
+- Quick Capture does not provide mobile capture or a global hotkey.
+- Journal Page privacy is metadata-only; encryption, app lock, hidden search, and hidden graph behavior are not implemented.
+- Research Notes and Brainstorm do not include AI generation, citation management, web import, external sync, or cloud behavior.
+### Final validation update for 2026-06-11 daily/capture template slice
+
+After the initial implementation append, broader validation was completed:
+
+- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 243 tests, build, `git diff --check`, and full red scan.
+- `npm run mizaan:browser-qa`: passed all configured route checks and captured `docs/screenshots/20260611-201019-browser-qa-*.png`.
+
+No recurrence/reminder engine, global hotkey, mobile capture, encryption, app lock, hidden search/graph behavior, AI generation, citation manager, web import, cloud, sync, native filesystem, SQLite, Tauri, or portable vault capability was implemented or claimed.

@@ -152,6 +152,29 @@ describe("page workspace model", () => {
     expect(database.metadata.database).toBeDefined();
   });
 
+  it("creates implemented daily, journal, capture, research, and brainstorm note templates", async () => {
+    const provider = createProvider();
+
+    const expectations = [
+      ["daily-note", "daily", "Today"],
+      ["journal-page", "journal", "Entry"],
+      ["quick-capture", "quick-capture", ""],
+      ["research-note", "research", "Research question"],
+      ["brainstorm-note", "brainstorm", "Idea"],
+    ] as const;
+
+    for (const [templateId, noteKind, firstBlockContent] of expectations) {
+      const page = await createPageFromTemplate(provider, templateId);
+      const blocks = await provider.getBlocks(page.id);
+
+      expect(page.metadata.templateId).toBe(templateId);
+      expect(page.metadata.noteKind).toBe(noteKind);
+      expect(page.category).toBe("notes");
+      expect(page.type).toBe("note");
+      expect(blocks[0]?.content).toBe(firstBlockContent);
+    }
+  });
+
   it(``, async () => {
     const provider = createProvider();
 

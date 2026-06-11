@@ -72,6 +72,9 @@ export interface TemplatePreview {
 export const COMMAND_PALETTE_TEMPLATE_IDS = [
   "blank-page",
   "blank-note",
+  "daily-note",
+  "quick-capture",
+  "journal-page",
   "project-plan",
   "task-record",
   "document-record",
@@ -101,120 +104,6 @@ const SAFE_BLOCK_TYPES = new Set([
 ] satisfies CreateBlockInput["type"][]);
 
 const EXTRA_IMPLEMENTED_TEMPLATES: TemplateDefinition[] = [
-  {
-    id: "daily-note",
-    name: "Daily Note",
-    icon: "N",
-    category: "notes",
-    type: "note",
-    title: "Daily Note",
-    summary: "Local daily planning note.",
-    description: "A provider-backed note for today, priorities, schedule notes, and reflection.",
-    status: "implemented",
-    targetItemType: "note",
-    tags: ["daily", "note"],
-    properties: { status: "Draft", noteKind: "Daily" },
-    metadata: { noteKind: "daily" },
-    blocks: [
-      { type: "heading1", content: "Today" },
-      { type: "todo", content: "Choose the most important task", checked: false },
-      { type: "heading2", content: "Notes" },
-      { type: "paragraph", content: "" },
-      { type: "heading2", content: "Reflection" },
-      { type: "paragraph", content: "" },
-    ],
-    limitations: ["No automatic daily recurrence or reminder engine is implemented."],
-  },
-  {
-    id: "journal-page",
-    name: "Journal Page",
-    icon: "N",
-    category: "notes",
-    type: "note",
-    title: "Journal Entry",
-    summary: "Private-context journal page with metadata flags only.",
-    description: "A local journal note. Privacy flags remain metadata only in this phase.",
-    status: "implemented",
-    targetItemType: "note",
-    tags: ["journal", "note"],
-    properties: { status: "Draft", noteKind: "Journal" },
-    metadata: { noteKind: "journal", private: false, sensitive: false },
-    blocks: [
-      { type: "heading1", content: "Entry" },
-      { type: "paragraph", content: "" },
-      {
-        type: "callout",
-        content:
-          "Privacy flags are metadata only. Encryption, app lock, and hidden search behavior are future phases.",
-      },
-    ],
-    limitations: ["No encryption, app lock, or hidden search behavior is implemented."],
-  },
-  {
-    id: "research-note",
-    name: "Research Notes",
-    icon: "N",
-    category: "notes",
-    type: "note",
-    title: "Research Notes - Untitled Topic",
-    summary: "Question, sources, claims, and next reading.",
-    description: "A provider-backed note for manual research capture and source tracking.",
-    status: "implemented",
-    targetItemType: "note",
-    tags: ["research", "note"],
-    properties: { status: "Draft", noteKind: "Research" },
-    metadata: { noteKind: "research" },
-    blocks: [
-      { type: "heading1", content: "Research question" },
-      { type: "paragraph", content: "" },
-      { type: "heading2", content: "Sources" },
-      { type: "bullet", content: "" },
-      { type: "heading2", content: "Claims to verify" },
-      { type: "todo", content: "Verify the main claim", checked: false },
-    ],
-    limitations: ["No AI summarization, citation manager, or web import is implemented."],
-  },
-  {
-    id: "quick-capture",
-    name: "Quick Capture",
-    icon: "N",
-    category: "notes",
-    type: "note",
-    title: "Quick Capture",
-    summary: "Fast inbox note.",
-    description: "A local inbox-style note for fast capture and later organization.",
-    status: "implemented",
-    targetItemType: "note",
-    tags: ["capture", "inbox"],
-    properties: { status: "Inbox", noteKind: "Quick capture" },
-    metadata: { noteKind: "quick-capture" },
-    blocks: [{ type: "paragraph", content: "" }],
-    limitations: ["No mobile capture or global hotkey is implemented."],
-  },
-  {
-    id: "brainstorm-note",
-    name: "Brainstorm",
-    icon: "N",
-    category: "notes",
-    type: "note",
-    title: "Brainstorm - Untitled",
-    summary: "Ideas, constraints, and next experiments.",
-    description: "A local note for ideation without AI generation claims.",
-    status: "implemented",
-    targetItemType: "note",
-    tags: ["brainstorm", "idea"],
-    properties: { status: "Draft", noteKind: "Brainstorm" },
-    metadata: { noteKind: "brainstorm" },
-    blocks: [
-      { type: "heading1", content: "Idea" },
-      { type: "paragraph", content: "" },
-      { type: "heading2", content: "Constraints" },
-      { type: "bullet", content: "" },
-      { type: "heading2", content: "Next experiments" },
-      { type: "todo", content: "Pick one experiment", checked: false },
-    ],
-    limitations: ["No AI idea generation is implemented."],
-  },
   {
     id: "certificate-document-record",
     name: "Certificate Document Record",
@@ -861,6 +750,21 @@ function inferWorkspaceTemplateLimitations(templateId: string): string[] {
     return [
       "Bank sync, imports, receipt OCR, tax, and accounting-grade ledger behavior are not implemented.",
     ];
+  }
+  if (templateId === "daily-note") {
+    return ["No automatic daily recurrence or reminder engine is implemented."];
+  }
+  if (templateId === "journal-page") {
+    return ["No encryption, app lock, or hidden search behavior is implemented."];
+  }
+  if (templateId === "quick-capture") {
+    return ["No mobile capture or global hotkey is implemented."];
+  }
+  if (templateId === "research-note") {
+    return ["No AI summarization, citation manager, or web import is implemented."];
+  }
+  if (templateId === "brainstorm-note") {
+    return ["No AI idea generation is implemented."];
   }
   if (templateId === "basic-database" || templateId === "simple-table-page") {
     return [

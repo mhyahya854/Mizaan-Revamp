@@ -617,3 +617,11 @@ Future Codex prompts should follow this template:
 - **Graph status:** Graph remains partial overall, but it now includes provider relations, typed metadata relations, parent hierarchy, and resolved wiki links.
 - **Not implemented:** Native Obsidian folder compatibility, markdown mirror writing, plugin ecosystem, cloud collaboration, mobile apps, AI automation, encryption, and app lock remain future work.
 - **Validation:** Targeted wiki/parser, graph, and page workspace tests pass; typecheck and lint pass after the implementation.
+
+## Obsidian / Notion Parity Slice - Daily Notes and Capture Templates
+
+- **Current status:** Implemented workspace-level note templates for Daily Note, Journal Page, Quick Capture, Research Notes, and Brainstorm.
+- **What works now:** These templates create real provider-backed note pages from the workspace template picker and template registry, with starter blocks, tags, `noteKind` metadata, and local prototype persistence.
+- **Command palette:** Added quick-create commands for Daily Note, Quick Capture, and Journal Page.
+- **Not implemented:** Automatic daily recurrence, reminders, global hotkeys, mobile capture, encryption, app lock, hidden search/graph behavior, AI generation, web import, and citation management remain future work.
+- **Validation:** Page workspace and template registry targeted tests pass; typecheck and lint pass after implementation.

@@ -56,6 +56,27 @@ const createActions: Array<{
     category: "notes",
   },
   {
+    title: "New daily note",
+    sub: "Create a local daily note template",
+    icon: Calendar,
+    templateId: "daily-note",
+    category: "notes",
+  },
+  {
+    title: "Quick capture",
+    sub: "Create a local inbox note",
+    icon: FilePlus2,
+    templateId: "quick-capture",
+    category: "notes",
+  },
+  {
+    title: "New journal page",
+    sub: "Create a journal note with metadata-only privacy flags",
+    icon: FileText,
+    templateId: "journal-page",
+    category: "notes",
+  },
+  {
     title: "New project",
     sub: "Create a project from the Project Plan template",
     icon: Briefcase,

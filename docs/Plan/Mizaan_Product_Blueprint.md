@@ -1681,3 +1681,12 @@ Report honestly with implemented, partial, not implemented, deliberately not imp
 - **Notion-like impact:** Page context panels now show relation links and wiki links separately, with counts in page metadata.
 - **Obsidian-like impact:** The graph model now receives automatic page links from block content, without claiming raw filesystem vault compatibility.
 - **Still future:** Native filesystem vault, markdown mirrors, folder import/export parity, manual canvas, plugin marketplace, cloud collaboration, mobile apps, encryption, app lock, and AI automation.
+
+## Obsidian / Notion Parity Slice - Daily Notes and Capture Templates
+
+- **Status:** PARTIAL IMPLEMENTED.
+- **Implemented now:** Daily Note, Journal Page, Quick Capture, Research Notes, and Brainstorm are real workspace templates, not registry-only definitions.
+- **Workspace impact:** The page template picker can now create these note types as provider-backed pages.
+- **Command palette impact:** Quick-create actions were added for Daily Note, Quick Capture, and Journal Page.
+- **Safety rule:** Journal privacy is labeled as metadata-only. Daily notes do not imply automatic recurrence or reminders. Quick Capture does not imply mobile capture or a global hotkey.
+- **Still future:** Recurrence, reminders, mobile capture, global hotkeys, encryption, app lock, hidden search/graph, AI generation, web import, and citation management.

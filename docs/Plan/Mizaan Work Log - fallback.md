@@ -230,3 +230,27 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Wiki links resolve only exact active page titles inside provider-stored block content. Native Obsidian folder compatibility, markdown mirror writing, plugin marketplace, cloud collaboration, mobile apps, AI automation, encryption, app lock, manual canvas, and native graph persistence remain future work.
+
+## Daily Notes and Capture Template Slice - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Promoted Daily Note, Journal Page, Quick Capture, Research Notes, and Brainstorm into `src/lib/page/page-workspace.ts` so they are real workspace/page-picker templates.
+- Removed duplicate registry-only definitions from `src/lib/templates/template-registry.ts`; the template registry now enriches these workspace templates instead of carrying separate copies.
+- Added command-palette create actions for Daily Note, Quick Capture, and Journal Page.
+- Added workspace tests proving these templates create provider-backed note pages with correct `templateId`, `noteKind`, category/type, and starter blocks.
+
+### Validation Evidence
+
+- Red-first page workspace test failed before implementation because `daily-note` fell back to `notes-space`.
+- Targeted tests passed after implementation: page workspace 24/24 and template registry 13/13.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 243 tests, build, diff check, and full red scan.
+- `npm run mizaan:browser-qa`: passed all configured routes and captured `docs/screenshots/20260611-201019-browser-qa-*.png`.
+
+### Limitations
+
+Daily notes do not have automatic recurrence or reminders. Quick Capture does not include mobile capture or a global hotkey. Journal Page privacy remains metadata-only; encryption, app lock, hidden search, and hidden graph behavior are not implemented. Research/Brainstorm templates do not add AI generation, citation management, or web import.
