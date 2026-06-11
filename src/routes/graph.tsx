@@ -42,8 +42,13 @@ function GraphPage() {
   const [isLocalFocus, setIsLocalFocus] = useState(false);
 
   const globalGraph = useMemo(
-    () => buildGlobalGraph({ items: snapshot.items, relations: snapshot.relations }),
-    [snapshot.items, snapshot.relations],
+    () =>
+      buildGlobalGraph({
+        items: snapshot.items,
+        blocks: snapshot.blocks,
+        relations: snapshot.relations,
+      }),
+    [snapshot.items, snapshot.blocks, snapshot.relations],
   );
   const localGraph = useMemo(
     () =>
@@ -51,10 +56,11 @@ function GraphPage() {
         ? buildLocalGraph({
             selectedItemId,
             items: snapshot.items,
+            blocks: snapshot.blocks,
             relations: snapshot.relations,
           })
         : undefined,
-    [selectedItemId, snapshot.items, snapshot.relations],
+    [selectedItemId, snapshot.items, snapshot.blocks, snapshot.relations],
   );
 
   const activeGraph = isLocalFocus && localGraph ? localGraph : globalGraph;
@@ -86,12 +92,12 @@ function GraphPage() {
             </div>
             <p className="mt-1 text-[13.5px] leading-relaxed text-soft">
               Provider-backed local graph foundation. Nodes come from real provider items; edges
-              come from provider relations, document relation metadata, and real parent hierarchy.
+              come from provider relations, metadata, parent hierarchy, and resolved wiki links.
             </p>
           </div>
           <div className="rounded-md border hairline bg-surface px-3 py-2 text-[11.5px] text-soft">
-            Manual canvas, editable standalone nodes, saved layouts, export, clustering, wiki-link
-            parsing, embeddings, and semantic graph AI remain future phases.
+            Manual canvas, editable standalone nodes, saved layouts, export, clustering, embeddings,
+            and semantic graph AI remain future phases.
           </div>
         </div>
       </header>
@@ -464,7 +470,7 @@ function LocalGraphPanel({
         <div className="mt-2 space-y-3">
           <p className="text-[12.5px] text-soft">
             Focused on <span className="font-medium text-foreground">{selectedNode.label}</span>.
-            Direct neighbors only; second-degree expansion and wiki-link parsing are future work.
+            Direct neighbors only; second-degree expansion and manual canvas are future work.
           </p>
           <button
             type="button"

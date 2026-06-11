@@ -609,3 +609,11 @@ Future Codex prompts should follow this template:
 - **Blockers:** Tauri CLI is not installed. Native shell work must not be claimed until the CLI/dev dependency path is intentionally added and validated.
 - **Next phases:** Tauri Shell Scaffold, Native Provider Contract, SQLite Prototype, and Portable Vault Folder.
 - **Limitation:** Do not claim native integration is implemented until the shell and provider boundaries are verified.
+
+## Obsidian / Notion Parity Slice - Wiki Links
+
+- **Current status:** Implemented a browser-safe wiki-link foundation for exact-title `[[Page Title]]` links inside stored page blocks.
+- **What works now:** Wiki links resolve to active, non-deleted, non-archived page titles; ambiguous duplicate titles are ignored instead of guessed; self-links and missing targets are ignored; resolved links appear in page outgoing/backlink panels and in the graph model as `wiki-link` edges.
+- **Graph status:** Graph remains partial overall, but it now includes provider relations, typed metadata relations, parent hierarchy, and resolved wiki links.
+- **Not implemented:** Native Obsidian folder compatibility, markdown mirror writing, plugin ecosystem, cloud collaboration, mobile apps, AI automation, encryption, and app lock remain future work.
+- **Validation:** Targeted wiki/parser, graph, and page workspace tests pass; typecheck and lint pass after the implementation.

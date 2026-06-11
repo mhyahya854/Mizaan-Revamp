@@ -1672,3 +1672,12 @@ Report honestly with implemented, partial, not implemented, deliberately not imp
 - **Native filesystem status:** NOT STARTED
 - **Portable vault folder status:** NOT STARTED
 - **Native app packaging status:** NOT STARTED
+
+## Obsidian / Notion Parity Slice - Wiki Links
+
+- **Status:** PARTIAL IMPLEMENTED.
+- **Implemented now:** Exact-title `[[Page Title]]` links in provider-stored page blocks are parsed, resolved, deduplicated, and surfaced as page backlinks/outgoing wiki links plus graph edges.
+- **Safety rule:** Duplicate page titles are treated as ambiguous and are not auto-linked. Archived, deleted, missing, and self targets are ignored.
+- **Notion-like impact:** Page context panels now show relation links and wiki links separately, with counts in page metadata.
+- **Obsidian-like impact:** The graph model now receives automatic page links from block content, without claiming raw filesystem vault compatibility.
+- **Still future:** Native filesystem vault, markdown mirrors, folder import/export parity, manual canvas, plugin marketplace, cloud collaboration, mobile apps, encryption, app lock, and AI automation.

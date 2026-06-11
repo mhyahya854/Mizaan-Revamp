@@ -9,7 +9,13 @@ import {
 import { createDefaultCalendarEventMetadata } from "../calendar/calendar-event";
 import { createDefaultGoalMetadata } from "../goals/goal-record";
 import { createDefaultTrackerMetadata } from "../trackers/tracker-record";
-import type { ItemCategory, ItemType, MizaanItem, MizaanRelation } from "../vault/types";
+import type {
+  ItemCategory,
+  ItemType,
+  MizaanBlock,
+  MizaanItem,
+  MizaanRelation,
+} from "../vault/types";
 
 function item(
   id: string,
@@ -45,6 +51,19 @@ function relation(input: Partial<MizaanRelation> & Pick<MizaanRelation, "sourceI
     label: input.label ?? "Related",
     createdAt: input.createdAt ?? "2026-06-01T00:00:00.000Z",
     metadata: input.metadata ?? {},
+  };
+}
+
+function block(input: Partial<MizaanBlock> & Pick<MizaanBlock, "itemId" | "content">): MizaanBlock {
+  return {
+    id: input.id ?? `${input.itemId}-block`,
+    itemId: input.itemId,
+    type: input.type ?? "paragraph",
+    content: input.content,
+    order: input.order ?? 0,
+    checked: input.checked,
+    createdAt: input.createdAt ?? "2026-06-01T00:00:00.000Z",
+    updatedAt: input.updatedAt ?? "2026-06-01T00:00:00.000Z",
   };
 }
 
@@ -195,6 +214,49 @@ describe("graph model", () => {
     expect(graph.summary.typeCounts.note).toBe(3);
     expect(graph.summary.edgeTypeCounts.relation).toBe(1);
     expect(graph.summary.relationSourceCounts["provider-relations"]).toBe(1);
+  });
+
+  it("creates graph edges from resolved wiki links in page blocks", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("source", { title: "Source" }),
+        item("target", { title: "Target Page" }),
+        item("duplicate-title", { title: "Duplicate" }),
+        item("duplicate-other", { title: " duplicate " }),
+      ],
+      blocks: [
+        block({
+          id: "source-block-1",
+          itemId: "source",
+          content: "See [[Target Page]] plus [[Missing]] and duplicated [[Target Page|alias]].",
+        }),
+        block({
+          id: "source-block-2",
+          itemId: "source",
+          content: "Ambiguous titles such as [[Duplicate]] do not create edges.",
+          order: 1,
+        }),
+      ],
+      relations: [],
+    });
+
+    expect(graph.edges).toHaveLength(1);
+    expect(graph.edges[0]).toMatchObject({
+      id: "source->target:wiki-link",
+      sourceId: "source",
+      targetId: "target",
+      type: "wiki-link",
+      label: "Wiki link",
+      sourceField: "blockContent",
+      bidirectional: false,
+      metadata: {
+        relationSource: "wiki-links",
+        blockId: "source-block-1",
+        targetTitle: "Target Page",
+      },
+    });
+    expect(graph.summary.edgeTypeCounts["wiki-link"]).toBe(1);
+    expect(graph.summary.relationSourceCounts["wiki-links"]).toBe(1);
   });
 
   it(``, async () => {

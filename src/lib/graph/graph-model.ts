@@ -39,7 +39,14 @@ import {
   isTrackerRecordItem,
   normalizeTrackerMetadataForItem,
 } from "../trackers/tracker-record";
-import type { ItemCategory, ItemType, MizaanItem, MizaanRelation } from "../vault/types";
+import type {
+  ItemCategory,
+  ItemType,
+  MizaanBlock,
+  MizaanItem,
+  MizaanRelation,
+} from "../vault/types";
+import { resolveWikiLinks } from "../wiki/wiki-links";
 
 export type GraphNodeType =
   | "page"
@@ -62,6 +69,7 @@ export type GraphEdgeType =
   | "relation"
   | "backlink"
   | "outgoing-link"
+  | "wiki-link"
   | "document-link"
   | "project-link"
   | "task-link"
@@ -125,6 +133,7 @@ export interface GraphModel {
 
 export interface BuildGraphInput {
   items: MizaanItem[];
+  blocks?: MizaanBlock[];
   relations?: MizaanRelation[];
 }
 
@@ -173,10 +182,14 @@ const DOCUMENT_RELATION_FIELDS: Array<{
   { field: "linkedFinanceIds", type: "finance-link", label: "Linked finance" },
 ];
 
-export function buildGlobalGraph({ items, relations = [] }: BuildGraphInput): GraphModel {
+export function buildGlobalGraph({
+  items,
+  blocks = [],
+  relations = [],
+}: BuildGraphInput): GraphModel {
   const activeItems = activeGraphItems(items);
   const itemById = new Map(activeItems.map((item) => [item.id, item]));
-  const edges = buildEdges(activeItems, itemById, relations);
+  const edges = buildEdges(activeItems, itemById, relations, blocks);
   const nodes = markOrphanNodes(activeItems.map(toGraphNode), edges);
 
   return createGraphModel("global", nodes, edges);
@@ -185,9 +198,10 @@ export function buildGlobalGraph({ items, relations = [] }: BuildGraphInput): Gr
 export function buildLocalGraph({
   selectedItemId,
   items,
+  blocks = [],
   relations = [],
 }: BuildLocalGraphInput): GraphModel {
-  const global = buildGlobalGraph({ items, relations });
+  const global = buildGlobalGraph({ items, blocks, relations });
   if (!global.nodes.some((node) => node.id === selectedItemId)) {
     return createGraphModel("local", [], [], selectedItemId);
   }
@@ -240,6 +254,7 @@ function buildEdges(
   items: MizaanItem[],
   itemById: Map<string, MizaanItem>,
   relations: MizaanRelation[],
+  blocks: MizaanBlock[],
 ): GraphEdge[] {
   const byId = new Map<string, GraphEdge>();
 
@@ -264,6 +279,23 @@ function buildEdges(
         relationId: relation.id,
         relationType: relation.relationType,
         relationSource: "provider-relations",
+      },
+    });
+  }
+
+  for (const link of resolveWikiLinks(items, blocks)) {
+    addEdge({
+      sourceId: link.source.id,
+      targetId: link.target.id,
+      type: "wiki-link",
+      label: "Wiki link",
+      strength: 1,
+      sourceField: "blockContent",
+      bidirectional: false,
+      metadata: {
+        relationSource: "wiki-links",
+        blockId: link.blockId,
+        targetTitle: link.targetTitle,
       },
     });
   }

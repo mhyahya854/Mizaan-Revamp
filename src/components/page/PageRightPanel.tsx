@@ -15,7 +15,7 @@ import {
   TaskMetadataPanel,
 } from "@/components/projects/ProjectMetadataPanel";
 import { TrackerMetadataPanel } from "@/components/trackers/TrackerMetadataPanel";
-import { PageLinkedContext } from "./PageLinkedContext";
+import { PageLinkedContext, PageWikiLinkContext } from "./PageLinkedContext";
 import { isDocumentRecordItem } from "@/lib/documents/document-record";
 import { isFinanceRecordItem } from "@/lib/finance/finance-record";
 import { isGoalRecordItem } from "@/lib/goals/goal-record";
@@ -85,18 +85,32 @@ export function PageRightPanel({
           <RelationsTab model={model} provider={provider} eligibleTargets={eligibleTargets} />
         )}
         {tab === "backlinks" && (
-          <PageLinkedContext
-            title="Incoming relation backlinks"
-            items={model.backlinks}
-            direction="source"
-          />
+          <div className="space-y-4">
+            <PageLinkedContext
+              title="Incoming relation backlinks"
+              items={model.backlinks}
+              direction="source"
+            />
+            <PageWikiLinkContext
+              title="Wiki backlinks"
+              items={model.wikiBacklinks}
+              direction="source"
+            />
+          </div>
         )}
         {tab === "outgoing" && (
-          <PageLinkedContext
-            title="Outgoing relation links"
-            items={model.outgoingLinks}
-            direction="target"
-          />
+          <div className="space-y-4">
+            <PageLinkedContext
+              title="Outgoing relation links"
+              items={model.outgoingLinks}
+              direction="target"
+            />
+            <PageWikiLinkContext
+              title="Outgoing wiki links"
+              items={model.wikiOutgoingLinks}
+              direction="target"
+            />
+          </div>
         )}
         {tab === "files" && <FilesTab model={model} />}
         {tab === "graph" && <GraphTab model={model} />}
@@ -234,9 +248,16 @@ function PageDataPanel({
 
       {/* 4. Links */}
       <CollapsibleSection title="Links" isOpenDefault={false}>
-        <MetadataRow label="Relations" value={String(model.properties.outgoingCount)} />
-        <MetadataRow label="Backlinks" value={String(model.properties.backlinksCount)} />
-        <MetadataRow label="Outgoing" value={String(model.properties.outgoingCount)} />
+        <MetadataRow
+          label="Relation outgoing"
+          value={String(model.properties.relationOutgoingCount)}
+        />
+        <MetadataRow
+          label="Relation backlinks"
+          value={String(model.properties.relationBacklinksCount)}
+        />
+        <MetadataRow label="Wiki outgoing" value={String(model.properties.wikiOutgoingCount)} />
+        <MetadataRow label="Wiki backlinks" value={String(model.properties.wikiBacklinksCount)} />
       </CollapsibleSection>
 
       {/* 5. Storage */}
@@ -352,15 +373,20 @@ function FilesTab({ model }: { model: PageWorkspaceModel }) {
 }
 
 function GraphTab({ model }: { model: PageWorkspaceModel }) {
-  const count = model.backlinks.length + model.outgoingLinks.length + model.childPages.length;
+  const count =
+    model.backlinks.length +
+    model.outgoingLinks.length +
+    model.wikiBacklinks.length +
+    model.wikiOutgoingLinks.length +
+    model.childPages.length;
   return (
     <section>
       <h3 className="text-[11px] font-semibold uppercase tracking-wider text-faint">
         Local graph foundation
       </h3>
       <p className="mt-2 text-[12.5px] text-soft">
-        This panel is relation-based only. It currently sees {count} connected page records. Full
-        automatic local graph generation is not implemented yet.
+        This panel uses relation and wiki-link sources. It currently sees {count} connected page
+        records. Manual canvas, saved layouts, and deeper graph expansion remain future phases.
       </p>
     </section>
   );

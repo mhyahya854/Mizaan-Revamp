@@ -201,3 +201,32 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Mizaan remains a browser/localStorage prototype. Async provider boundaries are ready for future native work, but Tauri, SQLite, native filesystem, portable vault folders, packaging, encryption, and app lock are not implemented.
+
+## Obsidian / Notion Parity Wiki-Link Slice - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Added `src/lib/wiki/wiki-links.ts` with exact-title wiki-link parsing, normalization, duplicate-title ambiguity handling, and source-to-target resolution.
+- Added wiki-link graph edges via `buildGlobalGraph` and `buildLocalGraph` using provider snapshot blocks.
+- Added page workspace `wikiOutgoingLinks`, `wikiBacklinks`, and separate relation/wiki link counts.
+- Updated page right-panel Backlinks, Outgoing, and Local Graph tabs to show wiki-link truthfully without claiming native vault compatibility.
+- Updated graph route copy and data inputs so graph edges include resolved wiki links from current provider blocks.
+- Created `docs/Phases/phase-obsidian-notion-parity-wiki-links.md` with the required parity table.
+
+### Validation Evidence
+
+- Red-first targeted tests failed before implementation for missing wiki helper, missing page fields, and absent graph wiki edges.
+- Targeted tests passed after implementation: wiki helpers 4/4, graph model 37/37, page workspace 23/23.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 242 tests, build, diff check, and full red scan.
+- `npm run mizaan:red-scan`: passed blocking checks.
+- `git diff --check`: passed.
+- `npm run mizaan:browser-qa`: passed all configured routes and captured `docs/screenshots/20260611-195650-browser-qa-*.png`.
+- In-app Browser plugin smoke was attempted, but `iab` was unavailable. This was classified as a tooling blocker; the scripted browser QA route and screenshot evidence was used as the safe fallback.
+
+### Limitations
+
+Wiki links resolve only exact active page titles inside provider-stored block content. Native Obsidian folder compatibility, markdown mirror writing, plugin marketplace, cloud collaboration, mobile apps, AI automation, encryption, app lock, manual canvas, and native graph persistence remain future work.

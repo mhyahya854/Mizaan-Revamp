@@ -22243,3 +22243,57 @@ Next dependency-safe queue:
 2. If the branch remains validated and fast-forwardable, merge to `main` and rerun the full gates there.
 3. Phase N2 Tauri Shell Scaffold remains blocked by missing Tauri CLI unless a controlled dev dependency install is intentionally accepted.
 4. Safe next implementation alternatives are native provider contract tests, native path/file capability boundary helpers, or an Obsidian/Notion parity audit with browser-safe gaps only.
+---
+
+## 2026-06-11 Autonomous Obsidian / Notion Parity Wiki-Link Slice
+
+### Status
+
+PARTIAL IMPLEMENTED - browser/provider-safe wiki-link foundation only.
+
+### Queue item addressed
+
+The master queue previously recorded Graph as [PARTIAL] and explicitly noted that no backlink index or wiki-link parser existed. Native Windows/Tauri, SQLite, native filesystem, markdown mirrors, portable vault folders, encryption, app lock, mobile, cloud collaboration, plugin marketplace, and AI automation remain future/blocked.
+
+### Implemented
+
+- Added a pure wiki-link helper at `src/lib/wiki/wiki-links.ts`.
+- Parsed exact-title `[[Page Title]]` block links, including `[[Page Title|alias]]` target extraction.
+- Normalized whitespace/case for matching.
+- Skipped empty links, missing targets, self-links, archived/deleted pages, and ambiguous duplicate page titles.
+- Added `wiki-link` graph edges from provider snapshot blocks through `buildGlobalGraph` and `buildLocalGraph`.
+- Added page workspace `wikiOutgoingLinks`, `wikiBacklinks`, and relation/wiki count fields.
+- Updated the page right panel to show relation backlinks/outgoing links separately from wiki backlinks/outgoing links.
+- Updated graph route copy and graph inputs so resolved wiki links are part of the current partial graph foundation.
+- Added `docs/Phases/phase-obsidian-notion-parity-wiki-links.md` with the required Obsidian/Notion parity table.
+
+### Tests added or updated
+
+- `src/lib/wiki/wiki-links.test.ts`
+- `src/lib/graph/graph-model.test.ts`
+- `src/lib/page/page-workspace.test.ts`
+
+### Validation at append time
+
+- Red-first targeted tests failed before implementation for missing wiki helper, absent graph wiki edges, and missing page wiki fields.
+- Targeted tests passed after implementation: wiki helpers 4/4, graph model 37/37, page workspace 23/23.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+
+### Honest remaining gaps
+
+- Wiki links are exact-title browser/provider links, not native Obsidian markdown files.
+- Page renames do not rewrite block content.
+- Aliases are parsed for `[[target|alias]]` target selection only; alias metadata is not implemented.
+- Unlinked mentions, markdown mirrors, native filesystem vaults, SQLite, Tauri shell, portable vault folders, manual canvas, graph clustering, saved graph layouts, graph export, cloud collaboration, plugin marketplace, mobile apps, encryption, app lock, and AI automation remain future or blocked.
+### Final validation update for 2026-06-11 wiki-link parity slice
+
+After the initial implementation append, broader validation was completed:
+
+- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 242 tests, build, `git diff --check`, and full red scan.
+- `npm run mizaan:red-scan`: passed blocking checks.
+- `git diff --check`: passed.
+- `npm run mizaan:browser-qa`: passed all configured route checks and captured `docs/screenshots/20260611-195650-browser-qa-*.png`.
+- In-app Browser plugin smoke was attempted, but the `iab` browser was unavailable in this session. This was classified as a tooling blocker and the scripted browser QA route/screenshot evidence was used as the safe fallback.
+
+No native/Tauri/SQLite/filesystem/portable-vault/encryption/app-lock/cloud/mobile/plugin/AI capability was implemented or claimed.

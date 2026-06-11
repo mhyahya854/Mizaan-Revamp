@@ -102,6 +102,31 @@ describe("page workspace model", () => {
     ).toBe("Source");
   });
 
+  it("resolves wiki-link outgoing links and backlinks from page blocks", async () => {
+    const provider = createProvider();
+    const source = await provider.createItem({ title: "Source", category: "notes", type: "note" });
+    const target = await provider.createItem({
+      title: "Target Page",
+      category: "notes",
+      type: "note",
+    });
+    await provider.createBlock(source.id, {
+      type: "paragraph",
+      content: "Use [[Target Page]] and ignore [[Missing Page]].",
+    });
+
+    const snapshot = await provider.getSnapshot();
+    const sourceModel = buildPageWorkspaceModel(provider, source.id, snapshot);
+    const targetModel = buildPageWorkspaceModel(provider, target.id, snapshot);
+
+    expect(sourceModel.wikiOutgoingLinks[0]?.target.title).toBe("Target Page");
+    expect(targetModel.wikiBacklinks[0]?.source.title).toBe("Source");
+    expect(sourceModel.properties.wikiOutgoingCount).toBe(1);
+    expect(targetModel.properties.wikiBacklinksCount).toBe(1);
+    expect(sourceModel.properties.outgoingCount).toBe(1);
+    expect(targetModel.properties.backlinksCount).toBe(1);
+  });
+
   it(``, async () => {
     const provider = createProvider();
 

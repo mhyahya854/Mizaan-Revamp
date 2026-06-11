@@ -31,6 +31,7 @@ import { createDefaultFinanceMetadata, updateFinanceMetadata } from "../finance/
 import { createDefaultGoalMetadata, updateGoalMetadata } from "../goals/goal-record";
 import { createDefaultTrackerMetadata, updateTrackerMetadata } from "../trackers/tracker-record";
 import { createDefaultTableData, serializeTableData } from "../table/simple-table";
+import { resolveWikiLinks, type ResolvedWikiLink } from "../wiki/wiki-links";
 
 interface Breadcrumb {
   label: string;
@@ -43,6 +44,8 @@ interface ResolvedRelation {
   target: MizaanItem;
 }
 
+export type ResolvedWikiPageLink = ResolvedWikiLink;
+
 interface PagePropertiesModel {
   type: string;
   category: string;
@@ -53,6 +56,10 @@ interface PagePropertiesModel {
   blocksCount: number;
   outgoingCount: number;
   backlinksCount: number;
+  relationOutgoingCount: number;
+  relationBacklinksCount: number;
+  wikiOutgoingCount: number;
+  wikiBacklinksCount: number;
   childPagesCount: number;
   attachedFilesCount: number;
   databaseColumnsCount: number;
@@ -71,6 +78,8 @@ export interface PageWorkspaceModel {
   relations: ResolvedRelation[];
   backlinks: ResolvedRelation[];
   outgoingLinks: ResolvedRelation[];
+  wikiBacklinks: ResolvedWikiPageLink[];
+  wikiOutgoingLinks: ResolvedWikiPageLink[];
   childPages: MizaanItem[];
   attachedFiles: MizaanItem["attachedFiles"];
   providerWarning: string;
@@ -992,6 +1001,9 @@ export function buildPageWorkspaceModel(
     snapshot.relations.filter((relation) => relation.targetId === item?.id),
     snapshot.items,
   );
+  const wikiLinks = resolveWikiLinks(snapshot.items, snapshot.blocks);
+  const wikiOutgoingLinks = wikiLinks.filter((link) => link.source.id === item?.id);
+  const wikiBacklinks = wikiLinks.filter((link) => link.target.id === item?.id);
   const database =
     item.type === "database"
       ? normalizeDatabaseModel(item.metadata.database, item?.id, item?.title)
@@ -1007,6 +1019,8 @@ export function buildPageWorkspaceModel(
     relations: outgoingLinks,
     outgoingLinks,
     backlinks,
+    wikiOutgoingLinks,
+    wikiBacklinks,
     attachedFiles: item.attachedFiles,
     providerWarning: snapshot.providerInfo.warning,
     properties: {
@@ -1017,8 +1031,12 @@ export function buildPageWorkspaceModel(
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
       blocksCount: blocks.length,
-      outgoingCount: outgoingLinks.length,
-      backlinksCount: backlinks.length,
+      outgoingCount: outgoingLinks.length + wikiOutgoingLinks.length,
+      backlinksCount: backlinks.length + wikiBacklinks.length,
+      relationOutgoingCount: outgoingLinks.length,
+      relationBacklinksCount: backlinks.length,
+      wikiOutgoingCount: wikiOutgoingLinks.length,
+      wikiBacklinksCount: wikiBacklinks.length,
       childPagesCount: childPages.length,
       attachedFilesCount: item.attachedFiles.length,
       databaseColumnsCount: database?.columns.length ?? 0,
