@@ -1690,3 +1690,12 @@ Report honestly with implemented, partial, not implemented, deliberately not imp
 - **Command palette impact:** Quick-create actions were added for Daily Note, Quick Capture, and Journal Page.
 - **Safety rule:** Journal privacy is labeled as metadata-only. Daily notes do not imply automatic recurrence or reminders. Quick Capture does not imply mobile capture or a global hotkey.
 - **Still future:** Recurrence, reminders, mobile capture, global hotkeys, encryption, app lock, hidden search/graph, AI generation, web import, and citation management.
+
+## Graph Search Slice
+
+- **Status:** PARTIAL IMPLEMENTED.
+- **Implemented now:** `/graph` has a search field that filters the visible graph nodes together with existing type/orphan/connected filters.
+- **Search scope:** Graph node label, type, category, status, item id/route, and metadata summary.
+- **Model impact:** `filterGraphNodes` is a pure helper with targeted graph model tests.
+- **Verification:** Full verify and browser QA pass for this slice; browser QA screenshots were captured under `docs/screenshots/20260611-202147-browser-qa-*.png`.
+- **Still future:** Saved graph searches, advanced syntax, block-level graph search, clustering, manual canvas search, graph export search, and native graph persistence.

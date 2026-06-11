@@ -254,3 +254,27 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Daily notes do not have automatic recurrence or reminders. Quick Capture does not include mobile capture or a global hotkey. Journal Page privacy remains metadata-only; encryption, app lock, hidden search, and hidden graph behavior are not implemented. Research/Brainstorm templates do not add AI generation, citation management, or web import.
+
+## Graph Search Slice - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Added `filterGraphNodes` to `src/lib/graph/graph-model.ts`.
+- Added graph model tests for combining graph scope filters with search.
+- Added a search field to `/graph` that filters visible graph nodes while preserving the existing graph filters.
+- Corrected visible edge filtering to use the active graph instead of always using the global graph edge list.
+
+### Validation Evidence
+
+- Red-first graph test failed before implementation because `filterGraphNodes` did not exist.
+- Targeted graph model test passed after implementation: 38/38.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed after formatting the touched test file.
+- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 244 tests, build, diff check, and full red scan.
+- `npm run mizaan:browser-qa`: passed all configured routes and captured `docs/screenshots/20260611-202147-browser-qa-*.png`.
+
+### Limitations
+
+Graph search is a browser UI filter over graph node metadata only. Saved graph searches, advanced syntax, block-level graph search, clustering, manual canvas search, graph export search, and native graph persistence remain future work.

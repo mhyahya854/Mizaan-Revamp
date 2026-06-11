@@ -86,6 +86,16 @@ export type GraphEdgeType =
 
 export type GraphScope = "global" | "local";
 
+export type GraphNodeFilter =
+  | "all"
+  | "documents"
+  | "pages"
+  | "projects"
+  | "people"
+  | "finance"
+  | "orphans"
+  | "connected";
+
 export interface GraphNode {
   id: string;
   itemId: string;
@@ -228,6 +238,24 @@ export function buildLocalGraph({
 
 export function getGraphNodeType(item: Pick<MizaanItem, "category" | "type">): GraphNodeType {
   return GRAPH_NODE_BY_TYPE[item.type] ?? GRAPH_NODE_BY_CATEGORY[item.category] ?? "unknown";
+}
+
+export function filterGraphNodes(
+  nodes: GraphNode[],
+  {
+    filter = "all",
+    query = "",
+  }: {
+    filter?: GraphNodeFilter;
+    query?: string;
+  },
+) {
+  const normalizedQuery = query.trim().toLowerCase();
+  return nodes.filter(
+    (node) =>
+      graphNodeMatchesFilter(node, filter) &&
+      (!normalizedQuery || graphNodeMatchesQuery(node, normalizedQuery)),
+  );
 }
 
 function activeGraphItems(items: MizaanItem[]) {
@@ -501,6 +529,40 @@ function markOrphanNodes(nodes: GraphNode[], edges: GraphEdge[]): GraphNode[] {
   return nodes
     .map((node) => ({ ...node, isOrphan: !connected.has(node.id) }))
     .sort((a, b) => a.label.localeCompare(b.label) || a.id.localeCompare(b.id));
+}
+
+function graphNodeMatchesFilter(node: GraphNode, filter: GraphNodeFilter) {
+  switch (filter) {
+    case "documents":
+      return node.type === "document";
+    case "pages":
+      return node.type === "note" || node.type === "page";
+    case "projects":
+      return node.type === "project";
+    case "people":
+      return node.type === "person" || node.type === "interaction";
+    case "finance":
+      return node.type === "finance";
+    case "orphans":
+      return node.isOrphan;
+    case "connected":
+      return !node.isOrphan;
+    case "all":
+    default:
+      return true;
+  }
+}
+
+function graphNodeMatchesQuery(node: GraphNode, normalizedQuery: string) {
+  return [
+    node.label,
+    node.type,
+    node.category,
+    node.status,
+    node.route,
+    node.itemId,
+    node.metadataSummary,
+  ].some((value) => value.toLowerCase().includes(normalizedQuery));
 }
 
 function createGraphModel(

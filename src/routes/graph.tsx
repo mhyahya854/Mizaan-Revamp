@@ -1,11 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Search } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 
 import {
   buildGlobalGraph,
   buildLocalGraph,
+  filterGraphNodes,
   type GraphEdge,
   type GraphNode,
+  type GraphNodeFilter,
 } from "@/lib/graph/graph-model";
 import { useVaultSnapshot } from "@/lib/vault/use-vault";
 
@@ -14,17 +17,7 @@ export const Route = createFileRoute("/graph")({
   component: GraphPage,
 });
 
-type GraphFilter =
-  | "all"
-  | "documents"
-  | "pages"
-  | "projects"
-  | "people"
-  | "finance"
-  | "orphans"
-  | "connected";
-
-const filterOptions: Array<{ id: GraphFilter; label: string }> = [
+const filterOptions: Array<{ id: GraphNodeFilter; label: string }> = [
   { id: "all", label: "All" },
   { id: "documents", label: "Documents" },
   { id: "pages", label: "Pages/notes" },
@@ -37,7 +30,8 @@ const filterOptions: Array<{ id: GraphFilter; label: string }> = [
 
 function GraphPage() {
   const snapshot = useVaultSnapshot();
-  const [filter, setFilter] = useState<GraphFilter>("all");
+  const [filter, setFilter] = useState<GraphNodeFilter>("all");
+  const [query, setQuery] = useState("");
   const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
   const [isLocalFocus, setIsLocalFocus] = useState(false);
 
@@ -69,9 +63,9 @@ function GraphPage() {
     () => countEdgesByNode(activeGraph.edges),
     [activeGraph.edges],
   );
-  const filteredNodes = activeGraph.nodes.filter((node) => matchesFilter(node, filter));
+  const filteredNodes = filterGraphNodes(activeGraph.nodes, { filter, query });
   const filteredNodeIds = new Set(filteredNodes.map((node) => node.id));
-  const filteredEdges = globalGraph.edges.filter(
+  const filteredEdges = activeGraph.edges.filter(
     (edge) => filteredNodeIds.has(edge.sourceId) && filteredNodeIds.has(edge.targetId),
   );
   const selectedNode = selectedItemId
@@ -124,20 +118,31 @@ function GraphPage() {
                     {filteredEdges.length} visible edges.
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-1">
-                  {filterOptions.map((option) => (
-                    <button
-                      key={option.id}
-                      onClick={() => setFilter(option.id)}
-                      className={`rounded-sm px-2 py-1 text-[11.5px] transition-colors ${
-                        filter === option.id
-                          ? "bg-foreground text-background"
-                          : "bg-muted/55 text-soft hover:bg-muted"
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
+                <div className="flex flex-wrap items-center gap-2">
+                  <label className="flex h-8 min-w-[210px] items-center gap-2 rounded-sm border hairline bg-background px-2 text-[12px] text-soft">
+                    <Search className="h-3.5 w-3.5 shrink-0 text-faint" />
+                    <input
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder="Search graph"
+                      className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-faint"
+                    />
+                  </label>
+                  <div className="flex flex-wrap gap-1">
+                    {filterOptions.map((option) => (
+                      <button
+                        key={option.id}
+                        onClick={() => setFilter(option.id)}
+                        className={`rounded-sm px-2 py-1 text-[11.5px] transition-colors ${
+                          filter === option.id
+                            ? "bg-foreground text-background"
+                            : "bg-muted/55 text-soft hover:bg-muted"
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
               <GraphMap nodes={filteredNodes} edges={filteredEdges} onFocus={setSelectedItemId} />
@@ -591,26 +596,4 @@ function countEdgesByNode(edges: GraphEdge[]) {
     counts.set(edge.targetId, (counts.get(edge.targetId) ?? 0) + 1);
   }
   return counts;
-}
-
-function matchesFilter(node: GraphNode, filter: GraphFilter) {
-  switch (filter) {
-    case "documents":
-      return node.type === "document";
-    case "pages":
-      return node.type === "note" || node.type === "page";
-    case "projects":
-      return node.type === "project";
-    case "people":
-      return node.type === "person" || node.type === "interaction";
-    case "finance":
-      return node.type === "finance";
-    case "orphans":
-      return node.isOrphan;
-    case "connected":
-      return !node.isOrphan;
-    case "all":
-    default:
-      return true;
-  }
 }

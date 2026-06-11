@@ -625,3 +625,12 @@ Future Codex prompts should follow this template:
 - **Command palette:** Added quick-create commands for Daily Note, Quick Capture, and Journal Page.
 - **Not implemented:** Automatic daily recurrence, reminders, global hotkeys, mobile capture, encryption, app lock, hidden search/graph behavior, AI generation, web import, and citation management remain future work.
 - **Validation:** Page workspace and template registry targeted tests pass; typecheck and lint pass after implementation.
+
+## Graph Search Slice
+
+- **Current status:** Implemented browser-safe graph search for the `/graph` route.
+- **What works now:** Users can search the current graph node set by label, type, category, status, route/item id, and metadata summary while combining that search with the existing graph filters.
+- **Implementation detail:** Filtering/search is handled by a pure `filterGraphNodes` helper with unit coverage.
+- **Not implemented:** Saved graph searches, advanced query syntax, graph clustering, manual canvas search, full-text block graph search, and native graph persistence remain future work.
+- **Validation:** Graph model targeted tests, typecheck, and lint pass after implementation.
+- **Full verification:** `npm run mizaan:verify:full` passed with 24 Vitest files / 244 tests, build, diff check, and full red scan; `npm run mizaan:browser-qa` passed with screenshots under `docs/screenshots/20260611-202147-browser-qa-*.png`.

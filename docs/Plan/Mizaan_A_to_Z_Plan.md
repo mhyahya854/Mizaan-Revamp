@@ -22338,3 +22338,41 @@ After the initial implementation append, broader validation was completed:
 - `npm run mizaan:browser-qa`: passed all configured route checks and captured `docs/screenshots/20260611-201019-browser-qa-*.png`.
 
 No recurrence/reminder engine, global hotkey, mobile capture, encryption, app lock, hidden search/graph behavior, AI generation, citation manager, web import, cloud, sync, native filesystem, SQLite, Tauri, or portable vault capability was implemented or claimed.
+---
+
+## 2026-06-11 Autonomous Graph Search Slice
+
+### Status
+
+PARTIAL IMPLEMENTED - browser graph node search/filter only.
+
+### Queue item addressed
+
+The master queue listed Graph search as not implemented. The existing graph page had filters and local focus behavior, but no text search over visible graph nodes.
+
+### Implemented
+
+- Added `filterGraphNodes` to `src/lib/graph/graph-model.ts`.
+- Added graph model tests for combining graph scope filters with search query text.
+- Added a search field to the `/graph` route.
+- Search covers graph node label, type, category, status, item id, route, and metadata summary.
+- Visible edge filtering now uses the active graph edge set instead of always using global graph edges.
+
+### Validation at append time
+
+- Red-first graph model test failed before implementation because `filterGraphNodes` did not exist.
+- Targeted graph model tests passed after implementation: 38/38.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+
+### Honest remaining gaps
+
+- Graph search is a UI filter over loaded graph node metadata only.
+- Saved graph searches, advanced query syntax, block-level graph search, clustering, manual canvas search, graph export search, native graph persistence, SQLite, Tauri, and filesystem-backed graph indexes remain future work.
+## Graph Search Slice Final Validation - 2026-06-11
+
+- Status: PARTIAL IMPLEMENTED.
+- Scope: browser-safe graph search for the current `/graph` node set, combined with existing graph filters.
+- Validation: `npm run mizaan:verify:full` passed, including typecheck, lint, 24 Vitest files / 244 tests, build, diff check, and full red scan.
+- Browser QA: `npm run mizaan:browser-qa` passed all configured routes and captured `docs/screenshots/20260611-202147-browser-qa-*.png` plus `docs/logs/browser-qa-20260611-202147.md`.
+- Still future: saved graph searches, advanced syntax, block-level graph search, clustering, manual canvas search, graph export search, and native graph persistence.

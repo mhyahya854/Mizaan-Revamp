@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildGlobalGraph,
   buildLocalGraph,
+  filterGraphNodes,
   getGraphNodeType,
   type GraphEdgeType,
 } from "./graph-model";
@@ -273,6 +274,47 @@ describe("graph model", () => {
     expect(graph.selectedItemId).toBe("center");
     expect(graph.nodes.map((node) => node.id).sort()).toEqual(["center", "incoming", "outgoing"]);
     expect(graph.edges).toHaveLength(2);
+  });
+
+  it("filters graph nodes by graph scope and search query", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("meeting-note", {
+          title: "Meeting Notes",
+          tags: ["client"],
+        }),
+        item("doc-1", {
+          category: "documents",
+          type: "document",
+          title: "Invoice PDF",
+        }),
+        item("project-1", {
+          category: "projects",
+          type: "project",
+          title: "Website Launch",
+        }),
+      ],
+      relations: [relation({ sourceId: "meeting-note", targetId: "project-1" })],
+    });
+
+    expect(
+      filterGraphNodes(graph.nodes, {
+        filter: "pages",
+        query: "client",
+      }).map((node) => node.id),
+    ).toEqual(["meeting-note"]);
+    expect(
+      filterGraphNodes(graph.nodes, {
+        filter: "documents",
+        query: "invoice",
+      }).map((node) => node.id),
+    ).toEqual(["doc-1"]);
+    expect(
+      filterGraphNodes(graph.nodes, {
+        filter: "orphans",
+        query: "",
+      }).map((node) => node.id),
+    ).toEqual(["doc-1"]);
   });
 
   it(``, async () => {
