@@ -314,3 +314,29 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Tasks remain browser/localStorage prototype records. The board is a status grouping/status editor, not a saved task-view database. The timeline reads existing task date metadata only; it is not a full Gantt engine, scheduling engine, recurrence engine, reminder system, native notification path, or calendar automation system. Task database views, dependencies, recurrence, reminders, native notifications, calendar scheduling automation, mobile capture, SQLite, Tauri, and native filesystem storage remain future work.
+
+## Graph JSON Export Slice - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Added `createGraphExportPayload` to `src/lib/graph/graph-model.ts`.
+- Added a stable `mizaan.graph.export.v1` payload with app id, timestamp, active scope, selected local item id when present, graph summary, sorted nodes, sorted edges, and limitation strings.
+- Added a visible Export JSON button to `/graph` that downloads the active graph model through browser `Blob`/object URL.
+- Updated product-map truth and tests so Mizaan claims current-graph browser JSON export only.
+- Updated PRD, blueprint, and phase report documentation.
+
+### Validation Evidence
+
+- Red-first graph model test failed before implementation because `createGraphExportPayload` did not exist.
+- Targeted graph model tests passed after implementation: 39/39.
+- Targeted product-map tests passed after implementation: 13/13.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed after formatting touched test files.
+- `npm run build`: passed.
+- `npm run mizaan:browser-qa`: passed all configured routes and captured the graph screenshot at `docs/screenshots/20260611-214357-browser-qa-graph.png`.
+
+### Limitations
+
+Graph JSON export is a browser export of the current graph model only. It is not a native vault backup, portable folder mirror, image/PDF export, clustering export, semantic graph export, or AI embeddings export. Manual canvas nodes, standalone editable graph nodes, directed manual arrows, saved graph layouts, native graph-readable files, SQLite, Tauri, and native filesystem storage remain future work.

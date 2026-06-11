@@ -38,7 +38,7 @@ There is no cloud/account dependency in the current product law or implementatio
 | Search                               | Partial                            | Local provider search indexes titles, summaries, tags, properties, metadata, and block text. No saved searches or native index.                                                                                                                                                                                                                                                   |
 | Databases/tables                     | Partial                            | Basic provider-backed table model, stateful column sorting, cell filters, row/column/cell editing, stats, and validation helpers exist. No formulas, rollups, or SQLite.                                                                                                                                                                                                          |
 | Documents                            | Partial                            | Metadata-only document records, typed helpers, route/list, detail metadata panel, templates, search, relation IDs, tests, and QA exist. No real file import, preview, OCR, thumbnails, or native document storage.                                                                                                                                                                |
-| Graph                                | Implemented browser interactive foundation | Provider graph helper, interactive node selection, graph filters, local neighborhood focus, drag-to-position visual nodes, explicit relations, metadata-derived edges, parent hierarchy edges, and orphan summaries exist. No manual canvas boards, custom nodes/arrows, persistent layouts, wiki-link backlink index, clustering, export, or AI graph. |
+| Graph                                | Implemented browser interactive foundation | Provider graph helper, interactive node selection, graph filters/search, local neighborhood focus, drag-to-position visual nodes, explicit relations, wiki-link edges, metadata-derived edges, parent hierarchy edges, orphan summaries, and current-graph browser JSON export exist. No manual canvas boards, custom nodes/arrows, persistent layouts, clustering, image/native export, or AI graph. |
 | Projects/tasks                       | Partial                            | Typed project/task metadata, Projects/Tasks Kanban status tracking views with drag-and-drop, project route/list, dedicated `/tasks` route/list, board, and bounded timeline UI, task records, linked task editing, templates, and graph edges exist. No saved task views, recurrence, reminders, dependencies, calendar scheduling, or full Gantt engine.                         |
 | People/CRM                           | Partial                            | Typed person and interaction metadata, route/list, linked interactions, detail panels, templates, search, graph edges, and metadata-only privacy flags exist. No contact sync/import, reminders, full timeline, or privacy enforcement.                                                                                                                                           |
 | Finance                              | Partial                            | Typed local finance records, route/list, detail panel, amount/currency/date/status normalization, summaries, templates, search, and graph edges exist. No bank sync/import, payment APIs, tax/accounting, OCR, or reminders.                                                                                                                                                      |
@@ -169,16 +169,16 @@ Each module below must be implemented through provider-backed data, tested helpe
 ### Graph
 
 - Purpose: local relationship layer from provider relations and typed metadata IDs.
-- User stories: see connected items, inspect edges, filter graph, open nodes, focus local neighborhood, drag to position.
+- User stories: see connected items, inspect edges, filter/search graph, open nodes, focus local neighborhood, drag to position, export the current graph model as browser JSON.
 - Current status: implemented interactive browser foundation.
 - Required data model: graph nodes/edges from provider items, relations, parent links, metadata relation IDs.
-- Required UI: graph route, filters, summaries, local focus view, draggable visual layout, orphan state.
+- Required UI: graph route, filters/search, summaries, local focus view, draggable visual layout, orphan state, scoped JSON export action.
 - Required persistence: relations and metadata live in provider data. Layouts do not persist yet.
 - Required graph/search/template integration: relation IDs must be normalized by module helpers.
-- Success criteria: no fake graph edges; invalid targets are ignored or reported; local focus filters visual map.
-- Test criteria: graph-model tests for nodes, edge extraction, orphans, duplicates, invalid targets.
+- Success criteria: no fake graph edges; invalid targets are ignored or reported; local focus filters visual map; graph JSON export includes current nodes/edges plus honest limitations.
+- Test criteria: graph-model tests for nodes, edge extraction, orphans, duplicates, invalid targets, search filtering, and export payload stability.
 - Browser QA criteria: graph route loads, filters work, nodes are draggable, local focus switches context, and shows real module nodes/edges.
-- Limitations: no manual canvas, custom nodes, custom arrows, wiki-link parser, saved layout, clustering, export, local AI graph.
+- Limitations: no manual canvas, custom nodes, custom arrows, saved layout, clustering, image/PDF export, native graph mirror/export, or local AI graph.
 
 ### Projects/tasks
 
@@ -634,6 +634,14 @@ Future Codex prompts should follow this template:
 - **Not implemented:** Saved graph searches, advanced query syntax, graph clustering, manual canvas search, full-text block graph search, and native graph persistence remain future work.
 - **Validation:** Graph model targeted tests, typecheck, and lint pass after implementation.
 - **Full verification:** `npm run mizaan:verify:full` passed with 24 Vitest files / 244 tests, build, diff check, and full red scan; `npm run mizaan:browser-qa` passed with screenshots under `docs/screenshots/20260611-202147-browser-qa-*.png`.
+
+## Graph JSON Export Slice
+
+- **Current status:** Implemented browser-safe current-graph JSON export for the `/graph` route.
+- **What works now:** Users can export the active global or local graph model as `mizaan.graph.export.v1` JSON with sorted nodes, sorted edges, graph summary, scope, timestamp, and explicit limitations.
+- **Implementation detail:** Export payload creation is handled by pure `createGraphExportPayload` with unit coverage. The route download uses browser `Blob`/object URL only.
+- **Not implemented:** Manual canvas export, standalone graph node export, saved layout export, graph image/PDF export, native graph mirror files, clustering export, semantic graph export, and AI embeddings remain future work.
+- **Validation:** Graph model and product-map targeted tests, typecheck, and lint pass after implementation.
 
 ## Tasks Route Slice
 

@@ -65,9 +65,10 @@ export const productModules: ProductModule[] = [
     category: "core",
     status: "partial",
     route: "/graph",
-    summary: "Relation-based graph foundation from provider items and relation records.",
-    currentTruth: "Route renders real provider nodes and explicit relation edges only.",
-    nextPhase: "Graph relation foundation.",
+    summary: "Relation graph foundation from provider items, relation records, and JSON export.",
+    currentTruth:
+      "Route renders real provider nodes and explicit relation edges, supports graph search/filtering, and can export the current graph model as browser JSON. Manual canvas, image/PDF export, clustering, native graph mirrors, and semantic AI graph remain future.",
+    nextPhase: "Manual graph data model after provider/storage boundaries mature.",
   },
   {
     id: "calendar",

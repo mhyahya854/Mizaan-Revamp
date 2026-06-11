@@ -141,6 +141,18 @@ export interface GraphModel {
   summary: GraphSummary;
 }
 
+export interface GraphExportPayload {
+  app: "Mizaan";
+  format: "mizaan.graph.export.v1";
+  exportedAt: string;
+  scope: GraphScope;
+  selectedItemId?: string;
+  summary: GraphSummary;
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  limitations: string[];
+}
+
 export interface BuildGraphInput {
   items: MizaanItem[];
   blocks?: MizaanBlock[];
@@ -256,6 +268,27 @@ export function filterGraphNodes(
       graphNodeMatchesFilter(node, filter) &&
       (!normalizedQuery || graphNodeMatchesQuery(node, normalizedQuery)),
   );
+}
+
+export function createGraphExportPayload(
+  graph: GraphModel,
+  exportedAt = new Date().toISOString(),
+): GraphExportPayload {
+  return {
+    app: "Mizaan",
+    format: "mizaan.graph.export.v1",
+    exportedAt,
+    scope: graph.scope,
+    ...(graph.selectedItemId ? { selectedItemId: graph.selectedItemId } : {}),
+    summary: cloneGraphSummary(graph.summary),
+    nodes: graph.nodes.map(cloneGraphNode).sort(sortById),
+    edges: graph.edges.map(cloneGraphEdge).sort(sortById),
+    limitations: [
+      "This is a browser JSON export of the current provider graph model.",
+      "It is not a native vault backup, portable folder mirror, image export, PDF export, clustering export, or semantic graph export.",
+      "Manual canvas nodes, saved layouts, embeddings, and local AI graph data are not included.",
+    ],
+  };
 }
 
 function activeGraphItems(items: MizaanItem[]) {
@@ -563,6 +596,34 @@ function graphNodeMatchesQuery(node: GraphNode, normalizedQuery: string) {
     node.itemId,
     node.metadataSummary,
   ].some((value) => value.toLowerCase().includes(normalizedQuery));
+}
+
+function cloneGraphNode(node: GraphNode): GraphNode {
+  return { ...node };
+}
+
+function cloneGraphEdge(edge: GraphEdge): GraphEdge {
+  return {
+    ...edge,
+    metadata: sortRecord(edge.metadata),
+  };
+}
+
+function cloneGraphSummary(summary: GraphSummary): GraphSummary {
+  return {
+    ...summary,
+    typeCounts: sortRecord(summary.typeCounts),
+    edgeTypeCounts: sortRecord(summary.edgeTypeCounts),
+    relationSourceCounts: sortRecord(summary.relationSourceCounts),
+  };
+}
+
+function sortRecord<T>(record: Record<string, T>): Record<string, T> {
+  return Object.fromEntries(Object.entries(record).sort(([a], [b]) => a.localeCompare(b)));
+}
+
+function sortById<T extends { id: string }>(a: T, b: T) {
+  return a.id.localeCompare(b.id);
 }
 
 function createGraphModel(

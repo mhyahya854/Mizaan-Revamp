@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { Download, Search } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 
 import {
   buildGlobalGraph,
   buildLocalGraph,
+  createGraphExportPayload,
   filterGraphNodes,
   type GraphEdge,
   type GraphNode,
@@ -34,6 +35,7 @@ function GraphPage() {
   const [query, setQuery] = useState("");
   const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
   const [isLocalFocus, setIsLocalFocus] = useState(false);
+  const [exportStatus, setExportStatus] = useState("");
 
   const globalGraph = useMemo(
     () =>
@@ -72,6 +74,28 @@ function GraphPage() {
     ? globalGraph.nodes.find((node) => node.id === selectedItemId)
     : undefined;
 
+  const exportGraphJson = () => {
+    const exportedAt = new Date().toISOString();
+    const payload = createGraphExportPayload(activeGraph, exportedAt);
+
+    try {
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `mizaan-graph-${payload.scope}-${exportedAt.slice(0, 10)}.json`;
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      setExportStatus(`Prepared ${payload.nodes.length} nodes / ${payload.edges.length} edges.`);
+    } catch {
+      setExportStatus("Graph JSON export is unavailable in this browser session.");
+    }
+  };
+
   return (
     <div className="flex h-full flex-col bg-background">
       <header className="border-b hairline px-6 pb-5 pt-8 md:px-10">
@@ -90,8 +114,9 @@ function GraphPage() {
             </p>
           </div>
           <div className="rounded-md border hairline bg-surface px-3 py-2 text-[11.5px] text-soft">
-            Manual canvas, editable standalone nodes, saved layouts, export, clustering, embeddings,
-            and semantic graph AI remain future phases.
+            JSON export covers the current provider graph only. Manual canvas, editable standalone
+            nodes, saved layouts, image export, clustering, embeddings, and semantic graph AI remain
+            future phases.
           </div>
         </div>
       </header>
@@ -128,6 +153,14 @@ function GraphPage() {
                       className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-faint"
                     />
                   </label>
+                  <button
+                    type="button"
+                    onClick={exportGraphJson}
+                    className="inline-flex h-8 items-center gap-1.5 rounded-sm border hairline bg-background px-2.5 text-[12px] font-medium text-foreground hover:bg-muted"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    Export JSON
+                  </button>
                   <div className="flex flex-wrap gap-1">
                     {filterOptions.map((option) => (
                       <button
@@ -143,6 +176,9 @@ function GraphPage() {
                       </button>
                     ))}
                   </div>
+                  {exportStatus && (
+                    <div className="basis-full text-[11.5px] text-faint">{exportStatus}</div>
+                  )}
                 </div>
               </div>
               <GraphMap nodes={filteredNodes} edges={filteredEdges} onFocus={setSelectedItemId} />
@@ -560,7 +596,7 @@ function FutureGraphPanel() {
     "Editable standalone nodes",
     "Directed manual arrows",
     "Saved canvas layout",
-    "Graph export image/PDF",
+    "Graph image/PDF export",
     "Graph clustering",
     "Local AI semantic graph",
   ];

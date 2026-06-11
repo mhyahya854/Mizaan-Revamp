@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildGlobalGraph,
   buildLocalGraph,
+  createGraphExportPayload,
   filterGraphNodes,
   getGraphNodeType,
   type GraphEdgeType,
@@ -315,6 +316,42 @@ describe("graph model", () => {
         query: "",
       }).map((node) => node.id),
     ).toEqual(["doc-1"]);
+  });
+
+  it("creates a stable browser JSON export payload for the current graph model", () => {
+    const graph = buildGlobalGraph({
+      items: [
+        item("z-note", { title: "Zeta note" }),
+        item("a-note", { title: "Alpha note" }),
+        item("task-1", {
+          category: "tasks",
+          type: "task",
+          metadata: { taskProjectId: "a-note" },
+        }),
+      ],
+      relations: [relation({ sourceId: "z-note", targetId: "a-note" })],
+    });
+
+    const payload = createGraphExportPayload(graph, "2026-06-11T00:00:00.000Z");
+
+    expect(payload).toMatchObject({
+      app: "Mizaan",
+      format: "mizaan.graph.export.v1",
+      exportedAt: "2026-06-11T00:00:00.000Z",
+      scope: "global",
+      summary: {
+        nodeCount: 3,
+        edgeCount: 2,
+        orphanCount: 0,
+      },
+    });
+    expect(payload.nodes.map((node) => node.id)).toEqual(["a-note", "task-1", "z-note"]);
+    expect(payload.edges.map((edge) => edge.id)).toEqual([
+      "task-1->a-note:project-link",
+      "z-note->a-note:relation",
+    ]);
+    expect(payload.limitations.join(" ")).toMatch(/not a native vault backup/i);
+    expect(payload.limitations.join(" ")).toMatch(/semantic graph export/i);
   });
 
   it(``, async () => {

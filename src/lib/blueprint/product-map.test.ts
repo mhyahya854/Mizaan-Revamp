@@ -135,4 +135,14 @@ describe("productModules", () => {
     expect(tasks?.currentTruth).toContain("recurrence engine");
     expect(tasks?.currentTruth).toContain("future");
   });
+
+  it("tracks graph JSON export without claiming future graph capabilities", () => {
+    const graph = productModules.find((module) => module.id === "graph");
+
+    expect(graph?.status).toBe("partial");
+    expect(graph?.route).toBe("/graph");
+    expect(graph?.currentTruth).toContain("browser JSON");
+    expect(graph?.currentTruth).toContain("Manual canvas");
+    expect(graph?.currentTruth).toContain("semantic AI graph remain future");
+  });
 });

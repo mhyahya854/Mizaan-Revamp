@@ -193,7 +193,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Core          | Sidebar                          | [PARTIAL]                          | Navigation and page tree exist                                                                                  | Item metadata                                                                    | localStorage prototype                                              | Sidebar tree tests exist                                                            | Blueprint modules not fully visible yet                                                                                      | Blueprint UI baseline                                               |
 | Core          | Search                           | [PARTIAL]                          | Route exists                                                                                                    | Search helper                                                                    | localStorage prototype                                              | Unit tests exist                                                                    | No saved searches or extracted document text                                                                                 | Search metadata expansion                                           |
 | Core          | Databases                        | [PARTIAL]                          | Route and table page exist                                                                                      | Database metadata helper                                                         | localStorage prototype                                              | Unit and browser QA exist                                                           | No filters/sorts/views/formulas/rollups                                                                                      | Database views and filters                                          |
-| Core          | Graph                            | [IMPLEMENTED FOUNDATION]           | Interactive selection, filters, local focus view, draggable layout                                              | Provider items, relations, document metadata arrays, parentId hierarchy          | localStorage prototype (no layout persistence)                      | Graph helper tests and browser QA                                                   | No persistent layout/manual canvas/custom nodes/wiki links/export/AI                                                         | Graph search/canvas later                                           |
+| Core          | Graph                            | [IMPLEMENTED FOUNDATION]           | Interactive selection, filters/search, local focus view, draggable layout, JSON export                          | Provider items, relations, wiki links, module metadata arrays, parentId hierarchy | localStorage prototype (no layout persistence)                      | Graph helper tests and browser QA                                                   | No persistent layout/manual canvas/custom nodes/image export/native mirror/AI                                                | Manual graph data model later                                       |
 | Core          | Calendar                         | [PARTIAL / IMPLEMENTED FOUNDATION] | Route exists with provider-backed events                                                                        | Typed calendar event helper                                                      | localStorage prototype                                              | Helper, graph, and search tests added; browser QA attempted                         | No recurrence/reminders/ICS/native notifications/sync                                                                        | Template expansion or version history                               |
 | System        | Templates                        | [PARTIAL]                          | Template picker plus searchable/filterable `/templates` registry route exist                                    | Static template definitions with status/category/preview metadata                | provider-backed creations                                           | Page template tests, template registry tests, full validation, and browser QA exist | No template editor, custom templates, version history, import/export, AI generation, marketplace, or sync                    | Version history or template management only after scoped data model |
 | System        | Vault                            | [PARTIAL]                          | Route exists with provider truth and browser archive controls                                                   | Provider info/health plus archive helper model                                   | localStorage prototype                                              | Provider and archive tests exist                                                    | No portable folder/SQLite/native/encrypted backup                                                                            | Native readiness after archive hardening                            |
@@ -378,14 +378,14 @@ the UI must show its status.
 - User mental model: see connected pages and relation links.
 - Current status: [PARTIAL]
 - UI now: provider-backed global graph route with summaries, filters, node/edge lists, a visual map, direct local focus, orphan state, source summaries, and open-node actions.
-- Implemented now: tested `src/lib/graph/graph-model.ts` helper, provider items as nodes, explicit provider relations as edges, document relation metadata arrays as edges when targets exist, parentId hierarchy as edges, deterministic edge IDs, duplicate/invalid edge filtering, orphan detection, global summary counts, direct local graph builder, route filters, and focus/open behavior.
-- Not implemented yet: backlink index, wiki-link parsing, manual canvas, editable standalone nodes, manual arrows, saved layouts, clustering, export, graph search, privacy-aware hiding, embeddings, OCR-derived graph edges, and semantic/local-AI graph.
+- Implemented now: tested `src/lib/graph/graph-model.ts` helper, provider items as nodes, explicit provider relations as edges, wiki-link edges, document/module relation metadata arrays as edges when targets exist, parentId hierarchy as edges, deterministic edge IDs, duplicate/invalid edge filtering, orphan detection, global summary counts, direct local graph builder, route filters/search, focus/open behavior, and current-graph browser JSON export.
+- Not implemented yet: manual canvas, editable standalone nodes, manual arrows, saved layouts, clustering, image/PDF export, native graph mirror files, privacy-aware hiding, embeddings, OCR-derived graph edges, and semantic/local-AI graph.
 - Data model: `MizaanRelation`, provider `MizaanItem`, document metadata arrays, parentId hierarchy, and graph helper models.
 - Routes: `/graph`
 - Main components: graph route.
 - Empty states: sparse/empty graph explains current relation limits.
 - Error states: invalid/missing relation targets are skipped; orphan nodes are labeled.
-- Actions: filter, focus, and open real nodes.
+- Actions: filter, search, focus, open real nodes, and export the active graph as scoped browser JSON.
 - Disabled/future actions: no fake graph editing, fake canvas controls, fake export, or fake AI graph controls.
 - Tests required: graph helper tests exist.
 - Screenshots required: graph route, global/filter state, local focus, orphan state, and open-node proof.
@@ -679,7 +679,7 @@ the UI must show its status.
 - Current status: [PARTIAL]
 - UI now: Settings, Vault, and `/import-export` expose browser-prototype JSON archive export with prototype-only warnings.
 - Implemented now: versioned browser archive JSON export for current provider/localStorage items, blocks, relations, trash/template summaries, settings placeholder, metadata, checksums, warnings, and manager route status.
-- Not implemented yet: selected-data export manifest, Markdown/PDF/DOCX exports, CSV export manager, graph export, native filesystem output, or final portable vault export.
+- Not implemented yet: selected-data export manifest, Markdown/PDF/DOCX exports, CSV export manager, graph image/PDF/native export, native filesystem output, or final portable vault export. `/graph` separately supports current graph-model browser JSON export only.
 - Data model: browser archive helper now; selected-data export manifest remains future.
 - Routes: `/import-export`.
 - Main components: `VaultArchivePanel`, archive manager helpers, and import/export route.
@@ -897,8 +897,8 @@ Document metadata UI:
 
 Graph UI:
 
-- Current graph can show relation-based nodes/edges.
-- Manual canvas, filters, clustering, export, and focus mode remain future until real.
+- Current graph can show relation-based nodes/edges, search/filter the visible model, focus local neighborhoods, and export the active graph model as browser JSON.
+- Manual canvas, image/PDF export, native graph mirrors, clustering, and semantic graph AI remain future until real.
 
 Calendar UI:
 
@@ -1699,3 +1699,11 @@ Report honestly with implemented, partial, not implemented, deliberately not imp
 - **Model impact:** `filterGraphNodes` is a pure helper with targeted graph model tests.
 - **Verification:** Full verify and browser QA pass for this slice; browser QA screenshots were captured under `docs/screenshots/20260611-202147-browser-qa-*.png`.
 - **Still future:** Saved graph searches, advanced syntax, block-level graph search, clustering, manual canvas search, graph export search, and native graph persistence.
+
+## Graph JSON Export Slice
+
+- **Status:** PARTIAL IMPLEMENTED.
+- **Implemented now:** `/graph` can export the active global or local graph model as `mizaan.graph.export.v1` browser JSON.
+- **Export scope:** Sorted graph nodes, sorted graph edges, graph summary, active scope, selected local item id when present, export timestamp, and explicit limitations.
+- **Model impact:** `createGraphExportPayload` is a pure helper with targeted graph model tests.
+- **Still future:** Manual canvas export, saved layout export, standalone graph node export, graph image/PDF export, native graph mirror files, clustering export, semantic graph export, embeddings, and AI graph data.

@@ -22485,3 +22485,33 @@ Remaining future/blocked scope:
 - SQLite, Tauri, native filesystem, and portable vault task storage remain future.
 
 Append-only note: this section was appended after the existing master Markdown content and did not rewrite earlier sections.
+---
+
+## Autonomous Implementation Append - Graph JSON Export Slice - 2026-06-11
+
+### Feature: Current graph browser JSON export [PARTIAL IMPLEMENTED]
+
+Status: Implemented as a bounded browser/localStorage-safe graph export slice.
+
+What changed:
+
+- Added a pure createGraphExportPayload helper for the active graph model.
+- Added mizaan.graph.export.v1 JSON with app id, export timestamp, graph scope, selected local item id when present, summary counts, sorted nodes, sorted edges, and explicit limitations.
+- Added a visible /graph Export JSON button that downloads the active graph through browser Blob/object URL.
+- Updated product-map truth, PRD, blueprint, fallback work log, and the active phase report.
+
+Validation completed before this append:
+
+- Red-first graph model test failed before implementation because createGraphExportPayload did not exist.
+- Targeted graph model tests passed after implementation: 39/39.
+- Targeted product-map tests passed after implementation: 13/13.
+- npm run typecheck: passed.
+- npm run lint: passed after formatting touched CRLF test files.
+- npm run build: passed.
+- npm run mizaan:browser-qa: passed all configured routes and captured docs/screenshots/20260611-214357-browser-qa-graph.png.
+
+Scope boundary:
+
+- This resolves only browser JSON export for the current graph model.
+- It does not implement manual canvas export, standalone manual graph nodes, directed manual arrows, saved graph layouts, clustering export, image/PDF export, native graph-readable mirror files, embeddings, semantic graph export, local AI graph, Tauri, SQLite, or native filesystem storage.
+- The historical Graph clustering/export [NOT IMPLEMENTED] queue item remains future for clustering, image/native export, and manual graph export; browser JSON export is now implemented as the safe dependency-free sub-slice.
