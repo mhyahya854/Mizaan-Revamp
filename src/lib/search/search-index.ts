@@ -5,6 +5,7 @@ import type {
   MizaanItem,
   VaultSnapshot,
 } from "../vault/types";
+import { isSavedSearchItem } from "./saved-searches";
 
 export type SearchMatchField =
   | "title"
@@ -49,7 +50,7 @@ export function buildSearchResults(
   const limit = criteria.limit ?? DEFAULT_LIMIT;
 
   return snapshot.items
-    .filter((item) => !item.archivedAt && !item.deletedAt)
+    .filter((item) => !item.archivedAt && !item.deletedAt && !isSavedSearchItem(item))
     .filter((item) => matchesFilters(item, criteria))
     .flatMap((item): SearchResult[] => {
       const blocks = blocksByItem.get(item.id) ?? [];

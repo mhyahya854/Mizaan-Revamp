@@ -152,4 +152,14 @@ describe("productModules", () => {
     expect(graph?.currentTruth).toContain("Manual canvas");
     expect(graph?.currentTruth).toContain("semantic AI graph remain future");
   });
+
+  it("tracks saved searches without claiming native search indexing", () => {
+    const search = productModules.find((module) => module.id === "search");
+
+    expect(search?.status).toBe("partial");
+    expect(search?.route).toBe("/search");
+    expect(search?.currentTruth).toContain("saved search presets");
+    expect(search?.currentTruth).toContain("Native indexes");
+    expect(search?.currentTruth).toContain("extracted document text do not");
+  });
 });

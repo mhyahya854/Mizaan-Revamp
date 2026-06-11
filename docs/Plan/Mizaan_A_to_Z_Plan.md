@@ -22618,3 +22618,35 @@ Current truth:
 - Task dependencies are relation metadata only.
 - Mizaan does not calculate blockers, enforce task order, schedule dependencies, generate Gantt chains, send reminders/native notifications, run a dependency engine, or persist this through SQLite/Tauri/native filesystem storage.
 - The historical dependency graph queue item is now partially implemented for task-to-task relation metadata only; scheduling automation remains future/blocked until a real dependency model and provider boundaries are designed.
+## Autonomous Implementation Append - Search Saved Searches Slice - 2026-06-11
+
+Queue driver: continued from the Markdown queue item covering Search [PARTIAL], saved searches, and advanced filters. The safe vertical slice was to implement provider-backed saved search presets without claiming native indexing, OCR, extracted file text, binary document search, graph-wide saved views, SQLite, Tauri, cloud, or filesystem sync.
+
+Implemented:
+
+- Added src/lib/search/saved-searches.ts for saved-search criteria normalization, stable duplicate keys, provider-backed create-item inputs, active saved-search listing, and active-criteria detection.
+- Added saved-search tests covering normalized metadata, active listing, duplicate key stability, and exclusion from ordinary search results.
+- Updated the search index so saved-search preset records are not returned as normal search results.
+- Updated /search with save current search, apply saved search, and trash saved search controls.
+- Hid saved-search provider records from the sidebar tree through existing metadata.
+- Updated Product Map, PRD, Blueprint, fallback work log, and phase report truth text.
+
+Validation evidence:
+
+- Red-first npm test -- src/lib/search/saved-searches.test.ts failed before implementation because the saved-search helper did not exist.
+- npm test -- src/lib/blueprint/product-map.test.ts src/lib/search/saved-searches.test.ts src/lib/search/search-index.test.ts: passed 27 tests.
+- npm run typecheck: passed.
+- npm run lint: passed.
+- npm run build: passed with existing Vite chunk-size and TanStack unused-import warnings only.
+- npm run mizaan:browser-qa: passed all configured routes and captured docs/screenshots/20260611-225231-browser-qa-search.png.
+
+Limitations:
+
+- Search remains [PARTIAL] overall.
+- Mizaan does not maintain a native search index, search OCR/extracted binary document text, mirror saved-search definitions into a filesystem vault, or run advanced compound query conditions.
+- Saved-search presets are provider-backed browser prototype records and archive through the existing JSON archive path only.
+
+Master Markdown append proof seed:
+
+- BeforeHash: 685B41142B835EBFCC3D9E8A63982B62BE9A856DEA4AA391BDD9ECDAA8B773AB
+- BeforeLength: 838550

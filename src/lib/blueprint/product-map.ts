@@ -44,10 +44,12 @@ export const productModules: ProductModule[] = [
     category: "core",
     status: "partial",
     route: "/search",
-    summary: "Provider-backed local search over titles, metadata, tags, properties, and blocks.",
+    summary:
+      "Provider-backed local search over titles, metadata, tags, properties, blocks, and saved search presets.",
     currentTruth:
-      "Search helper and route exist; native indexes and extracted document text do not.",
-    nextPhase: "Expand document metadata search after the Documents foundation.",
+      "Search helper, route filters, and provider-backed saved search presets exist. Native indexes, advanced compound conditions, and extracted document text do not.",
+    nextPhase:
+      "Advanced conditions and document extracted-text indexing after native/provider boundaries mature.",
   },
   {
     id: "databases",

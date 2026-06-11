@@ -450,3 +450,30 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Task dependencies are metadata relation IDs only. Mizaan does not calculate blockers, enforce task order, schedule dependencies, generate Gantt chains, send reminders/native notifications, run a dependency engine, or persist this through SQLite/Tauri/native filesystem storage.
+
+## Search Saved Searches Slice - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Added provider-backed saved search presets for `/search` without introducing native indexing, SQLite, cloud, or separate route storage.
+- Added `src/lib/search/saved-searches.ts` and tests for normalization, duplicate keys, active listing, and ordinary-result exclusion.
+- Updated `/search` with save/apply/trash controls for current query and filters.
+- Hid saved-search provider records from the sidebar tree using existing metadata.
+- Updated Product Map, PRD, and Blueprint truth text to say saved-search presets are implemented while native indexes, OCR, extracted file text, binary search, and advanced compound conditions remain future.
+
+### Validation Evidence
+
+- Red-first saved-search test failed before implementation.
+- `npm test -- src/lib/blueprint/product-map.test.ts src/lib/search/saved-searches.test.ts src/lib/search/search-index.test.ts`: passed 27 tests.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+- `npm run build`: passed with existing Vite chunk-size and TanStack unused-import warnings only.
+- `npm run mizaan:browser-qa`: passed all configured routes and captured the search screenshot at `docs/screenshots/20260611-225231-browser-qa-search.png`.
+- Final pre-commit `npm run mizaan:browser-qa`: passed all configured routes and captured the search screenshot at `docs/screenshots/20260611-230018-browser-qa-search.png`.
+- Master Markdown append proof: before hash `685B41142B835EBFCC3D9E8A63982B62BE9A856DEA4AA391BDD9ECDAA8B773AB`, after hash `E284CD36FDDC6BBD8925A9047742FA4869C2D3170B2866145F6D5559E7F97C14`, before length `838550`, after length `840794`, starts-with preservation `True`.
+
+### Limitations
+
+Search remains partial. Mizaan does not maintain a native search index, search OCR/extracted binary document text, sync saved-search definitions to a filesystem folder, or run an advanced compound query builder.

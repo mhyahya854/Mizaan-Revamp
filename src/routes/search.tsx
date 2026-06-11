@@ -1,9 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { Bookmark, BookmarkPlus, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { buildSearchResults, highlightMatches, type SearchResult } from "@/lib/search/search-index";
-import { useVaultSnapshot } from "@/lib/vault/use-vault";
+import {
+  createSavedSearchRecordInput,
+  getSavedSearchCriteriaKey,
+  isSavedSearchCriteriaActive,
+  isSavedSearchItem,
+  listSavedSearchRecords,
+  type SavedSearchCriteria,
+  type SavedSearchRecord,
+} from "@/lib/search/saved-searches";
+import { useVaultProvider, useVaultSnapshot } from "@/lib/vault/use-vault";
 import type { ItemCategory, ItemType } from "@/lib/vault/types";
 
 export const Route = createFileRoute("/search")({
@@ -12,23 +21,59 @@ export const Route = createFileRoute("/search")({
 });
 
 function SearchPage() {
+  const provider = useVaultProvider();
   const snapshot = useVaultSnapshot();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"all" | ItemCategory>("all");
   const [type, setType] = useState<"all" | ItemType>("all");
   const [status, setStatus] = useState("all");
   const [tag, setTag] = useState("all");
+  const [savingSearch, setSavingSearch] = useState(false);
+  const [deletingSearchId, setDeletingSearchId] = useState<string | null>(null);
   const q = query.trim();
 
   const activeItems = useMemo(
-    () => snapshot.items.filter((item) => !item.archivedAt && !item.deletedAt),
+    () =>
+      snapshot.items.filter(
+        (item) => !item.archivedAt && !item.deletedAt && !isSavedSearchItem(item),
+      ),
     [snapshot.items],
   );
-  const categoryOptions = unique(activeItems.map((item) => item.category));
-  const typeOptions = unique(activeItems.map((item) => item.type));
-  const statusOptions = unique(activeItems.flatMap((item) => (item.status ? [item.status] : [])));
-  const tagOptions = unique(activeItems.flatMap((item) => item.tags));
-  const results = buildSearchResults(snapshot, {
+  const categoryOptions = unique([
+    ...activeItems.map((item) => item.category),
+    ...(category === "all" ? [] : [category]),
+  ]);
+  const typeOptions = unique([
+    ...activeItems.map((item) => item.type),
+    ...(type === "all" ? [] : [type]),
+  ]);
+  const statusOptions = unique([
+    ...activeItems.flatMap((item) => (item.status ? [item.status] : [])),
+    ...(status === "all" ? [] : [status]),
+  ]);
+  const tagOptions = unique([
+    ...activeItems.flatMap((item) => item.tags),
+    ...(tag === "all" ? [] : [tag]),
+  ]);
+  const criteria: SavedSearchCriteria = {
+    query: q,
+    category,
+    type,
+    status,
+    tag,
+  };
+  const savedSearches = useMemo(() => listSavedSearchRecords(snapshot.items), [snapshot.items]);
+  const savedSearchKeys = useMemo(
+    () => new Set(savedSearches.map((record) => record.key)),
+    [savedSearches],
+  );
+  const criteriaKey = getSavedSearchCriteriaKey(criteria);
+  const canSaveSearch = isSavedSearchCriteriaActive(criteria) && !savedSearchKeys.has(criteriaKey);
+  const searchSnapshot = useMemo(
+    () => ({ ...snapshot, items: activeItems }),
+    [activeItems, snapshot],
+  );
+  const results = buildSearchResults(searchSnapshot, {
     query: q,
     categories: category === "all" ? undefined : [category],
     types: type === "all" ? undefined : [type],
@@ -38,6 +83,33 @@ function SearchPage() {
   const filtered = Boolean(
     q || category !== "all" || type !== "all" || status !== "all" || tag !== "all",
   );
+
+  async function saveCurrentSearch() {
+    if (!canSaveSearch || savingSearch) return;
+    setSavingSearch(true);
+    try {
+      await provider.createItem(createSavedSearchRecordInput(criteria));
+    } finally {
+      setSavingSearch(false);
+    }
+  }
+
+  function applySavedSearch(record: SavedSearchRecord) {
+    setQuery(record.criteria.query);
+    setCategory(record.criteria.category);
+    setType(record.criteria.type);
+    setStatus(record.criteria.status);
+    setTag(record.criteria.tag);
+  }
+
+  async function deleteSavedSearch(record: SavedSearchRecord) {
+    setDeletingSearchId(record.item.id);
+    try {
+      await provider.trashItem(record.item.id);
+    } finally {
+      setDeletingSearchId(null);
+    }
+  }
 
   return (
     <div className="mx-auto w-full max-w-[900px] px-6 pb-24 pt-12 md:px-10">
@@ -101,6 +173,61 @@ function SearchPage() {
           ))}
         </SearchSelect>
       </div>
+
+      <section className="mt-4 rounded-md border hairline bg-surface px-3 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <Bookmark className="h-4 w-4 shrink-0 text-faint" />
+            <div className="min-w-0">
+              <p className="truncate text-[13px] font-medium">Saved searches</p>
+              <p className="text-[11.5px] text-faint">
+                {savedSearches.length} provider-backed preset
+                {savedSearches.length === 1 ? "" : "s"}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={saveCurrentSearch}
+            disabled={!canSaveSearch || savingSearch}
+            className="inline-flex h-8 items-center gap-1.5 rounded-sm border hairline px-2.5 text-[12px] text-soft hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <BookmarkPlus className="h-3.5 w-3.5" />
+            {savedSearchKeys.has(criteriaKey) ? "Saved" : savingSearch ? "Saving" : "Save current"}
+          </button>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {savedSearches.map((record) => (
+            <div
+              key={record.item.id}
+              className="flex max-w-full items-stretch overflow-hidden rounded-sm border hairline bg-background"
+            >
+              <button
+                type="button"
+                onClick={() => applySavedSearch(record)}
+                className="min-w-0 px-2.5 py-1.5 text-left hover:bg-muted"
+              >
+                <span className="block truncate text-[12.5px] text-foreground">{record.label}</span>
+                <span className="block max-w-[260px] truncate text-[11px] text-faint">
+                  {record.summary}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => deleteSavedSearch(record)}
+                disabled={deletingSearchId === record.item.id}
+                className="grid w-8 place-items-center border-l hairline text-faint hover:bg-muted hover:text-foreground disabled:opacity-50"
+                aria-label={`Delete ${record.label}`}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ))}
+          {!savedSearches.length && (
+            <span className="text-[12px] text-faint">No saved searches in this local vault.</span>
+          )}
+        </div>
+      </section>
 
       <div className="mt-5 flex items-center justify-between gap-3 text-[12px] text-faint">
         <span>

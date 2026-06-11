@@ -35,7 +35,7 @@ There is no cloud/account dependency in the current product law or implementatio
 | ------------------------------------ | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Home                                 | Partial                            | Route exists with recent provider data, quick capture, product map status, and prototype vault truth.                                                                                                                                                                                                                                                                             |
 | Sidebar/navigation                   | Partial                            | Core nav, system tools, pinned pages, page tree, duplicate, trash, pin/unpin, hover "+" child page creation, and child picker exist.                                                                                                                                                                                                                                              |
-| Search                               | Partial                            | Local provider search indexes titles, summaries, tags, properties, metadata, and block text. No saved searches or native index.                                                                                                                                                                                                                                                   |
+| Search                               | Partial                            | Local provider search indexes titles, summaries, tags, properties, metadata, block text, and provider-backed saved search presets. No native index, OCR, extracted file text, or advanced compound conditions.                                                                                                                                                                    |
 | Databases/tables                     | Partial                            | Basic provider-backed table model, stateful column sorting, cell filters, row/column/cell editing, stats, and validation helpers exist. No formulas, rollups, or SQLite.                                                                                                                                                                                                          |
 | Documents                            | Partial                            | Metadata-only document records, typed helpers, route/list, detail metadata panel, templates, search, relation IDs, tests, and QA exist. No real file import, preview, OCR, thumbnails, or native document storage.                                                                                                                                                                |
 | Graph                                | Implemented browser interactive foundation | Provider graph helper, interactive node selection, graph filters/search, local neighborhood focus, drag-to-position visual nodes, explicit relations, wiki-link edges, metadata-derived edges, parent hierarchy edges, orphan summaries, and current-graph browser JSON export exist. No manual canvas boards, custom nodes/arrows, persistent layouts, clustering, image/native export, or AI graph. |
@@ -131,12 +131,12 @@ Each module below must be implemented through provider-backed data, tested helpe
 - Current status: partial.
 - Required data model: local search result model and query filters.
 - Required UI: query input, filters, result list, empty/error states.
-- Required persistence: no separate persistence until saved searches exist.
+- Required persistence: saved searches are provider-backed local items in the current browser prototype.
 - Required graph/search/template integration: every typed module metadata should be indexed.
 - Success criteria: module metadata is searchable with no remote requests.
 - Test criteria: search-index tests for each typed metadata surface.
 - Browser QA criteria: route loads and queries return expected local records.
-- Limitations: no saved searches or native extracted document index.
+- Limitations: no native extracted document index, OCR, binary file search, advanced compound conditions, or persistent native index.
 
 ### Databases/tables
 

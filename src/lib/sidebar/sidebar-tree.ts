@@ -13,6 +13,7 @@ export function buildSidebarTrees(items: MizaanItem[]): {
       item.category !== "templates" &&
       item.category !== "calendar" &&
       item.type !== "database-row" &&
+      item.metadata.sidebarHidden !== true &&
       !item.archivedAt &&
       !item.deletedAt,
   );
