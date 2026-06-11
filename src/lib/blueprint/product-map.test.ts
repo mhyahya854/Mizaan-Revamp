@@ -133,7 +133,9 @@ describe("productModules", () => {
     expect(tasks?.currentTruth).toContain("board UI");
     expect(tasks?.currentTruth).toContain("timeline UI");
     expect(tasks?.currentTruth).toContain("recurrence metadata");
+    expect(tasks?.currentTruth).toContain("reminder metadata");
     expect(tasks?.currentTruth).toContain("recurrence generation");
+    expect(tasks?.currentTruth).toContain("reminder alarms");
     expect(tasks?.currentTruth).toContain("future");
   });
 

@@ -22545,3 +22545,26 @@ Scope boundary:
 - This resolves only recurring task metadata and visible filtering/display/editing.
 - It does not implement recurrence generation, future task instance creation, reminders, native notifications, calendar scheduling automation, dependency scheduling, saved task views, full Gantt, SQLite, Tauri, native filesystem storage, or portable vault task storage.
 - The historical Recurring tasks [NOT IMPLEMENTED] queue item is now partially implemented for metadata only; recurrence generation remains future/blocked until scheduling and native/provider boundaries are designed.
+## 2026-06-11 - Task Reminder Metadata Slice
+
+Queue driver: continued from the Markdown queue items covering Reminders, Reminders/native notifications, and task reminder tests. Real alarms/native notifications require native scheduling and OS notification boundaries, so the safe vertical slice was to implement local task reminder metadata without claiming notification behavior.
+
+Implemented:
+- Added normalized task reminder metadata fields for date, time, and note.
+- Kept reminderEngine and nativeNotificationEngine explicitly false during task metadata normalization.
+- Added reminder labels, reminder metadata totals, task search coverage, a Reminders stat, a Reminder metadata preset, badges, and task-page/project-linked task metadata controls.
+- Updated product-map truth, PRD, blueprint, fallback log, and the active phase report to say reminder metadata exists while reminder alarms and native notifications remain future.
+
+Validation evidence:
+- Red-first task helper test failed before implementation because reminder metadata fields and labels did not exist.
+- Targeted task helper tests passed after implementation: 19/19.
+- Targeted product-map tests passed after implementation: 13/13.
+- npm run typecheck: passed.
+- npm run lint: passed after formatting touched files.
+- npm run build: passed.
+- npm run mizaan:browser-qa: passed all configured routes and captured docs/screenshots/20260611-221225-browser-qa-tasks.png.
+
+Current truth:
+- Task reminders are metadata only.
+- Mizaan does not schedule alarms, send native notifications, send push notifications, create calendar events, generate recurring task instances, manage dependency scheduling, run a full Gantt engine, or persist task reminders through SQLite/Tauri/native filesystem storage.
+- The historical Reminders queue item is now partially implemented for task metadata only; actual reminder alarms/native notifications remain future/blocked until native scheduling and provider boundaries exist.

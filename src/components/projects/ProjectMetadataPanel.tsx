@@ -313,6 +313,31 @@ export function TaskMetadataPanel({
           onChange={(value) => persist({ taskRecurrenceEndsOn: value })}
           type="date"
         />
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+          <TextField
+            label="Reminder date"
+            value={metadata.taskReminderDate}
+            onChange={(value) => persist({ taskReminderDate: value })}
+            type="date"
+          />
+          <TextField
+            label="Reminder time"
+            value={metadata.taskReminderTime}
+            onChange={(value) => persist({ taskReminderTime: value })}
+            type="time"
+          />
+        </div>
+        <label className="block">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-faint">
+            Reminder note
+          </span>
+          <textarea
+            value={metadata.taskReminderNote}
+            onChange={(event) => persist({ taskReminderNote: event.target.value })}
+            placeholder="Explain the intended reminder. No notification is scheduled."
+            className="mt-1 min-h-[54px] w-full resize-y rounded-sm border hairline bg-surface px-2 py-1.5 text-[12.5px] outline-none placeholder:text-faint"
+          />
+        </label>
         <label className="block">
           <span className="text-[11px] font-medium uppercase tracking-wider text-faint">
             Recurrence note
@@ -341,12 +366,14 @@ export function TaskMetadataPanel({
         <StateRow label="Priority" value={display.priorityLabel} />
         <StateRow label="Due" value={display.dueDate || "Not set"} />
         <StateRow label="Repeats" value={display.recurrenceLabel} />
+        <StateRow label="Reminder" value={display.reminderLabel} />
         <StateRow label="Overdue" value={summary.overdue ? "Yes" : "No"} />
       </div>
-      {summary.recurring && (
+      {(summary.recurring || summary.hasReminderMetadata) && (
         <div className="mt-3 rounded-sm border hairline bg-muted/25 px-2 py-2 text-[11.5px] leading-relaxed text-faint">
-          Recurrence is metadata only. Mizaan is not generating future tasks, reminders, native
-          notifications, or calendar events from this rule.
+          Recurrence and reminder fields are metadata only. Mizaan is not generating future tasks,
+          scheduling alarms, sending native notifications, or creating calendar events from these
+          fields.
         </div>
       )}
     </section>
@@ -435,6 +462,11 @@ function TaskInlineEditor({
             Repeats {display.recurrenceLabel}
           </span>
         )}
+        {summary.hasReminderMetadata && (
+          <span className="rounded-full border hairline bg-background px-2 py-0.5">
+            Reminder {display.reminderLabel}
+          </span>
+        )}
         {summary.overdue && (
           <span className="rounded-full border border-red-500/25 bg-red-500/10 px-2 py-0.5 text-red-700">
             Overdue
@@ -459,7 +491,7 @@ function TextField({
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  type?: "text" | "date";
+  type?: "text" | "date" | "time";
 }) {
   return (
     <label className="block">

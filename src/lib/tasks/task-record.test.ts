@@ -44,6 +44,9 @@ describe("task metadata helpers", () => {
       taskRecurrenceAnchorDate: "",
       taskRecurrenceEndsOn: "",
       taskRecurrenceNote: "",
+      taskReminderDate: "",
+      taskReminderTime: "",
+      taskReminderNote: "",
       recurrenceEngine: false,
       reminderEngine: false,
       nativeNotificationEngine: false,
@@ -108,6 +111,34 @@ describe("task metadata helpers", () => {
     expect(getTaskStateSummary(metadata)).toMatchObject({
       recurring: true,
       recurrenceLabel: "Monthly",
+    });
+  });
+
+  it(`normalizes reminder metadata without enabling reminders or native notifications`, async () => {
+    const metadata = normalizeTaskMetadata({
+      taskTitle: "Submit form",
+      taskReminderDate: "2026-06-10",
+      taskReminderTime: "09:30",
+      taskReminderNote: "  Check local files first.  ",
+      reminderEngine: true,
+      nativeNotificationEngine: true,
+    });
+
+    expect(metadata).toMatchObject({
+      taskReminderDate: "2026-06-10",
+      taskReminderTime: "09:30",
+      taskReminderNote: "Check local files first.",
+      reminderEngine: false,
+      nativeNotificationEngine: false,
+    });
+    expect(getTaskDisplayFields(metadata)).toMatchObject({
+      reminderLabel: "2026-06-10 09:30",
+      reminderDate: "2026-06-10",
+      reminderTime: "09:30",
+    });
+    expect(getTaskStateSummary(metadata)).toMatchObject({
+      hasReminderMetadata: true,
+      reminderLabel: "2026-06-10 09:30",
     });
   });
 
@@ -338,6 +369,7 @@ describe("task metadata helpers", () => {
           taskDueDate: "2026-06-01",
           taskProjectId: "project-1",
           taskRecurrence: "weekly",
+          taskReminderDate: "2026-05-31",
         },
       }),
       item({
@@ -370,6 +402,7 @@ describe("task metadata helpers", () => {
       overdueCount: 1,
       highPriorityCount: 1,
       recurringCount: 1,
+      reminderMetadataCount: 1,
       byStatus: {
         todo: 1,
         "in-progress": 1,

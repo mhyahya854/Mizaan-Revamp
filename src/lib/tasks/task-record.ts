@@ -38,6 +38,9 @@ export interface TaskMetadata extends Record<string, PropertyValue> {
   taskRecurrenceAnchorDate: string;
   taskRecurrenceEndsOn: string;
   taskRecurrenceNote: string;
+  taskReminderDate: string;
+  taskReminderTime: string;
+  taskReminderNote: string;
   recurrenceEngine: false;
   reminderEngine: false;
   nativeNotificationEngine: false;
@@ -63,6 +66,9 @@ export interface CreateTaskRecordOptions {
   recurrenceAnchorDate?: string;
   recurrenceEndsOn?: string;
   recurrenceNote?: string;
+  reminderDate?: string;
+  reminderTime?: string;
+  reminderNote?: string;
   tags?: string[];
   notes?: string;
 }
@@ -160,6 +166,9 @@ export function createDefaultTaskMetadata(input: Record<string, unknown> = {}): 
     taskRecurrenceAnchorDate: "",
     taskRecurrenceEndsOn: "",
     taskRecurrenceNote: "",
+    taskReminderDate: "",
+    taskReminderTime: "",
+    taskReminderNote: "",
     recurrenceEngine: false,
     reminderEngine: false,
     nativeNotificationEngine: false,
@@ -201,6 +210,9 @@ export function normalizeTaskMetadata(input: unknown): TaskMetadata {
     taskRecurrenceAnchorDate: normalizeDateString(source.taskRecurrenceAnchorDate),
     taskRecurrenceEndsOn: normalizeDateString(source.taskRecurrenceEndsOn),
     taskRecurrenceNote: normalizeString(source.taskRecurrenceNote),
+    taskReminderDate: normalizeDateString(source.taskReminderDate),
+    taskReminderTime: normalizeTimeString(source.taskReminderTime),
+    taskReminderNote: normalizeString(source.taskReminderNote),
     recurrenceEngine: false,
     reminderEngine: false,
     nativeNotificationEngine: false,
@@ -235,6 +247,9 @@ export function createTaskRecordInput(options: CreateTaskRecordOptions = {}): Cr
     taskRecurrenceAnchorDate: options.recurrenceAnchorDate ?? "",
     taskRecurrenceEndsOn: options.recurrenceEndsOn ?? "",
     taskRecurrenceNote: options.recurrenceNote ?? "",
+    taskReminderDate: options.reminderDate ?? "",
+    taskReminderTime: options.reminderTime ?? "",
+    taskReminderNote: options.reminderNote ?? "",
     notes: options.notes ?? "",
   });
 
@@ -253,6 +268,7 @@ export function createTaskRecordInput(options: CreateTaskRecordOptions = {}): Cr
       dueDate: metadata.taskDueDate,
       projectId: metadata.taskProjectId,
       recurrence: getTaskRecurrenceLabel(metadata.taskRecurrence),
+      reminder: getTaskReminderLabel(metadata),
     },
     attachedFiles: [],
     metadata,
@@ -317,6 +333,10 @@ export function getTaskDisplayFields(metadataInput: unknown) {
     recurrenceAnchorDate: metadata.taskRecurrenceAnchorDate,
     recurrenceEndsOn: metadata.taskRecurrenceEndsOn,
     recurrenceNote: metadata.taskRecurrenceNote,
+    reminderLabel: getTaskReminderLabel(metadata),
+    reminderDate: metadata.taskReminderDate,
+    reminderTime: metadata.taskReminderTime,
+    reminderNote: metadata.taskReminderNote,
     notes: metadata.notes,
     relationCount: getTaskGraphRelationTargets(metadata).length,
   };
@@ -331,6 +351,8 @@ export function getTaskStateSummary(metadataInput: unknown, today?: string) {
     overdue: isTaskOverdue(metadata, today),
     recurring: metadata.taskRecurrence !== "none",
     recurrenceLabel: getTaskRecurrenceLabel(metadata.taskRecurrence),
+    hasReminderMetadata: hasTaskReminderMetadata(metadata),
+    reminderLabel: getTaskReminderLabel(metadata),
     relationCount: getTaskGraphRelationTargets(metadata).length,
   };
 }
@@ -354,6 +376,7 @@ export function computeTaskTotals(
   let overdueCount = 0;
   let highPriorityCount = 0;
   let recurringCount = 0;
+  let reminderMetadataCount = 0;
 
   for (const item of items) {
     const metadata = normalizeTaskMetadataForItem(item);
@@ -367,6 +390,7 @@ export function computeTaskTotals(
       highPriorityCount += 1;
     }
     if (metadata.taskRecurrence !== "none") recurringCount += 1;
+    if (hasTaskReminderMetadata(metadata)) reminderMetadataCount += 1;
   }
 
   return {
@@ -378,6 +402,7 @@ export function computeTaskTotals(
     overdueCount,
     highPriorityCount,
     recurringCount,
+    reminderMetadataCount,
     byStatus,
   };
 }
@@ -499,6 +524,17 @@ export function getTaskRecurrenceLabel(recurrence: TaskRecurrence): string {
   return TASK_RECURRENCE_LABELS[recurrence];
 }
 
+function hasTaskReminderMetadata(metadata: TaskMetadata): boolean {
+  return Boolean(
+    metadata.taskReminderDate || metadata.taskReminderTime || metadata.taskReminderNote,
+  );
+}
+
+function getTaskReminderLabel(metadata: TaskMetadata): string {
+  if (!hasTaskReminderMetadata(metadata)) return "None";
+  return [metadata.taskReminderDate, metadata.taskReminderTime].filter(Boolean).join(" ") || "Note";
+}
+
 function normalizeEnum<const T extends readonly string[]>(
   value: unknown,
   allowed: T,
@@ -525,6 +561,12 @@ function normalizeDateString(value: unknown): string {
   const normalized = normalizeString(value);
   if (!normalized) return "";
   return /^\d{4}-\d{2}-\d{2}$/.test(normalized) ? normalized : "";
+}
+
+function normalizeTimeString(value: unknown): string {
+  const normalized = normalizeString(value);
+  if (!normalized) return "";
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(normalized) ? normalized : "";
 }
 
 function uniqueStrings(values: string[]): string[] {

@@ -98,6 +98,9 @@ function TasksPage() {
     priority?: TaskPriority;
     recurrence?: TaskRecurrence;
     recurrenceNote?: string;
+    reminderDate?: string;
+    reminderTime?: string;
+    reminderNote?: string;
   }) {
     const item = await provider.createItem({
       ...createTaskRecordInput(preset),
@@ -152,7 +155,7 @@ function TasksPage() {
           <p className="mt-1 max-w-2xl text-[13.5px] leading-relaxed text-soft">
             Tasks are provider-backed local items with typed status, priority, due dates, notes, and
             project links. Recurrence metadata can be recorded, but this route does not generate
-            repeating instances, reminders, native notifications, dependencies, or calendar
+            repeating instances, reminder alarms, native notifications, dependencies, or calendar
             scheduling.
           </p>
         </div>
@@ -165,12 +168,17 @@ function TasksPage() {
         </button>
       </header>
 
-      <section className="mt-6 grid gap-3 md:grid-cols-5">
+      <section className="mt-6 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
         <StatCard label="Records" value={String(totals.recordCount)} detail="real local items" />
         <StatCard label="Active" value={String(totals.activeCount)} detail="not done/archived" />
         <StatCard label="Overdue" value={String(totals.overdueCount)} detail="due date only" />
         <StatCard label="Linked" value={String(totals.linkedProjectCount)} detail="project ids" />
         <StatCard label="Repeating" value={String(totals.recurringCount)} detail="metadata only" />
+        <StatCard
+          label="Reminders"
+          value={String(totals.reminderMetadataCount)}
+          detail="metadata only"
+        />
       </section>
 
       <section className="mt-5 rounded-md border hairline bg-surface px-4 py-3">
@@ -182,8 +190,8 @@ function TasksPage() {
             <h2 className="text-[13px] font-semibold text-foreground">Current task truth</h2>
             <p className="mt-1 text-[12.5px] leading-relaxed text-soft">
               Task status, priority, recurrence metadata, and board/timeline views update or read
-              provider item metadata. Overdue counts and recurrence labels do not create reminders,
-              notifications, generated task instances, or calendar scheduling.
+              provider item metadata. Overdue counts, recurrence labels, and reminder metadata do
+              not create alarms, notifications, generated task instances, or calendar scheduling.
             </p>
           </div>
         </div>
@@ -222,6 +230,18 @@ function TasksPage() {
                 title: "Weekly Task - Untitled",
                 recurrence: "weekly",
                 recurrenceNote: "Weekly recurrence metadata only; no generated instances.",
+              })
+            }
+          />
+          <CreateButton
+            title="Reminder"
+            detail="Metadata only"
+            onClick={() =>
+              createTask({
+                title: "Reminder Task - Untitled",
+                reminderDate: new Date().toISOString().slice(0, 10),
+                reminderTime: "09:00",
+                reminderNote: "Reminder metadata only; no notification is scheduled.",
               })
             }
           />
@@ -319,6 +339,7 @@ function TasksPage() {
         <span className="text-faint">{taskRecords.length} visible</span>
         <span className="text-faint">{totals.unlinkedCount} unlinked</span>
         <span className="text-faint">{totals.recurringCount} recurring metadata</span>
+        <span className="text-faint">{totals.reminderMetadataCount} reminder metadata</span>
       </div>
 
       {viewMode === "board" ? (
@@ -536,6 +557,7 @@ function TaskBoardColumn({
 function TaskBoardCard({ item, project }: { item: MizaanItem; project?: MizaanItem }) {
   const metadata = normalizeTaskMetadataForItem(item);
   const display = getTaskDisplayFields(metadata);
+  const state = getTaskStateSummary(metadata);
 
   return (
     <article
@@ -568,6 +590,11 @@ function TaskBoardCard({ item, project }: { item: MizaanItem; project?: MizaanIt
         {metadata.taskRecurrence !== "none" && (
           <span className="rounded-full border hairline bg-background px-2 py-0.5">
             Repeats {display.recurrenceLabel}
+          </span>
+        )}
+        {state.hasReminderMetadata && (
+          <span className="rounded-full border hairline bg-background px-2 py-0.5">
+            Reminder {display.reminderLabel}
           </span>
         )}
         <span className="rounded-full border hairline bg-background px-2 py-0.5">
@@ -649,6 +676,7 @@ function TaskCard({
         <Meta label="Due" value={display.dueDate || "Not set"} />
         <Meta label="Start" value={display.startDate || "Not set"} />
         <Meta label="Repeats" value={display.recurrenceLabel} />
+        <Meta label="Reminder" value={display.reminderLabel} />
         <Meta label="Relations" value={String(display.relationCount)} />
       </dl>
 
@@ -659,7 +687,9 @@ function TaskCard({
             ? "This task is overdue by local date comparison only. No reminder or native notification is active."
             : state.recurring
               ? "Recurrence is metadata only. No future task instances, reminders, notifications, or calendar scheduling are active."
-              : "Metadata-only local task record; dependencies, reminders, recurrence engine, and notifications are not active."}
+              : state.hasReminderMetadata
+                ? "Reminder metadata is stored only. No alarm, native notification, or calendar event is scheduled."
+                : "Metadata-only local task record; dependencies, reminders, recurrence engine, and notifications are not active."}
         </span>
       </div>
     </article>
@@ -723,6 +753,9 @@ function searchableTaskText(item: MizaanItem, project?: MizaanItem) {
     metadata.taskRecurrenceAnchorDate,
     metadata.taskRecurrenceEndsOn,
     metadata.taskRecurrenceNote,
+    metadata.taskReminderDate,
+    metadata.taskReminderTime,
+    metadata.taskReminderNote,
     project?.title,
     metadata.notes,
     metadata.linkedPageIds.join(" "),

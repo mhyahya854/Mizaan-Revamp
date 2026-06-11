@@ -366,3 +366,31 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Task recurrence remains metadata only. Mizaan does not generate future task instances, schedule reminders, send native notifications, create calendar events, manage dependencies, run a full Gantt engine, or persist this through SQLite/Tauri/native filesystem storage.
+
+## Task Reminder Metadata Slice - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Added normalized task reminder metadata fields for reminder date, reminder time, and reminder note.
+- Kept reminder and native-notification engine flags explicitly false during task metadata normalization.
+- Added reminder labels and reminder-metadata counts in `src/lib/tasks/task-record.ts`.
+- Added a Reminders stat, a Reminder metadata preset, reminder badges/details, and reminder search coverage on `/tasks`.
+- Added reminder date/time/note controls and reminder truth copy to task page metadata panels and project-linked task cards.
+- Updated product-map truth and tests so Mizaan claims reminder metadata only, while reminder alarms and native notifications remain future.
+- Updated PRD, blueprint, and the active phase report documentation.
+
+### Validation Evidence
+
+- Red-first task helper test failed before implementation because reminder metadata fields and labels did not exist.
+- Targeted task helper tests passed after implementation: 19/19.
+- Targeted product-map tests passed after implementation: 13/13.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed after formatting touched files.
+- `npm run build`: passed.
+- `npm run mizaan:browser-qa`: passed all configured routes and captured the task screenshot at `docs/screenshots/20260611-221225-browser-qa-tasks.png`.
+
+### Limitations
+
+Task reminders remain metadata only. Mizaan does not schedule alarms, send native notifications, create push notifications, create calendar events, generate recurring instances, manage dependencies, run a full Gantt engine, or persist this through SQLite/Tauri/native filesystem storage.
