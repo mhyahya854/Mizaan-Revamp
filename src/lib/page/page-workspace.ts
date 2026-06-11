@@ -124,7 +124,7 @@ const SPACE_HREFS: Record<ItemCategory, string> = {
   notes: "/notes",
   documents: "/documents",
   projects: "/projects",
-  tasks: "/projects",
+  tasks: "/tasks",
   people: "/people",
   finance: "/finance",
   calendar: "/calendar",

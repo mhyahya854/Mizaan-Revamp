@@ -634,3 +634,11 @@ Future Codex prompts should follow this template:
 - **Not implemented:** Saved graph searches, advanced query syntax, graph clustering, manual canvas search, full-text block graph search, and native graph persistence remain future work.
 - **Validation:** Graph model targeted tests, typecheck, and lint pass after implementation.
 - **Full verification:** `npm run mizaan:verify:full` passed with 24 Vitest files / 244 tests, build, diff check, and full red scan; `npm run mizaan:browser-qa` passed with screenshots under `docs/screenshots/20260611-202147-browser-qa-*.png`.
+
+## Tasks Route Slice
+
+- **Current status:** Implemented a bounded browser-safe `/tasks` route.
+- **What works now:** Users can view provider-backed task records, search task metadata, filter by status and priority, create unlinked task records, and edit task status/priority inline.
+- **Implementation detail:** Route statistics use the pure `computeTaskTotals` helper with unit coverage; `/tasks` is now in the generated route tree and browser QA route list.
+- **Not implemented:** Task database engine, saved task views, dependency engine, recurrence, reminders, native notifications, calendar scheduling automation, mobile capture, SQLite, Tauri, native filesystem, and portable vault task storage remain future work.
+- **Validation:** Targeted task/product-map tests, typecheck, lint, build, browser QA, and `npm run mizaan:verify:full` pass after implementation.

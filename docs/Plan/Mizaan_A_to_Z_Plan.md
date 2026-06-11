@@ -22376,3 +22376,38 @@ The master queue listed Graph search as not implemented. The existing graph page
 - Validation: `npm run mizaan:verify:full` passed, including typecheck, lint, 24 Vitest files / 244 tests, build, diff check, and full red scan.
 - Browser QA: `npm run mizaan:browser-qa` passed all configured routes and captured `docs/screenshots/20260611-202147-browser-qa-*.png` plus `docs/logs/browser-qa-20260611-202147.md`.
 - Still future: saved graph searches, advanced syntax, block-level graph search, clustering, manual canvas search, graph export search, and native graph persistence.
+---
+
+## 2026-06-11 Autonomous Tasks Route Slice
+
+### Status
+
+PARTIAL IMPLEMENTED - browser/provider-backed `/tasks` route only.
+
+### Queue item addressed
+
+The master queue recorded Tasks as partial and explicitly noted there was no dedicated `/tasks` route. Native scheduling, recurrence, reminders, notifications, dependency graphs, mobile capture, SQLite, Tauri, and native filesystem storage remain future/blocked.
+
+### Implemented
+
+- Added a dedicated `/tasks` route for provider-backed task records.
+- Added task search plus status and priority filters.
+- Added real unlinked task creation shortcuts using existing task metadata helpers.
+- Added inline task status and priority edits that persist through the current provider.
+- Added `computeTaskTotals` with targeted unit coverage.
+- Updated product-map route truth, task space links, stale route-level task copy, top-bar labeling, generated route tree, and browser QA route coverage.
+
+### Validation
+
+- Red-first product-map test failed before implementation because Tasks had no `/tasks` route.
+- Red-first task helper test failed before implementation because `computeTaskTotals` did not exist.
+- Targeted tests passed after implementation: task helpers 15/15 and product-map 12/12.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+- `npm run build`: passed and emitted the `/tasks` route bundle.
+- `npm run mizaan:browser-qa`: passed all configured routes including `/tasks` and captured `docs/screenshots/20260611-204334-browser-qa-tasks.png`.
+- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 245 tests, build, diff check, and full red scan.
+
+### Honest remaining gaps
+
+Tasks remain browser/localStorage prototype records. Task database views, saved task views, dependency modeling, recurrence, reminders, native notifications, calendar scheduling automation, mobile capture, SQLite, Tauri, native filesystem storage, and portable vault task storage remain future work.

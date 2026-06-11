@@ -244,8 +244,8 @@ export function TaskMetadataPanel({
     <section className="rounded-md border hairline bg-background/70 p-3">
       <h3 className="text-[12.5px] font-semibold text-foreground">Task metadata</h3>
       <p className="mt-0.5 text-[11.5px] leading-relaxed text-faint">
-        Provider-backed task record. Route-level task lists remain future; tasks are managed inside
-        linked projects for this phase.
+        Provider-backed task record. The dedicated Tasks route lists task records; this panel keeps
+        project-linked task editing close to the project.
       </p>
 
       <div className="mt-3 space-y-2.5">

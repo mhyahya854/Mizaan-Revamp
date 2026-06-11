@@ -115,12 +115,13 @@ export const productModules: ProductModule[] = [
     label: "Tasks",
     category: "workspace",
     status: "partial",
+    route: "/tasks",
     summary: "Provider-backed task records linked to projects in the current local prototype.",
     currentTruth:
-      "Task metadata, provider-backed creation, project-linked editing, task page metadata, search metadata, graph edges, and templates exist. No dedicated task route, recurrence engine, reminders, native notifications, or calendar scheduling exists.",
+      "Task metadata, provider-backed creation, dedicated Tasks route/list UI, project-linked editing, task page metadata, search metadata, graph edges, and templates exist. The recurrence engine, reminders, native notifications, dependencies, and calendar scheduling are future.",
     futureReason:
-      "A dedicated task workspace should wait until project, people, finance, and calendar relations are stronger.",
-    nextPhase: "Route-level task workspace later.",
+      "Richer task workspace views should wait until project, people, finance, and calendar relations are stronger.",
+    nextPhase: "Task views and scheduling after relation targets mature.",
   },
   {
     id: "people",

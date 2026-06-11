@@ -13,6 +13,7 @@ import { Route as VaultRouteImport } from './routes/vault'
 import { Route as TrashRouteImport } from './routes/trash'
 import { Route as TrackersRouteImport } from './routes/trackers'
 import { Route as TemplatesRouteImport } from './routes/templates'
+import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as RepairRouteImport } from './routes/repair'
@@ -49,6 +50,11 @@ const TrackersRoute = TrackersRouteImport.update({
 const TemplatesRoute = TemplatesRouteImport.update({
   id: '/templates',
   path: '/templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TasksRoute = TasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/repair': typeof RepairRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/tasks': typeof TasksRoute
   '/templates': typeof TemplatesRoute
   '/trackers': typeof TrackersRoute
   '/trash': typeof TrashRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/repair': typeof RepairRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/tasks': typeof TasksRoute
   '/templates': typeof TemplatesRoute
   '/trackers': typeof TrackersRoute
   '/trash': typeof TrashRoute
@@ -199,6 +207,7 @@ export interface FileRoutesById {
   '/repair': typeof RepairRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/tasks': typeof TasksRoute
   '/templates': typeof TemplatesRoute
   '/trackers': typeof TrackersRoute
   '/trash': typeof TrashRoute
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/repair'
     | '/search'
     | '/settings'
+    | '/tasks'
     | '/templates'
     | '/trackers'
     | '/trash'
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/repair'
     | '/search'
     | '/settings'
+    | '/tasks'
     | '/templates'
     | '/trackers'
     | '/trash'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/repair'
     | '/search'
     | '/settings'
+    | '/tasks'
     | '/templates'
     | '/trackers'
     | '/trash'
@@ -294,6 +306,7 @@ export interface RootRouteChildren {
   RepairRoute: typeof RepairRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
+  TasksRoute: typeof TasksRoute
   TemplatesRoute: typeof TemplatesRoute
   TrackersRoute: typeof TrackersRoute
   TrashRoute: typeof TrashRoute
@@ -331,6 +344,13 @@ declare module '@tanstack/react-router' {
       path: '/templates'
       fullPath: '/templates'
       preLoaderRoute: typeof TemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tasks': {
+      id: '/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof TasksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -470,6 +490,7 @@ const rootRouteChildren: RootRouteChildren = {
   RepairRoute: RepairRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
+  TasksRoute: TasksRoute,
   TemplatesRoute: TemplatesRoute,
   TrackersRoute: TrackersRoute,
   TrashRoute: TrashRoute,

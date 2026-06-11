@@ -9,6 +9,7 @@ import {
 import {
   createDefaultTaskMetadata,
   createTaskRecordInput,
+  computeTaskTotals,
   getTaskDisplayFields,
   getTaskGraphRelationTargets,
   getTaskStateSummary,
@@ -274,6 +275,59 @@ describe("task metadata helpers", () => {
     expect(JSON.stringify(input.metadata)).toContain("blocked");
     expect(JSON.stringify(input.metadata)).toContain("medium");
     expect(JSON.stringify(input.metadata)).toContain("2026-06-30");
+  });
+
+  it(``, async () => {
+    const records = [
+      item({
+        id: "task-1",
+        title: "Linked overdue",
+        status: "Todo",
+        metadata: {
+          taskStatus: "todo",
+          taskPriority: "urgent",
+          taskDueDate: "2026-06-01",
+          taskProjectId: "project-1",
+        },
+      }),
+      item({
+        id: "task-2",
+        title: "In progress",
+        status: "In progress",
+        metadata: {
+          taskStatus: "in-progress",
+          taskPriority: "medium",
+          taskDueDate: "2026-06-10",
+        },
+      }),
+      item({
+        id: "task-3",
+        title: "Done",
+        status: "Done",
+        metadata: {
+          taskStatus: "done",
+          taskCompletedAt: "2026-06-02",
+        },
+      }),
+    ];
+
+    expect(computeTaskTotals(records, "2026-06-02")).toMatchObject({
+      recordCount: 3,
+      linkedProjectCount: 1,
+      unlinkedCount: 2,
+      activeCount: 2,
+      completedCount: 1,
+      overdueCount: 1,
+      highPriorityCount: 1,
+      byStatus: {
+        todo: 1,
+        "in-progress": 1,
+        waiting: 0,
+        blocked: 0,
+        done: 1,
+        archived: 0,
+      },
+    });
   });
 
   it(``, async () => {

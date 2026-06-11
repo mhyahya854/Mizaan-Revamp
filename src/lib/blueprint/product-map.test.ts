@@ -123,4 +123,14 @@ describe("productModules", () => {
     expect(goals?.currentTruth).toContain("cloud sync");
     expect(goals?.currentTruth).toContain("future");
   });
+
+  it(``, async () => {
+    const tasks = productModules.find((module) => module.id === "tasks");
+
+    expect(tasks?.status).toBe("partial");
+    expect(tasks?.route).toBe("/tasks");
+    expect(tasks?.currentTruth).toContain("dedicated Tasks route");
+    expect(tasks?.currentTruth).toContain("recurrence engine");
+    expect(tasks?.currentTruth).toContain("future");
+  });
 });

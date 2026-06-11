@@ -278,3 +278,31 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Graph search is a browser UI filter over graph node metadata only. Saved graph searches, advanced syntax, block-level graph search, clustering, manual canvas search, graph export search, and native graph persistence remain future work.
+
+## Tasks Route Slice - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Added a dedicated `/tasks` route for provider-backed local task records.
+- Added task search plus status and priority filters.
+- Added real unlinked task creation shortcuts using existing task metadata helpers.
+- Added inline status and priority edits that persist through the current provider.
+- Added `computeTaskTotals` for honest route statistics.
+- Updated product-map route truth, route breadcrumbs, task space links, stale task copy, generated route tree, and browser QA route coverage.
+
+### Validation Evidence
+
+- Red-first product-map test failed before implementation because Tasks had no `/tasks` route.
+- Red-first task helper test failed before implementation because `computeTaskTotals` did not exist.
+- Targeted tests passed after implementation: task helpers 15/15 and product-map 12/12.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+- `npm run build`: passed and emitted the `/tasks` route bundle.
+- `npm run mizaan:browser-qa`: passed all configured routes including `/tasks` and captured `docs/screenshots/20260611-204334-browser-qa-tasks.png`.
+- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 245 tests, build, diff check, and full red scan.
+
+### Limitations
+
+Tasks remain browser/localStorage prototype records. Task database views, dependencies, recurrence, reminders, native notifications, calendar scheduling automation, mobile capture, SQLite, Tauri, and native filesystem storage remain future work.

@@ -252,6 +252,50 @@ export function getTaskStateSummary(metadataInput: unknown, today?: string) {
   };
 }
 
+export function computeTaskTotals(
+  items: Array<Pick<MizaanItem, "title" | "status" | "tags" | "metadata" | "parentId">>,
+  today?: string,
+) {
+  const byStatus = TASK_STATUS_VALUES.reduce(
+    (counts, status) => {
+      counts[status] = 0;
+      return counts;
+    },
+    {} as Record<TaskStatus, number>,
+  );
+
+  let linkedProjectCount = 0;
+  let unlinkedCount = 0;
+  let activeCount = 0;
+  let completedCount = 0;
+  let overdueCount = 0;
+  let highPriorityCount = 0;
+
+  for (const item of items) {
+    const metadata = normalizeTaskMetadataForItem(item);
+    byStatus[metadata.taskStatus] += 1;
+    if (metadata.taskProjectId) linkedProjectCount += 1;
+    else unlinkedCount += 1;
+    if (metadata.taskStatus !== "done" && metadata.taskStatus !== "archived") activeCount += 1;
+    if (isTaskCompleted(metadata)) completedCount += 1;
+    if (isTaskOverdue(metadata, today)) overdueCount += 1;
+    if (metadata.taskPriority === "high" || metadata.taskPriority === "urgent") {
+      highPriorityCount += 1;
+    }
+  }
+
+  return {
+    recordCount: items.length,
+    linkedProjectCount,
+    unlinkedCount,
+    activeCount,
+    completedCount,
+    overdueCount,
+    highPriorityCount,
+    byStatus,
+  };
+}
+
 export function isTaskCompleted(metadataInput: unknown): boolean {
   const metadata = normalizeTaskMetadata(metadataInput);
   return metadata.taskStatus === "done" || Boolean(metadata.taskCompletedAt);
