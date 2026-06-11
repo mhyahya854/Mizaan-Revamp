@@ -63,6 +63,25 @@ export interface TaskGraphRelationTarget {
   label: string;
 }
 
+export type TaskTimelineBucket = "Scheduled" | "Overdue" | "Completed" | "Unscheduled";
+
+export interface TaskTimelineEntry<T> {
+  item: T;
+  title: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  startDate: string;
+  endDate: string;
+  dueDate: string;
+  completedAt: string;
+  projectId: string;
+  durationDays: number;
+  hasSchedule: boolean;
+  completed: boolean;
+  overdue: boolean;
+  bucket: TaskTimelineBucket;
+}
+
 const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
   todo: "Todo",
   "in-progress": "In progress",
@@ -315,6 +334,52 @@ export function groupTaskRecordsByStatus<
   return groups;
 }
 
+export function createTaskTimelineEntries<
+  T extends Pick<MizaanItem, "title" | "status" | "tags" | "metadata" | "parentId">,
+>(items: T[], today?: string): Array<TaskTimelineEntry<T>> {
+  return items
+    .map((item) => {
+      const metadata = normalizeTaskMetadataForItem(item);
+      const completed = isTaskCompleted(metadata);
+      const overdue = isTaskOverdue(metadata, today);
+      const startDate = metadata.taskStartDate || metadata.taskDueDate || metadata.taskCompletedAt;
+      const rawEndDate = metadata.taskDueDate || metadata.taskCompletedAt || metadata.taskStartDate;
+      const endDate = startDate && rawEndDate && rawEndDate < startDate ? startDate : rawEndDate;
+      const hasSchedule = Boolean(startDate || endDate);
+      const bucket: TaskTimelineBucket = completed
+        ? "Completed"
+        : overdue
+          ? "Overdue"
+          : hasSchedule
+            ? "Scheduled"
+            : "Unscheduled";
+
+      return {
+        item,
+        title: metadata.taskTitle,
+        status: metadata.taskStatus,
+        priority: metadata.taskPriority,
+        startDate,
+        endDate,
+        dueDate: metadata.taskDueDate,
+        completedAt: metadata.taskCompletedAt,
+        projectId: metadata.taskProjectId,
+        durationDays: startDate && endDate ? getInclusiveDateSpanDays(startDate, endDate) : 0,
+        hasSchedule,
+        completed,
+        overdue,
+        bucket,
+      };
+    })
+    .sort((a, b) => {
+      const aSort = a.startDate || a.endDate || "9999-12-31";
+      const bSort = b.startDate || b.endDate || "9999-12-31";
+      if (aSort !== bSort) return aSort.localeCompare(bSort);
+      if (a.endDate !== b.endDate) return a.endDate.localeCompare(b.endDate);
+      return a.title.localeCompare(b.title);
+    });
+}
+
 export function isTaskCompleted(metadataInput: unknown): boolean {
   const metadata = normalizeTaskMetadata(metadataInput);
   return metadata.taskStatus === "done" || Boolean(metadata.taskCompletedAt);
@@ -376,6 +441,13 @@ function normalizeString(value: unknown): string {
   if (typeof value === "string") return value.trim();
   if (typeof value === "number" || typeof value === "boolean") return String(value).trim();
   return "";
+}
+
+function getInclusiveDateSpanDays(startDate: string, endDate: string): number {
+  const start = Date.parse(`${startDate}T00:00:00.000Z`);
+  const end = Date.parse(`${endDate}T00:00:00.000Z`);
+  if (!Number.isFinite(start) || !Number.isFinite(end)) return 1;
+  return Math.max(1, Math.floor((end - start) / 86_400_000) + 1);
 }
 
 function normalizeDateString(value: unknown): string {

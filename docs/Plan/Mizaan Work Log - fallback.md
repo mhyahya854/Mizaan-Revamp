@@ -292,6 +292,7 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 - Added `computeTaskTotals` for honest route statistics.
 - Added `groupTaskRecordsByStatus` and a default board view that groups visible tasks by normalized status.
 - Added drag/drop task status changes between board columns through the existing provider update path.
+- Added `createTaskTimelineEntries` and a Timeline tab that displays existing local start, due, and completed dates.
 - Updated product-map route truth, route breadcrumbs, task space links, stale task copy, generated route tree, and browser QA route coverage.
 
 ### Validation Evidence
@@ -299,15 +300,17 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 - Red-first product-map test failed before implementation because Tasks had no `/tasks` route.
 - Red-first task helper test failed before implementation because `computeTaskTotals` did not exist.
 - Red-first board helper test failed before implementation because `groupTaskRecordsByStatus` did not exist.
+- Red-first timeline helper test failed before implementation because `createTaskTimelineEntries` did not exist.
 - Targeted tests passed after implementation: task helpers 15/15 and product-map 12/12.
 - Targeted task helper tests passed after the board slice: task helpers 16/16.
+- Targeted task helper tests passed after the timeline slice: task helpers 17/17.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed.
 - `npm run build`: passed and emitted the `/tasks` route bundle.
-- `npm run mizaan:browser-qa`: passed all configured routes including `/tasks` and captured the corrected board screenshot at `docs/screenshots/20260611-210723-browser-qa-tasks.png`.
-- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 268 tests, build, diff check, and full red scan.
+- `npm run mizaan:browser-qa`: passed all configured routes including `/tasks` and `/tasks?view=timeline`; captured corrected screenshots at `docs/screenshots/20260611-212858-browser-qa-tasks.png` and `docs/screenshots/20260611-212858-browser-qa-tasks-view-timeline.png`.
+- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 269 tests, build, diff check, and full red scan.
 - In-app Browser automation was attempted first but the `iab` backend was unavailable, so rendered QA used the repo browser QA script fallback.
 
 ### Limitations
 
-Tasks remain browser/localStorage prototype records. The board is a status grouping/status editor, not a saved task-view database. Task database views, dependencies, recurrence, reminders, native notifications, calendar scheduling automation, mobile capture, SQLite, Tauri, and native filesystem storage remain future work.
+Tasks remain browser/localStorage prototype records. The board is a status grouping/status editor, not a saved task-view database. The timeline reads existing task date metadata only; it is not a full Gantt engine, scheduling engine, recurrence engine, reminder system, native notification path, or calendar automation system. Task database views, dependencies, recurrence, reminders, native notifications, calendar scheduling automation, mobile capture, SQLite, Tauri, and native filesystem storage remain future work.

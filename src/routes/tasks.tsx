@@ -1,11 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AlertTriangle, FilePlus2, ListTodo, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { isProjectRecordItem } from "@/lib/projects/project-record";
 import {
   computeTaskTotals,
   createTaskRecordInput,
+  createTaskTimelineEntries,
   getTaskDisplayFields,
   getTaskPriorityLabel,
   getTaskStateSummary,
@@ -18,11 +19,17 @@ import {
   updateTaskMetadata,
   type TaskPriority,
   type TaskStatus,
+  type TaskTimelineEntry,
 } from "@/lib/tasks/task-record";
 import { useVaultProvider, useVaultSnapshot } from "@/lib/vault/use-vault";
 import type { MizaanItem } from "@/lib/vault/types";
 
+type TaskViewMode = "list" | "board" | "timeline";
+
 export const Route = createFileRoute("/tasks")({
+  validateSearch: (search: Record<string, unknown>): { view?: TaskViewMode } => ({
+    view: isTaskViewMode(search.view) ? search.view : undefined,
+  }),
   head: () => ({ meta: [{ title: "Tasks - Mizaan" }] }),
   component: TasksPage,
 });
@@ -31,10 +38,11 @@ function TasksPage() {
   const provider = useVaultProvider();
   const snapshot = useVaultSnapshot();
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "all">("all");
-  const [viewMode, setViewMode] = useState<"list" | "board">("board");
+  const [viewMode, setViewMode] = useState<TaskViewMode>(search.view ?? "board");
   const q = query.trim().toLowerCase();
   const tasksSpace = snapshot.items.find(
     (item) =>
@@ -71,6 +79,11 @@ function TasksPage() {
   );
   const totals = computeTaskTotals(allTaskRecords);
   const groupedTaskRecords = useMemo(() => groupTaskRecordsByStatus(taskRecords), [taskRecords]);
+  const timelineEntries = useMemo(() => createTaskTimelineEntries(taskRecords), [taskRecords]);
+
+  useEffect(() => {
+    setViewMode(search.view ?? "board");
+  }, [search.view]);
 
   async function createTask(preset: {
     title: string;
@@ -157,8 +170,9 @@ function TasksPage() {
           <div>
             <h2 className="text-[13px] font-semibold text-foreground">Current task truth</h2>
             <p className="mt-1 text-[12.5px] leading-relaxed text-soft">
-              Task status and priority edits update provider item metadata. Overdue counts are only
-              a date comparison over local task metadata, not a reminder or notification system.
+              Task status, priority, and board/timeline views update or read provider item metadata.
+              Overdue counts are only a date comparison over local task metadata, not a reminder or
+              notification system.
             </p>
           </div>
         </div>
@@ -255,6 +269,17 @@ function TasksPage() {
         >
           Board
         </button>
+        <button
+          onClick={() => setViewMode("timeline")}
+          aria-pressed={viewMode === "timeline"}
+          className={`-mb-[9px] rounded-sm border-b-2 px-2 py-1 pb-[9px] ${
+            viewMode === "timeline"
+              ? "border-foreground text-foreground"
+              : "border-transparent hover:text-foreground"
+          }`}
+        >
+          Timeline
+        </button>
         <span className="text-faint">Task records</span>
         <span className="text-faint">{taskRecords.length} visible</span>
         <span className="text-faint">{totals.unlinkedCount} unlinked</span>
@@ -272,6 +297,8 @@ function TasksPage() {
             />
           ))}
         </div>
+      ) : viewMode === "timeline" ? (
+        <TaskTimeline entries={timelineEntries} projectsById={projectsById} />
       ) : taskRecords.length > 0 ? (
         <div className="mt-5 grid gap-3 lg:grid-cols-2">
           {taskRecords.map((item) => (
@@ -301,6 +328,119 @@ function TasksPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function isTaskViewMode(value: unknown): value is TaskViewMode {
+  return value === "list" || value === "board" || value === "timeline";
+}
+
+function TaskTimeline({
+  entries,
+  projectsById,
+}: {
+  entries: Array<TaskTimelineEntry<MizaanItem>>;
+  projectsById: Map<string, MizaanItem>;
+}) {
+  const maxDuration = Math.max(1, ...entries.map((entry) => entry.durationDays || 1));
+
+  if (!entries.length) {
+    return (
+      <div className="mt-5 rounded-md border border-dashed hairline bg-surface px-5 py-8 text-center">
+        <h2 className="font-editorial text-[24px]">No task records match</h2>
+        <p className="mx-auto mt-2 max-w-xl text-[13px] leading-relaxed text-soft">
+          Create a provider-backed task record before the timeline can show local start, due, or
+          completed dates.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <section className="mt-5 rounded-md border hairline bg-surface p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b hairline pb-3">
+        <div>
+          <h2 className="text-[13px] font-semibold text-foreground">Timeline</h2>
+          <p className="mt-1 text-[12px] text-soft">
+            Uses existing start, due, and completed dates only.
+          </p>
+        </div>
+        <span className="rounded-full border hairline bg-background px-2.5 py-1 text-[11px] text-faint">
+          {entries.filter((entry) => entry.hasSchedule).length} dated
+        </span>
+      </div>
+      <div className="mt-4 space-y-3">
+        {entries.map((entry) => (
+          <TaskTimelineRow
+            key={entry.item.id}
+            entry={entry}
+            project={projectsById.get(entry.projectId)}
+            maxDuration={maxDuration}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TaskTimelineRow({
+  entry,
+  project,
+  maxDuration,
+}: {
+  entry: TaskTimelineEntry<MizaanItem>;
+  project?: MizaanItem;
+  maxDuration: number;
+}) {
+  const barWidth = entry.hasSchedule
+    ? `${Math.min(100, Math.max(18, (entry.durationDays / maxDuration) * 100))}%`
+    : "12%";
+  const bucketClass =
+    entry.bucket === "Overdue"
+      ? "bg-red-500/70"
+      : entry.bucket === "Completed"
+        ? "bg-emerald-500/70"
+        : entry.bucket === "Unscheduled"
+          ? "bg-muted"
+          : "bg-foreground/70";
+
+  return (
+    <article className="grid gap-3 rounded-md border hairline bg-background p-3 md:grid-cols-[220px_minmax(0,1fr)]">
+      <div className="min-w-0">
+        <Link
+          to="/page/$id"
+          params={{ id: entry.item.id }}
+          className="block truncate text-[13.5px] font-semibold hover:underline"
+        >
+          {entry.title}
+        </Link>
+        <div className="mt-2 flex flex-wrap gap-1.5 text-[10.5px] text-faint">
+          <span className="rounded-full border hairline bg-surface px-2 py-0.5">
+            {entry.bucket}
+          </span>
+          <span className="rounded-full border hairline bg-surface px-2 py-0.5">
+            {getTaskPriorityLabel(entry.priority)}
+          </span>
+          <span className="rounded-full border hairline bg-surface px-2 py-0.5">
+            {project?.title || "Unlinked"}
+          </span>
+        </div>
+      </div>
+      <div className="min-w-0">
+        <div className="flex items-center justify-between gap-2 text-[11px] text-faint">
+          <span>{entry.startDate || "No start"}</span>
+          <span>{entry.endDate || "No end"}</span>
+        </div>
+        <div className="mt-2 h-2 rounded-full bg-muted">
+          <div className={`h-full rounded-full ${bucketClass}`} style={{ width: barWidth }} />
+        </div>
+        <div className="mt-2 text-[11px] text-soft">
+          {entry.hasSchedule
+            ? `${entry.durationDays} day${entry.durationDays === 1 ? "" : "s"}`
+            : "Unscheduled"}
+        </div>
+      </div>
+    </article>
   );
 }
 

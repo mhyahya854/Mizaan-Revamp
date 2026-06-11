@@ -10,6 +10,7 @@ import {
   createDefaultTaskMetadata,
   createTaskRecordInput,
   computeTaskTotals,
+  createTaskTimelineEntries,
   groupTaskRecordsByStatus,
   getTaskDisplayFields,
   getTaskGraphRelationTargets,
@@ -347,6 +348,76 @@ describe("task metadata helpers", () => {
     expect(grouped.waiting.map((entry) => entry.id)).toEqual(["task-4"]);
     expect(grouped["in-progress"]).toEqual([]);
     expect(grouped.archived).toEqual([]);
+  });
+
+  it(`creates sorted task timeline entries from existing task dates`, async () => {
+    const records = [
+      item({
+        id: "task-1",
+        title: "Planned",
+        metadata: {
+          taskStatus: "in-progress",
+          taskPriority: "high",
+          taskStartDate: "2026-06-01",
+          taskDueDate: "2026-06-05",
+        },
+      }),
+      item({
+        id: "task-2",
+        title: "Due only",
+        metadata: {
+          taskStatus: "todo",
+          taskDueDate: "2026-05-30",
+        },
+      }),
+      item({
+        id: "task-3",
+        title: "Unscheduled",
+        metadata: {},
+      }),
+      item({
+        id: "task-4",
+        title: "Completed",
+        metadata: {
+          taskStatus: "done",
+          taskCompletedAt: "2026-06-03",
+        },
+      }),
+    ];
+
+    const entries = createTaskTimelineEntries(records, "2026-06-02");
+
+    expect(entries.map((entry) => entry.item.id)).toEqual(["task-2", "task-1", "task-4", "task-3"]);
+    expect(entries[0]).toMatchObject({
+      title: "Due only",
+      startDate: "2026-05-30",
+      endDate: "2026-05-30",
+      durationDays: 1,
+      overdue: true,
+      bucket: "Overdue",
+    });
+    expect(entries[1]).toMatchObject({
+      title: "Planned",
+      startDate: "2026-06-01",
+      endDate: "2026-06-05",
+      durationDays: 5,
+      overdue: false,
+      bucket: "Scheduled",
+    });
+    expect(entries[2]).toMatchObject({
+      title: "Completed",
+      startDate: "2026-06-03",
+      endDate: "2026-06-03",
+      completed: true,
+      bucket: "Completed",
+    });
+    expect(entries[3]).toMatchObject({
+      title: "Unscheduled",
+      startDate: "",
+      endDate: "",
+      hasSchedule: false,
+      bucket: "Unscheduled",
+    });
   });
 
   it(``, async () => {

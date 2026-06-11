@@ -26,6 +26,7 @@ $routes = @(
   '/people',
   '/projects',
   '/tasks',
+  '/tasks?view=timeline',
   '/trackers',
   '/goals',
   '/graph',

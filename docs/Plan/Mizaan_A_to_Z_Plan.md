@@ -22448,3 +22448,40 @@ Remaining future/blocked scope:
 - SQLite, Tauri, native filesystem, and portable vault task storage remain future.
 
 Append-only note: this section was appended after the existing master Markdown content and did not rewrite earlier sections.
+---
+
+## 2026-06-11 Autonomous Task Timeline Slice
+
+Status: [PARTIAL IMPLEMENTED] browser/provider-backed task timeline only.
+
+Queue driver: continued from the Markdown queue item covering Timeline/Gantt after the Kanban board slice. The safe vertical slice was to build a local timeline view over existing provider-backed task date metadata without claiming a full Gantt engine, saved task views, recurrence, reminders, notifications, calendar scheduling automation, SQLite, Tauri, or native filesystem support.
+
+Implemented:
+- Added `createTaskTimelineEntries` in `src/lib/tasks/task-record.ts`.
+- Added red-first unit coverage for date normalization, chronological sorting, overdue/completed handling, and unscheduled tasks in `src/lib/tasks/task-record.test.ts`.
+- Added a Timeline tab on `/tasks` that displays existing local start, due, and completed dates.
+- Added `/tasks?view=timeline` route search support so browser QA can capture the timeline view directly.
+- Added `/tasks?view=timeline` to `scripts/mizaan-browser-qa.ps1` route coverage.
+- Updated product-map truth and docs to say a bounded timeline UI exists while saved views, full Gantt, recurrence, reminders, native notifications, dependencies, and calendar scheduling remain future.
+
+Validation evidence:
+- Red-first timeline helper test failed before implementation because `createTaskTimelineEntries` did not exist.
+- Targeted tests passed after implementation: task helpers 17/17 and product-map 12/12.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+- `npm run build`: passed; existing bundle-size and upstream package unused-import warnings remain non-blocking.
+- `npm run mizaan:browser-qa`: passed all configured routes including `/tasks` and `/tasks?view=timeline`; corrected timeline screenshot: `docs/screenshots/20260611-212858-browser-qa-tasks-view-timeline.png`.
+- `npm run mizaan:verify:full`: passed with typecheck, lint, 24 Vitest files / 269 tests, build, diff check, and full red scan.
+
+Remaining future/blocked scope:
+- Full Gantt engine remains future.
+- Saved task views remain future.
+- Task database engine remains future.
+- Dependency engine remains future.
+- Recurrence engine remains future.
+- Reminder engine and native notifications remain future.
+- Calendar-linked scheduling automation remains future.
+- Mobile capture remains future.
+- SQLite, Tauri, native filesystem, and portable vault task storage remain future.
+
+Append-only note: this section was appended after the existing master Markdown content and did not rewrite earlier sections.
