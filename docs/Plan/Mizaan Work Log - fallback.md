@@ -421,3 +421,32 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Calendar links are metadata relation IDs only. Mizaan does not create calendar events from tasks, schedule task dates onto Calendar, send reminders/native notifications, run a dependency scheduler, or persist this through SQLite/Tauri/native filesystem storage.
+
+## Task Dependency Metadata Slice - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Added normalized dependency metadata arrays for `dependsOnTaskIds` and `blockingTaskIds`.
+- Added dependency display/state labels and `dependencyMetadataCount` to task totals.
+- Added task dependency and blocker graph edge types.
+- Added a Dependencies stat, dependency metadata counts, task-card metadata, and task-board badges on `/tasks`.
+- Added dependency ID editing to task page metadata panels and project-linked task cards.
+- Updated product-map truth and tests so Mizaan claims dependency metadata only, while dependency scheduling remains future.
+- Updated PRD, blueprint, and the active phase report documentation.
+
+### Validation Evidence
+
+- Red-first task helper test failed before implementation because dependency normalization, graph targets, display, and totals did not exist.
+- Targeted task helper tests passed after implementation: 21/21.
+- Targeted product-map tests passed after implementation: 13/13.
+- Targeted graph model tests passed after implementation: 39/39.
+- `npm run typecheck`: passed after adding the dependency edge types to the graph edge union.
+- `npm run lint`: passed after formatting touched files.
+- `npm run build`: passed.
+- `npm run mizaan:browser-qa`: passed all configured routes and captured the task screenshot at `docs/screenshots/20260611-224224-browser-qa-tasks.png`.
+
+### Limitations
+
+Task dependencies are metadata relation IDs only. Mizaan does not calculate blockers, enforce task order, schedule dependencies, generate Gantt chains, send reminders/native notifications, run a dependency engine, or persist this through SQLite/Tauri/native filesystem storage.

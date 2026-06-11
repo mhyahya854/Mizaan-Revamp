@@ -112,7 +112,7 @@ function TasksPage() {
       {
         type: "callout",
         content:
-          "This task is local metadata. Recurrence, reminders, dependencies, native notifications, and calendar scheduling are not implemented.",
+          "This task is local metadata. Recurrence, reminders, dependency scheduling, native notifications, and calendar scheduling are not implemented.",
       },
     ]);
     navigate({ to: "/page/$id", params: { id: item.id } });
@@ -155,8 +155,8 @@ function TasksPage() {
           <p className="mt-1 max-w-2xl text-[13.5px] leading-relaxed text-soft">
             Tasks are provider-backed local items with typed status, priority, due dates, notes, and
             project/calendar links. Recurrence and reminder metadata can be recorded, but this route
-            does not generate repeating instances, reminder alarms, native notifications,
-            dependencies, or calendar scheduling.
+            does not generate repeating instances, reminder alarms, native notifications, dependency
+            scheduling, or calendar scheduling.
           </p>
         </div>
         <button
@@ -168,7 +168,7 @@ function TasksPage() {
         </button>
       </header>
 
-      <section className="mt-6 grid gap-3 md:grid-cols-3 xl:grid-cols-7">
+      <section className="mt-6 grid gap-3 md:grid-cols-4 xl:grid-cols-8">
         <StatCard label="Records" value={String(totals.recordCount)} detail="real local items" />
         <StatCard label="Active" value={String(totals.activeCount)} detail="not done/archived" />
         <StatCard label="Overdue" value={String(totals.overdueCount)} detail="due date only" />
@@ -176,6 +176,11 @@ function TasksPage() {
         <StatCard
           label="Calendar links"
           value={String(totals.calendarLinkedCount)}
+          detail="metadata only"
+        />
+        <StatCard
+          label="Dependencies"
+          value={String(totals.dependencyMetadataCount)}
           detail="metadata only"
         />
         <StatCard label="Repeating" value={String(totals.recurringCount)} detail="metadata only" />
@@ -194,10 +199,11 @@ function TasksPage() {
           <div>
             <h2 className="text-[13px] font-semibold text-foreground">Current task truth</h2>
             <p className="mt-1 text-[12.5px] leading-relaxed text-soft">
-              Task status, priority, recurrence metadata, calendar link metadata, and board/timeline
-              views update or read provider item metadata. Overdue counts, recurrence labels,
-              reminder metadata, and calendar link IDs do not create alarms, notifications,
-              generated task instances, calendar events, or calendar scheduling.
+              Task status, priority, recurrence metadata, dependency metadata, calendar link
+              metadata, and board/timeline views update or read provider item metadata. Overdue
+              counts, recurrence labels, dependency links, reminder metadata, and calendar link IDs
+              do not create alarms, notifications, generated task instances, dependency schedules,
+              calendar events, or calendar scheduling.
             </p>
           </div>
         </div>
@@ -345,6 +351,7 @@ function TasksPage() {
         <span className="text-faint">{taskRecords.length} visible</span>
         <span className="text-faint">{totals.unlinkedCount} unlinked</span>
         <span className="text-faint">{totals.calendarLinkedCount} calendar-linked metadata</span>
+        <span className="text-faint">{totals.dependencyMetadataCount} dependency metadata</span>
         <span className="text-faint">{totals.recurringCount} recurring metadata</span>
         <span className="text-faint">{totals.reminderMetadataCount} reminder metadata</span>
       </div>
@@ -379,9 +386,9 @@ function TasksPage() {
         <div className="mt-5 rounded-md border border-dashed hairline bg-surface px-5 py-8 text-center">
           <h2 className="font-editorial text-[24px]">No task records match</h2>
           <p className="mx-auto mt-2 max-w-xl text-[13px] leading-relaxed text-soft">
-            Create a provider-backed task record now. Recurrence, reminders, dependencies, calendar
-            scheduling, native notifications, and mobile capture are intentionally not shown as
-            working controls in this phase.
+            Create a provider-backed task record now. Recurrence, reminders, dependency scheduling,
+            calendar scheduling, native notifications, and mobile capture are intentionally not
+            shown as working controls in this phase.
           </p>
           <button
             onClick={() => createTask({ title: "Task - Untitled", status: "todo" })}
@@ -609,6 +616,11 @@ function TaskBoardCard({ item, project }: { item: MizaanItem; project?: MizaanIt
             Calendar {display.calendarLinkLabel}
           </span>
         )}
+        {state.hasDependencyMetadata && (
+          <span className="rounded-full border hairline bg-background px-2 py-0.5">
+            Dependencies {display.dependencyLabel}
+          </span>
+        )}
         <span className="rounded-full border hairline bg-background px-2 py-0.5">
           {project?.title || "Unlinked"}
         </span>
@@ -690,6 +702,7 @@ function TaskCard({
         <Meta label="Repeats" value={display.recurrenceLabel} />
         <Meta label="Reminder" value={display.reminderLabel} />
         <Meta label="Calendar links" value={display.calendarLinkLabel} />
+        <Meta label="Dependencies" value={display.dependencyLabel} />
         <Meta label="Relations" value={String(display.relationCount)} />
       </dl>
 
@@ -704,7 +717,9 @@ function TaskCard({
                 ? "Reminder metadata is stored only. No alarm, native notification, or calendar event is scheduled."
                 : state.calendarLinked
                   ? "Calendar links are stored as relation IDs only. No calendar event is created or scheduled."
-                  : "Metadata-only local task record; dependencies, reminders, recurrence engine, and notifications are not active."}
+                  : state.hasDependencyMetadata
+                    ? "Dependency links are stored as relation IDs only. No blocker workflow or schedule is generated."
+                    : "Metadata-only local task record; dependency scheduling, reminders, recurrence engine, and notifications are not active."}
         </span>
       </div>
     </article>
@@ -778,6 +793,8 @@ function searchableTaskText(item: MizaanItem, project?: MizaanItem) {
     metadata.linkedPersonIds.join(" "),
     metadata.linkedFinanceIds.join(" "),
     metadata.linkedCalendarEventIds.join(" "),
+    metadata.dependsOnTaskIds.join(" "),
+    metadata.blockingTaskIds.join(" "),
   ]
     .filter(Boolean)
     .join(" ")

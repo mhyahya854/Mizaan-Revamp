@@ -161,6 +161,25 @@ describe("task metadata helpers", () => {
     });
   });
 
+  it(`summarizes task dependency metadata without enabling scheduling`, async () => {
+    const metadata = normalizeTaskMetadata({
+      taskTitle: "Publish report",
+      dependsOnTaskIds: ["task-1", "task-2", "task-1", "bad/id"],
+      blockingTaskIds: ["task-3"],
+    });
+
+    expect(metadata.dependsOnTaskIds).toEqual(["task-1", "task-2"]);
+    expect(metadata.blockingTaskIds).toEqual(["task-3"]);
+    expect(getTaskDisplayFields(metadata)).toMatchObject({
+      dependencyCount: 3,
+      dependencyLabel: "3 task links",
+    });
+    expect(getTaskStateSummary(metadata)).toMatchObject({
+      hasDependencyMetadata: true,
+      dependencyLabel: "3 task links",
+    });
+  });
+
   it(``, async () => {
     const metadata = normalizeTaskMetadata({
       taskTitle: "  Draft proposal  ",
@@ -218,6 +237,8 @@ describe("task metadata helpers", () => {
       linkedPersonIds: ["person-1"],
       linkedFinanceIds: ["finance-1", " finance-2 "],
       linkedCalendarEventIds: ["calendar-1", "bad/id"],
+      dependsOnTaskIds: ["task-2", "bad/id"],
+      blockingTaskIds: ["task-3"],
     });
 
     expect(metadata.taskProjectId).toBe("project-1");
@@ -226,6 +247,8 @@ describe("task metadata helpers", () => {
     expect(metadata.linkedPersonIds).toEqual(["person-1"]);
     expect(metadata.linkedFinanceIds).toEqual(["finance-1", "finance-2"]);
     expect(metadata.linkedCalendarEventIds).toEqual(["calendar-1"]);
+    expect(metadata.dependsOnTaskIds).toEqual(["task-2"]);
+    expect(metadata.blockingTaskIds).toEqual(["task-3"]);
   });
 
   it(``, async () => {
@@ -319,6 +342,8 @@ describe("task metadata helpers", () => {
       linkedPersonIds: ["person-1"],
       linkedFinanceIds: ["finance-1"],
       linkedCalendarEventIds: ["calendar-1"],
+      dependsOnTaskIds: ["task-2"],
+      blockingTaskIds: ["task-3"],
     });
 
     expect(getTaskGraphRelationTargets(metadata)).toEqual([
@@ -358,6 +383,18 @@ describe("task metadata helpers", () => {
         edgeType: "calendar-link",
         label: "Linked calendar event",
       },
+      {
+        targetId: "task-2",
+        sourceField: "dependsOnTaskIds",
+        edgeType: "task-dependency",
+        label: "Depends on task",
+      },
+      {
+        targetId: "task-3",
+        sourceField: "blockingTaskIds",
+        edgeType: "task-blocker",
+        label: "Blocks task",
+      },
     ]);
   });
 
@@ -390,6 +427,7 @@ describe("task metadata helpers", () => {
           taskRecurrence: "weekly",
           taskReminderDate: "2026-05-31",
           linkedCalendarEventIds: ["calendar-1"],
+          dependsOnTaskIds: ["task-2"],
         },
       }),
       item({
@@ -424,6 +462,7 @@ describe("task metadata helpers", () => {
       recurringCount: 1,
       reminderMetadataCount: 1,
       calendarLinkedCount: 1,
+      dependencyMetadataCount: 1,
       byStatus: {
         todo: 1,
         "in-progress": 1,

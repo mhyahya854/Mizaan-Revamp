@@ -22592,3 +22592,29 @@ Current truth:
 - Task calendar links are relation metadata only.
 - Mizaan does not create calendar events from tasks, schedule task dates onto Calendar, send reminders/native notifications, run dependency scheduling, run a full Gantt engine, or persist this through SQLite/Tauri/native filesystem storage.
 - The historical Calendar-linked tasks queue item is now partially implemented for task-to-calendar relation metadata only; scheduling automation remains future/blocked until calendar scheduling and native/provider boundaries are designed.
+## 2026-06-11 - Task Dependency Metadata Slice
+
+Queue driver: continued from the Markdown queue items covering task dependencies and dependency graphs. Real dependency scheduling, blocker workflows, and full Gantt behavior remain future, so the safe vertical slice was to store and display dependency relation metadata only.
+
+Implemented:
+- Added normalized task dependency metadata arrays for dependsOnTaskIds and blockingTaskIds.
+- Added dependency display/state labels and dependencyMetadataCount to task totals.
+- Added task dependency and blocker graph edge types.
+- Added a Dependencies stat, dependency metadata counts, task-card metadata, and task-board badges on the Tasks route.
+- Added dependency ID editing to task page metadata panels and project-linked task cards.
+- Updated product-map truth, PRD, blueprint, fallback log, and the active phase report to say dependency metadata exists while dependency scheduling remains future.
+
+Validation evidence:
+- Red-first task helper test failed before implementation because dependency normalization, graph targets, display, and totals did not exist.
+- Targeted task helper tests passed after implementation: 21/21.
+- Targeted product-map tests passed after implementation: 13/13.
+- Targeted graph model tests passed after implementation: 39/39.
+- npm run typecheck: passed after adding the dependency edge types to the graph edge union.
+- npm run lint: passed after formatting touched files.
+- npm run build: passed.
+- npm run mizaan:browser-qa: passed all configured routes and captured docs/screenshots/20260611-224224-browser-qa-tasks.png.
+
+Current truth:
+- Task dependencies are relation metadata only.
+- Mizaan does not calculate blockers, enforce task order, schedule dependencies, generate Gantt chains, send reminders/native notifications, run a dependency engine, or persist this through SQLite/Tauri/native filesystem storage.
+- The historical dependency graph queue item is now partially implemented for task-to-task relation metadata only; scheduling automation remains future/blocked until a real dependency model and provider boundaries are designed.

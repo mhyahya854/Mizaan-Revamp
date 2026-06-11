@@ -52,6 +52,8 @@ export interface TaskMetadata extends Record<string, PropertyValue> {
   linkedPersonIds: string[];
   linkedFinanceIds: string[];
   linkedCalendarEventIds: string[];
+  dependsOnTaskIds: string[];
+  blockingTaskIds: string[];
 }
 
 export interface CreateTaskRecordOptions {
@@ -81,14 +83,18 @@ export interface TaskGraphRelationTarget {
     | "linkedDocumentIds"
     | "linkedPersonIds"
     | "linkedFinanceIds"
-    | "linkedCalendarEventIds";
+    | "linkedCalendarEventIds"
+    | "dependsOnTaskIds"
+    | "blockingTaskIds";
   edgeType:
     | "project-link"
     | "page-link"
     | "document-link"
     | "person-link"
     | "finance-link"
-    | "calendar-link";
+    | "calendar-link"
+    | "task-dependency"
+    | "task-blocker";
   label: string;
 }
 
@@ -151,6 +157,8 @@ const TASK_GRAPH_RELATION_FIELDS: Array<{
     edgeType: "calendar-link",
     label: "Linked calendar event",
   },
+  { field: "dependsOnTaskIds", edgeType: "task-dependency", label: "Depends on task" },
+  { field: "blockingTaskIds", edgeType: "task-blocker", label: "Blocks task" },
 ];
 
 export function createDefaultTaskMetadata(input: Record<string, unknown> = {}): TaskMetadata {
@@ -180,6 +188,8 @@ export function createDefaultTaskMetadata(input: Record<string, unknown> = {}): 
     linkedPersonIds: [],
     linkedFinanceIds: [],
     linkedCalendarEventIds: [],
+    dependsOnTaskIds: [],
+    blockingTaskIds: [],
     ...input,
   });
 }
@@ -224,6 +234,8 @@ export function normalizeTaskMetadata(input: unknown): TaskMetadata {
     linkedPersonIds: normalizeTaskRelationIds(source.linkedPersonIds),
     linkedFinanceIds: normalizeTaskRelationIds(source.linkedFinanceIds),
     linkedCalendarEventIds: normalizeTaskRelationIds(source.linkedCalendarEventIds),
+    dependsOnTaskIds: normalizeTaskRelationIds(source.dependsOnTaskIds),
+    blockingTaskIds: normalizeTaskRelationIds(source.blockingTaskIds),
   };
 }
 
@@ -339,6 +351,8 @@ export function getTaskDisplayFields(metadataInput: unknown) {
     reminderNote: metadata.taskReminderNote,
     calendarLinkCount: metadata.linkedCalendarEventIds.length,
     calendarLinkLabel: getTaskCalendarLinkLabel(metadata),
+    dependencyCount: getTaskDependencyCount(metadata),
+    dependencyLabel: getTaskDependencyLabel(metadata),
     notes: metadata.notes,
     relationCount: getTaskGraphRelationTargets(metadata).length,
   };
@@ -357,6 +371,8 @@ export function getTaskStateSummary(metadataInput: unknown, today?: string) {
     reminderLabel: getTaskReminderLabel(metadata),
     calendarLinked: metadata.linkedCalendarEventIds.length > 0,
     calendarLinkLabel: getTaskCalendarLinkLabel(metadata),
+    hasDependencyMetadata: getTaskDependencyCount(metadata) > 0,
+    dependencyLabel: getTaskDependencyLabel(metadata),
     relationCount: getTaskGraphRelationTargets(metadata).length,
   };
 }
@@ -382,6 +398,7 @@ export function computeTaskTotals(
   let recurringCount = 0;
   let reminderMetadataCount = 0;
   let calendarLinkedCount = 0;
+  let dependencyMetadataCount = 0;
 
   for (const item of items) {
     const metadata = normalizeTaskMetadataForItem(item);
@@ -397,6 +414,7 @@ export function computeTaskTotals(
     if (metadata.taskRecurrence !== "none") recurringCount += 1;
     if (hasTaskReminderMetadata(metadata)) reminderMetadataCount += 1;
     if (metadata.linkedCalendarEventIds.length > 0) calendarLinkedCount += 1;
+    if (getTaskDependencyCount(metadata) > 0) dependencyMetadataCount += 1;
   }
 
   return {
@@ -410,6 +428,7 @@ export function computeTaskTotals(
     recurringCount,
     reminderMetadataCount,
     calendarLinkedCount,
+    dependencyMetadataCount,
     byStatus,
   };
 }
@@ -547,6 +566,17 @@ function getTaskCalendarLinkLabel(metadata: TaskMetadata): string {
   if (count === 0) return "None";
   if (count === 1) return "1 event link";
   return `${count} event links`;
+}
+
+function getTaskDependencyCount(metadata: TaskMetadata): number {
+  return metadata.dependsOnTaskIds.length + metadata.blockingTaskIds.length;
+}
+
+function getTaskDependencyLabel(metadata: TaskMetadata): string {
+  const count = getTaskDependencyCount(metadata);
+  if (count === 0) return "None";
+  if (count === 1) return "1 task link";
+  return `${count} task links`;
 }
 
 function normalizeEnum<const T extends readonly string[]>(

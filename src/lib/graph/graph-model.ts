@@ -73,6 +73,8 @@ export type GraphEdgeType =
   | "document-link"
   | "project-link"
   | "task-link"
+  | "task-dependency"
+  | "task-blocker"
   | "person-link"
   | "finance-link"
   | "calendar-link"

@@ -204,7 +204,7 @@ export function ProjectMetadataPanel({
         <span>
           The status board, bounded timeline, and recurrence metadata are implemented. Saved task
           views, full Gantt scheduling, recurrence generation, reminders, calendar scheduling,
-          native notifications, dependencies, and AI planning are not implemented in this
+          native notifications, dependency scheduling, and AI planning are not implemented in this
           foundation.
         </span>
       </div>
@@ -355,6 +355,18 @@ export function TaskMetadataPanel({
           onChange={(value) => persist({ linkedCalendarEventIds: parseRelationIds(value) })}
           placeholder="calendar-1, calendar-2"
         />
+        <TextField
+          label="Depends on task IDs"
+          value={metadata.dependsOnTaskIds.join(", ")}
+          onChange={(value) => persist({ dependsOnTaskIds: parseRelationIds(value) })}
+          placeholder="task-1, task-2"
+        />
+        <TextField
+          label="Blocks task IDs"
+          value={metadata.blockingTaskIds.join(", ")}
+          onChange={(value) => persist({ blockingTaskIds: parseRelationIds(value) })}
+          placeholder="task-3"
+        />
         <label className="block">
           <span className="text-[11px] font-medium uppercase tracking-wider text-faint">Notes</span>
           <textarea
@@ -374,13 +386,17 @@ export function TaskMetadataPanel({
         <StateRow label="Repeats" value={display.recurrenceLabel} />
         <StateRow label="Reminder" value={display.reminderLabel} />
         <StateRow label="Calendar links" value={display.calendarLinkLabel} />
+        <StateRow label="Dependencies" value={display.dependencyLabel} />
         <StateRow label="Overdue" value={summary.overdue ? "Yes" : "No"} />
       </div>
-      {(summary.recurring || summary.hasReminderMetadata || summary.calendarLinked) && (
+      {(summary.recurring ||
+        summary.hasReminderMetadata ||
+        summary.calendarLinked ||
+        summary.hasDependencyMetadata) && (
         <div className="mt-3 rounded-sm border hairline bg-muted/25 px-2 py-2 text-[11.5px] leading-relaxed text-faint">
-          Recurrence, reminder, and calendar-link fields are metadata only. Mizaan is not generating
-          future tasks, scheduling alarms, sending native notifications, or creating calendar events
-          from these fields.
+          Recurrence, reminder, dependency, and calendar-link fields are metadata only. Mizaan is
+          not generating future tasks, scheduling blockers, scheduling alarms, sending native
+          notifications, or creating calendar events from these fields.
         </div>
       )}
     </section>
@@ -477,6 +493,11 @@ function TaskInlineEditor({
         {summary.calendarLinked && (
           <span className="rounded-full border hairline bg-background px-2 py-0.5">
             Calendar {display.calendarLinkLabel}
+          </span>
+        )}
+        {summary.hasDependencyMetadata && (
+          <span className="rounded-full border hairline bg-background px-2 py-0.5">
+            Dependencies {display.dependencyLabel}
           </span>
         )}
         {summary.overdue && (
