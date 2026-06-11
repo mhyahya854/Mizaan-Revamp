@@ -119,7 +119,7 @@ export const productModules: ProductModule[] = [
     route: "/tasks",
     summary: "Provider-backed task records linked to projects in the current local prototype.",
     currentTruth:
-      "Task metadata, provider-backed creation, dedicated Tasks route/list, board UI, timeline UI, recurrence metadata, reminder metadata, project-linked editing, task page metadata, search metadata, graph edges, and templates exist. Saved task views, recurrence generation, reminder alarms, native notifications, dependencies, and calendar scheduling are future.",
+      "Task metadata, provider-backed creation, dedicated Tasks route/list, board UI, timeline UI, recurrence metadata, reminder metadata, calendar-link metadata, project-linked editing, task page metadata, search metadata, graph edges, and templates exist. Saved task views, recurrence generation, reminder alarms, native notifications, dependencies, and calendar scheduling are future.",
     futureReason:
       "Saved task views, recurrence generation, reminder alarms, and scheduling should wait until project, people, finance, and calendar relations are stronger.",
     nextPhase:

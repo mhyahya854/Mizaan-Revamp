@@ -337,6 +337,8 @@ export function getTaskDisplayFields(metadataInput: unknown) {
     reminderDate: metadata.taskReminderDate,
     reminderTime: metadata.taskReminderTime,
     reminderNote: metadata.taskReminderNote,
+    calendarLinkCount: metadata.linkedCalendarEventIds.length,
+    calendarLinkLabel: getTaskCalendarLinkLabel(metadata),
     notes: metadata.notes,
     relationCount: getTaskGraphRelationTargets(metadata).length,
   };
@@ -353,6 +355,8 @@ export function getTaskStateSummary(metadataInput: unknown, today?: string) {
     recurrenceLabel: getTaskRecurrenceLabel(metadata.taskRecurrence),
     hasReminderMetadata: hasTaskReminderMetadata(metadata),
     reminderLabel: getTaskReminderLabel(metadata),
+    calendarLinked: metadata.linkedCalendarEventIds.length > 0,
+    calendarLinkLabel: getTaskCalendarLinkLabel(metadata),
     relationCount: getTaskGraphRelationTargets(metadata).length,
   };
 }
@@ -377,6 +381,7 @@ export function computeTaskTotals(
   let highPriorityCount = 0;
   let recurringCount = 0;
   let reminderMetadataCount = 0;
+  let calendarLinkedCount = 0;
 
   for (const item of items) {
     const metadata = normalizeTaskMetadataForItem(item);
@@ -391,6 +396,7 @@ export function computeTaskTotals(
     }
     if (metadata.taskRecurrence !== "none") recurringCount += 1;
     if (hasTaskReminderMetadata(metadata)) reminderMetadataCount += 1;
+    if (metadata.linkedCalendarEventIds.length > 0) calendarLinkedCount += 1;
   }
 
   return {
@@ -403,6 +409,7 @@ export function computeTaskTotals(
     highPriorityCount,
     recurringCount,
     reminderMetadataCount,
+    calendarLinkedCount,
     byStatus,
   };
 }
@@ -533,6 +540,13 @@ function hasTaskReminderMetadata(metadata: TaskMetadata): boolean {
 function getTaskReminderLabel(metadata: TaskMetadata): string {
   if (!hasTaskReminderMetadata(metadata)) return "None";
   return [metadata.taskReminderDate, metadata.taskReminderTime].filter(Boolean).join(" ") || "Note";
+}
+
+function getTaskCalendarLinkLabel(metadata: TaskMetadata): string {
+  const count = metadata.linkedCalendarEventIds.length;
+  if (count === 0) return "None";
+  if (count === 1) return "1 event link";
+  return `${count} event links`;
 }
 
 function normalizeEnum<const T extends readonly string[]>(

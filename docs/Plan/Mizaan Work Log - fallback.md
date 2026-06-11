@@ -394,3 +394,30 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Task reminders remain metadata only. Mizaan does not schedule alarms, send native notifications, create push notifications, create calendar events, generate recurring instances, manage dependencies, run a full Gantt engine, or persist this through SQLite/Tauri/native filesystem storage.
+
+## Task Calendar-Link Metadata Slice - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Added task helper display/state fields for linked calendar event counts and labels.
+- Added `calendarLinkedCount` to task totals.
+- Added a Calendar links stat, visible calendar-link metadata counts, task-card metadata, and task-board badges on `/tasks`.
+- Added linked calendar event ID editing to task page metadata panels and project-linked task cards.
+- Updated product-map truth and tests so Mizaan claims task calendar-link metadata only, while calendar event creation and scheduling remain future.
+- Updated PRD, blueprint, and the active phase report documentation.
+
+### Validation Evidence
+
+- Red-first task helper test failed before implementation because calendar-link display and totals did not exist.
+- Targeted task helper tests passed after implementation: 20/20.
+- Targeted product-map tests passed after implementation: 13/13.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed after formatting touched files.
+- `npm run build`: passed.
+- `npm run mizaan:browser-qa`: passed all configured routes and captured the task screenshot at `docs/screenshots/20260611-222310-browser-qa-tasks.png`.
+
+### Limitations
+
+Calendar links are metadata relation IDs only. Mizaan does not create calendar events from tasks, schedule task dates onto Calendar, send reminders/native notifications, run a dependency scheduler, or persist this through SQLite/Tauri/native filesystem storage.

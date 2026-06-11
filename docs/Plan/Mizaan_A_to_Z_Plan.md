@@ -22568,3 +22568,27 @@ Current truth:
 - Task reminders are metadata only.
 - Mizaan does not schedule alarms, send native notifications, send push notifications, create calendar events, generate recurring task instances, manage dependency scheduling, run a full Gantt engine, or persist task reminders through SQLite/Tauri/native filesystem storage.
 - The historical Reminders queue item is now partially implemented for task metadata only; actual reminder alarms/native notifications remain future/blocked until native scheduling and provider boundaries exist.
+## 2026-06-11 - Task Calendar-Link Metadata Slice
+
+Queue driver: continued from the Markdown queue item covering Calendar-linked tasks and calendar scheduling. Calendar event creation and scheduling automation are still blocked/future, so the safe vertical slice was to expose existing task-to-calendar relation metadata without creating events or scheduling anything.
+
+Implemented:
+- Added task helper display/state fields for linked calendar event counts and labels.
+- Added calendarLinkedCount to task totals.
+- Added Calendar links stats, visible calendar-link metadata counts, task-card metadata, and task-board badges on the Tasks route.
+- Added linked calendar event ID editing to task page metadata panels and project-linked task cards.
+- Updated product-map truth, PRD, blueprint, fallback log, and the active phase report to say calendar-link metadata exists while calendar event creation and scheduling remain future.
+
+Validation evidence:
+- Red-first task helper test failed before implementation because calendar-link display and totals did not exist.
+- Targeted task helper tests passed after implementation: 20/20.
+- Targeted product-map tests passed after implementation: 13/13.
+- npm run typecheck: passed.
+- npm run lint: passed after formatting touched files.
+- npm run build: passed.
+- npm run mizaan:browser-qa: passed all configured routes and captured docs/screenshots/20260611-222310-browser-qa-tasks.png.
+
+Current truth:
+- Task calendar links are relation metadata only.
+- Mizaan does not create calendar events from tasks, schedule task dates onto Calendar, send reminders/native notifications, run dependency scheduling, run a full Gantt engine, or persist this through SQLite/Tauri/native filesystem storage.
+- The historical Calendar-linked tasks queue item is now partially implemented for task-to-calendar relation metadata only; scheduling automation remains future/blocked until calendar scheduling and native/provider boundaries are designed.

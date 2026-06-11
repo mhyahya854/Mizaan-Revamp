@@ -349,6 +349,12 @@ export function TaskMetadataPanel({
             className="mt-1 min-h-[54px] w-full resize-y rounded-sm border hairline bg-surface px-2 py-1.5 text-[12.5px] outline-none placeholder:text-faint"
           />
         </label>
+        <TextField
+          label="Linked calendar event IDs"
+          value={metadata.linkedCalendarEventIds.join(", ")}
+          onChange={(value) => persist({ linkedCalendarEventIds: parseRelationIds(value) })}
+          placeholder="calendar-1, calendar-2"
+        />
         <label className="block">
           <span className="text-[11px] font-medium uppercase tracking-wider text-faint">Notes</span>
           <textarea
@@ -367,13 +373,14 @@ export function TaskMetadataPanel({
         <StateRow label="Due" value={display.dueDate || "Not set"} />
         <StateRow label="Repeats" value={display.recurrenceLabel} />
         <StateRow label="Reminder" value={display.reminderLabel} />
+        <StateRow label="Calendar links" value={display.calendarLinkLabel} />
         <StateRow label="Overdue" value={summary.overdue ? "Yes" : "No"} />
       </div>
-      {(summary.recurring || summary.hasReminderMetadata) && (
+      {(summary.recurring || summary.hasReminderMetadata || summary.calendarLinked) && (
         <div className="mt-3 rounded-sm border hairline bg-muted/25 px-2 py-2 text-[11.5px] leading-relaxed text-faint">
-          Recurrence and reminder fields are metadata only. Mizaan is not generating future tasks,
-          scheduling alarms, sending native notifications, or creating calendar events from these
-          fields.
+          Recurrence, reminder, and calendar-link fields are metadata only. Mizaan is not generating
+          future tasks, scheduling alarms, sending native notifications, or creating calendar events
+          from these fields.
         </div>
       )}
     </section>
@@ -467,6 +474,11 @@ function TaskInlineEditor({
             Reminder {display.reminderLabel}
           </span>
         )}
+        {summary.calendarLinked && (
+          <span className="rounded-full border hairline bg-background px-2 py-0.5">
+            Calendar {display.calendarLinkLabel}
+          </span>
+        )}
         {summary.overdue && (
           <span className="rounded-full border border-red-500/25 bg-red-500/10 px-2 py-0.5 text-red-700">
             Overdue
@@ -505,6 +517,13 @@ function TextField({
       />
     </label>
   );
+}
+
+function parseRelationIds(value: string): string[] {
+  return value
+    .split(/[,\s]+/)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
 }
 
 function SelectField({

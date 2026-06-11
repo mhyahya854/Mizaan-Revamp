@@ -142,6 +142,25 @@ describe("task metadata helpers", () => {
     });
   });
 
+  it(`summarizes calendar link metadata without enabling calendar scheduling`, async () => {
+    const metadata = normalizeTaskMetadata({
+      taskTitle: "Prepare review",
+      linkedCalendarEventIds: ["calendar-1", "calendar-2", "calendar-1", "bad/id"],
+      calendarSchedulingEngine: true,
+    });
+
+    expect(metadata.linkedCalendarEventIds).toEqual(["calendar-1", "calendar-2"]);
+    expect(metadata.calendarSchedulingEngine).toBe(false);
+    expect(getTaskDisplayFields(metadata)).toMatchObject({
+      calendarLinkCount: 2,
+      calendarLinkLabel: "2 event links",
+    });
+    expect(getTaskStateSummary(metadata)).toMatchObject({
+      calendarLinked: true,
+      calendarLinkLabel: "2 event links",
+    });
+  });
+
   it(``, async () => {
     const metadata = normalizeTaskMetadata({
       taskTitle: "  Draft proposal  ",
@@ -370,6 +389,7 @@ describe("task metadata helpers", () => {
           taskProjectId: "project-1",
           taskRecurrence: "weekly",
           taskReminderDate: "2026-05-31",
+          linkedCalendarEventIds: ["calendar-1"],
         },
       }),
       item({
@@ -403,6 +423,7 @@ describe("task metadata helpers", () => {
       highPriorityCount: 1,
       recurringCount: 1,
       reminderMetadataCount: 1,
+      calendarLinkedCount: 1,
       byStatus: {
         todo: 1,
         "in-progress": 1,
