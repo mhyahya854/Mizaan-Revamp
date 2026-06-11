@@ -15,6 +15,17 @@ export const TASK_PRIORITY_VALUES = ["none", "low", "medium", "high", "urgent"] 
 
 export type TaskPriority = (typeof TASK_PRIORITY_VALUES)[number];
 
+export const TASK_RECURRENCE_VALUES = [
+  "none",
+  "daily",
+  "weekly",
+  "monthly",
+  "yearly",
+  "custom",
+] as const;
+
+export type TaskRecurrence = (typeof TASK_RECURRENCE_VALUES)[number];
+
 export interface TaskMetadata extends Record<string, PropertyValue> {
   taskTitle: string;
   taskStatus: TaskStatus;
@@ -23,6 +34,14 @@ export interface TaskMetadata extends Record<string, PropertyValue> {
   taskDueDate: string;
   taskCompletedAt: string;
   taskProjectId: string;
+  taskRecurrence: TaskRecurrence;
+  taskRecurrenceAnchorDate: string;
+  taskRecurrenceEndsOn: string;
+  taskRecurrenceNote: string;
+  recurrenceEngine: false;
+  reminderEngine: false;
+  nativeNotificationEngine: false;
+  calendarSchedulingEngine: false;
   category: "tasks";
   notes: string;
   linkedPageIds: string[];
@@ -40,6 +59,10 @@ export interface CreateTaskRecordOptions {
   dueDate?: string;
   completedAt?: string;
   projectId?: string;
+  recurrence?: TaskRecurrence | string;
+  recurrenceAnchorDate?: string;
+  recurrenceEndsOn?: string;
+  recurrenceNote?: string;
   tags?: string[];
   notes?: string;
 }
@@ -99,6 +122,15 @@ const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = {
   urgent: "Urgent",
 };
 
+const TASK_RECURRENCE_LABELS: Record<TaskRecurrence, string> = {
+  none: "None",
+  daily: "Daily",
+  weekly: "Weekly",
+  monthly: "Monthly",
+  yearly: "Yearly",
+  custom: "Custom",
+};
+
 const TASK_GRAPH_RELATION_FIELDS: Array<{
   field: Exclude<TaskGraphRelationTarget["sourceField"], "taskProjectId">;
   edgeType: TaskGraphRelationTarget["edgeType"];
@@ -124,6 +156,14 @@ export function createDefaultTaskMetadata(input: Record<string, unknown> = {}): 
     taskDueDate: "",
     taskCompletedAt: "",
     taskProjectId: "",
+    taskRecurrence: "none",
+    taskRecurrenceAnchorDate: "",
+    taskRecurrenceEndsOn: "",
+    taskRecurrenceNote: "",
+    recurrenceEngine: false,
+    reminderEngine: false,
+    nativeNotificationEngine: false,
+    calendarSchedulingEngine: false,
     category: "tasks",
     notes: "",
     linkedPageIds: [],
@@ -156,6 +196,15 @@ export function normalizeTaskMetadata(input: unknown): TaskMetadata {
     taskDueDate: normalizeDateString(source.taskDueDate),
     taskCompletedAt: normalizeDateString(source.taskCompletedAt),
     taskProjectId: normalizeTaskProjectId(source.taskProjectId),
+    taskRecurrence:
+      source.taskRecurrence === undefined ? "none" : normalizeTaskRecurrence(source.taskRecurrence),
+    taskRecurrenceAnchorDate: normalizeDateString(source.taskRecurrenceAnchorDate),
+    taskRecurrenceEndsOn: normalizeDateString(source.taskRecurrenceEndsOn),
+    taskRecurrenceNote: normalizeString(source.taskRecurrenceNote),
+    recurrenceEngine: false,
+    reminderEngine: false,
+    nativeNotificationEngine: false,
+    calendarSchedulingEngine: false,
     category: "tasks",
     notes: normalizeString(source.notes),
     linkedPageIds: normalizeTaskRelationIds(source.linkedPageIds),
@@ -182,6 +231,10 @@ export function createTaskRecordInput(options: CreateTaskRecordOptions = {}): Cr
     taskDueDate: options.dueDate ?? "",
     taskCompletedAt: options.completedAt ?? "",
     taskProjectId: options.projectId ?? "",
+    taskRecurrence: options.recurrence ?? "none",
+    taskRecurrenceAnchorDate: options.recurrenceAnchorDate ?? "",
+    taskRecurrenceEndsOn: options.recurrenceEndsOn ?? "",
+    taskRecurrenceNote: options.recurrenceNote ?? "",
     notes: options.notes ?? "",
   });
 
@@ -199,6 +252,7 @@ export function createTaskRecordInput(options: CreateTaskRecordOptions = {}): Cr
       priority: getTaskPriorityLabel(metadata.taskPriority),
       dueDate: metadata.taskDueDate,
       projectId: metadata.taskProjectId,
+      recurrence: getTaskRecurrenceLabel(metadata.taskRecurrence),
     },
     attachedFiles: [],
     metadata,
@@ -229,6 +283,10 @@ export function normalizeTaskPriority(value: unknown): TaskPriority {
   return normalizeEnum(value, TASK_PRIORITY_VALUES, "none");
 }
 
+export function normalizeTaskRecurrence(value: unknown): TaskRecurrence {
+  return normalizeEnum(value, TASK_RECURRENCE_VALUES, "none");
+}
+
 export function normalizeTaskProjectId(value: unknown): string {
   const normalized = normalizeString(value);
   return isValidItemId(normalized) ? normalized : "";
@@ -255,6 +313,10 @@ export function getTaskDisplayFields(metadataInput: unknown) {
     dueDate: metadata.taskDueDate,
     completedAt: metadata.taskCompletedAt,
     projectId: metadata.taskProjectId,
+    recurrenceLabel: getTaskRecurrenceLabel(metadata.taskRecurrence),
+    recurrenceAnchorDate: metadata.taskRecurrenceAnchorDate,
+    recurrenceEndsOn: metadata.taskRecurrenceEndsOn,
+    recurrenceNote: metadata.taskRecurrenceNote,
     notes: metadata.notes,
     relationCount: getTaskGraphRelationTargets(metadata).length,
   };
@@ -267,6 +329,8 @@ export function getTaskStateSummary(metadataInput: unknown, today?: string) {
     priorityLabel: getTaskPriorityLabel(metadata.taskPriority),
     completed: isTaskCompleted(metadata),
     overdue: isTaskOverdue(metadata, today),
+    recurring: metadata.taskRecurrence !== "none",
+    recurrenceLabel: getTaskRecurrenceLabel(metadata.taskRecurrence),
     relationCount: getTaskGraphRelationTargets(metadata).length,
   };
 }
@@ -289,6 +353,7 @@ export function computeTaskTotals(
   let completedCount = 0;
   let overdueCount = 0;
   let highPriorityCount = 0;
+  let recurringCount = 0;
 
   for (const item of items) {
     const metadata = normalizeTaskMetadataForItem(item);
@@ -301,6 +366,7 @@ export function computeTaskTotals(
     if (metadata.taskPriority === "high" || metadata.taskPriority === "urgent") {
       highPriorityCount += 1;
     }
+    if (metadata.taskRecurrence !== "none") recurringCount += 1;
   }
 
   return {
@@ -311,6 +377,7 @@ export function computeTaskTotals(
     completedCount,
     overdueCount,
     highPriorityCount,
+    recurringCount,
     byStatus,
   };
 }
@@ -426,6 +493,10 @@ export function getTaskStatusLabel(status: TaskStatus): string {
 
 export function getTaskPriorityLabel(priority: TaskPriority): string {
   return TASK_PRIORITY_LABELS[priority];
+}
+
+export function getTaskRecurrenceLabel(recurrence: TaskRecurrence): string {
+  return TASK_RECURRENCE_LABELS[recurrence];
 }
 
 function normalizeEnum<const T extends readonly string[]>(

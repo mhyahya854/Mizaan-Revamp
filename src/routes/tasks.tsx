@@ -9,15 +9,18 @@ import {
   createTaskTimelineEntries,
   getTaskDisplayFields,
   getTaskPriorityLabel,
+  getTaskRecurrenceLabel,
   getTaskStateSummary,
   getTaskStatusLabel,
   groupTaskRecordsByStatus,
   isTaskRecordItem,
   normalizeTaskMetadataForItem,
   TASK_PRIORITY_VALUES,
+  TASK_RECURRENCE_VALUES,
   TASK_STATUS_VALUES,
   updateTaskMetadata,
   type TaskPriority,
+  type TaskRecurrence,
   type TaskStatus,
   type TaskTimelineEntry,
 } from "@/lib/tasks/task-record";
@@ -42,6 +45,7 @@ function TasksPage() {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "all">("all");
+  const [recurrenceFilter, setRecurrenceFilter] = useState<TaskRecurrence | "all">("all");
   const [viewMode, setViewMode] = useState<TaskViewMode>(search.view ?? "board");
   const q = query.trim().toLowerCase();
   const tasksSpace = snapshot.items.find(
@@ -64,11 +68,14 @@ function TasksPage() {
           const metadata = normalizeTaskMetadataForItem(item);
           if (statusFilter !== "all" && metadata.taskStatus !== statusFilter) return false;
           if (priorityFilter !== "all" && metadata.taskPriority !== priorityFilter) return false;
+          if (recurrenceFilter !== "all" && metadata.taskRecurrence !== recurrenceFilter) {
+            return false;
+          }
           if (!q) return true;
           return searchableTaskText(item, projectsById.get(metadata.taskProjectId)).includes(q);
         })
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
-    [priorityFilter, projectsById, q, snapshot.items, statusFilter],
+    [priorityFilter, projectsById, q, recurrenceFilter, snapshot.items, statusFilter],
   );
   const allTaskRecords = useMemo(
     () =>
@@ -89,6 +96,8 @@ function TasksPage() {
     title: string;
     status?: TaskStatus;
     priority?: TaskPriority;
+    recurrence?: TaskRecurrence;
+    recurrenceNote?: string;
   }) {
     const item = await provider.createItem({
       ...createTaskRecordInput(preset),
@@ -142,8 +151,9 @@ function TasksPage() {
           <h1 className="mt-1 font-editorial text-[34px] tracking-normal">Tasks</h1>
           <p className="mt-1 max-w-2xl text-[13.5px] leading-relaxed text-soft">
             Tasks are provider-backed local items with typed status, priority, due dates, notes, and
-            project links. This route does not fake recurrence, reminders, dependencies, native
-            notifications, or calendar scheduling.
+            project links. Recurrence metadata can be recorded, but this route does not generate
+            repeating instances, reminders, native notifications, dependencies, or calendar
+            scheduling.
           </p>
         </div>
         <button
@@ -155,11 +165,12 @@ function TasksPage() {
         </button>
       </header>
 
-      <section className="mt-6 grid gap-3 md:grid-cols-4">
+      <section className="mt-6 grid gap-3 md:grid-cols-5">
         <StatCard label="Records" value={String(totals.recordCount)} detail="real local items" />
         <StatCard label="Active" value={String(totals.activeCount)} detail="not done/archived" />
         <StatCard label="Overdue" value={String(totals.overdueCount)} detail="due date only" />
         <StatCard label="Linked" value={String(totals.linkedProjectCount)} detail="project ids" />
+        <StatCard label="Repeating" value={String(totals.recurringCount)} detail="metadata only" />
       </section>
 
       <section className="mt-5 rounded-md border hairline bg-surface px-4 py-3">
@@ -170,9 +181,9 @@ function TasksPage() {
           <div>
             <h2 className="text-[13px] font-semibold text-foreground">Current task truth</h2>
             <p className="mt-1 text-[12.5px] leading-relaxed text-soft">
-              Task status, priority, and board/timeline views update or read provider item metadata.
-              Overdue counts are only a date comparison over local task metadata, not a reminder or
-              notification system.
+              Task status, priority, recurrence metadata, and board/timeline views update or read
+              provider item metadata. Overdue counts and recurrence labels do not create reminders,
+              notifications, generated task instances, or calendar scheduling.
             </p>
           </div>
         </div>
@@ -202,6 +213,17 @@ function TasksPage() {
             title="High priority"
             detail="No reminder implied"
             onClick={() => createTask({ title: "High-priority Task - Untitled", priority: "high" })}
+          />
+          <CreateButton
+            title="Weekly"
+            detail="Recurrence metadata"
+            onClick={() =>
+              createTask({
+                title: "Weekly Task - Untitled",
+                recurrence: "weekly",
+                recurrenceNote: "Weekly recurrence metadata only; no generated instances.",
+              })
+            }
           />
           <CreateButton
             title="Custom"
@@ -247,6 +269,19 @@ function TasksPage() {
             </option>
           ))}
         </select>
+        <select
+          value={recurrenceFilter}
+          onChange={(event) => setRecurrenceFilter(event.target.value as TaskRecurrence | "all")}
+          className="rounded-sm border hairline bg-surface px-2 py-1 text-[12.5px] outline-none"
+          aria-label="Filter by task recurrence"
+        >
+          <option value="all">All recurrence</option>
+          {TASK_RECURRENCE_VALUES.map((recurrence) => (
+            <option key={recurrence} value={recurrence}>
+              {getTaskRecurrenceLabel(recurrence)}
+            </option>
+          ))}
+        </select>
         <button
           onClick={() => setViewMode("list")}
           aria-pressed={viewMode === "list"}
@@ -283,6 +318,7 @@ function TasksPage() {
         <span className="text-faint">Task records</span>
         <span className="text-faint">{taskRecords.length} visible</span>
         <span className="text-faint">{totals.unlinkedCount} unlinked</span>
+        <span className="text-faint">{totals.recurringCount} recurring metadata</span>
       </div>
 
       {viewMode === "board" ? (
@@ -529,6 +565,11 @@ function TaskBoardCard({ item, project }: { item: MizaanItem; project?: MizaanIt
             Due {display.dueDate}
           </span>
         )}
+        {metadata.taskRecurrence !== "none" && (
+          <span className="rounded-full border hairline bg-background px-2 py-0.5">
+            Repeats {display.recurrenceLabel}
+          </span>
+        )}
         <span className="rounded-full border hairline bg-background px-2 py-0.5">
           {project?.title || "Unlinked"}
         </span>
@@ -607,6 +648,7 @@ function TaskCard({
         <Meta label="Project" value={project?.title || "Unlinked"} />
         <Meta label="Due" value={display.dueDate || "Not set"} />
         <Meta label="Start" value={display.startDate || "Not set"} />
+        <Meta label="Repeats" value={display.recurrenceLabel} />
         <Meta label="Relations" value={String(display.relationCount)} />
       </dl>
 
@@ -615,7 +657,9 @@ function TaskCard({
         <span>
           {state.overdue
             ? "This task is overdue by local date comparison only. No reminder or native notification is active."
-            : "Metadata-only local task record; recurrence, dependencies, reminders, and notifications are not active."}
+            : state.recurring
+              ? "Recurrence is metadata only. No future task instances, reminders, notifications, or calendar scheduling are active."
+              : "Metadata-only local task record; dependencies, reminders, recurrence engine, and notifications are not active."}
         </span>
       </div>
     </article>
@@ -675,6 +719,10 @@ function searchableTaskText(item: MizaanItem, project?: MizaanItem) {
     metadata.taskDueDate,
     metadata.taskCompletedAt,
     metadata.taskProjectId,
+    metadata.taskRecurrence,
+    metadata.taskRecurrenceAnchorDate,
+    metadata.taskRecurrenceEndsOn,
+    metadata.taskRecurrenceNote,
     project?.title,
     metadata.notes,
     metadata.linkedPageIds.join(" "),

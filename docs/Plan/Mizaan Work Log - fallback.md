@@ -340,3 +340,29 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Graph JSON export is a browser export of the current graph model only. It is not a native vault backup, portable folder mirror, image/PDF export, clustering export, semantic graph export, or AI embeddings export. Manual canvas nodes, standalone editable graph nodes, directed manual arrows, saved graph layouts, native graph-readable files, SQLite, Tauri, and native filesystem storage remain future work.
+
+## Task Recurrence Metadata Slice - 2026-06-11
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Added normalized task recurrence metadata fields for recurrence type, anchor date, end date, and note.
+- Added explicit false engine flags for recurrence generation, reminders, native notifications, and calendar scheduling.
+- Added recurrence labels and recurring-task counts in `src/lib/tasks/task-record.ts`.
+- Added recurrence-aware `/tasks` filtering, a Repeating stat, a Weekly metadata preset, task card badges, and task-page metadata controls.
+- Updated product-map truth, template copy, project/tasks route copy, PRD, blueprint, and the active phase report.
+
+### Validation Evidence
+
+- Red-first task helper test failed before implementation because recurrence helpers and fields did not exist.
+- Targeted task helper tests passed after implementation: 18/18.
+- Targeted product-map tests passed after implementation: 13/13.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed after formatting touched files.
+- `npm run build`: passed.
+- `npm run mizaan:browser-qa`: passed all configured routes and captured the task screenshot at `docs/screenshots/20260611-215939-browser-qa-tasks.png`.
+
+### Limitations
+
+Task recurrence remains metadata only. Mizaan does not generate future task instances, schedule reminders, send native notifications, create calendar events, manage dependencies, run a full Gantt engine, or persist this through SQLite/Tauri/native filesystem storage.

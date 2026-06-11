@@ -147,8 +147,8 @@ function ProjectsPage() {
           <h1 className="mt-1 font-editorial text-[34px] tracking-normal">Projects</h1>
           <p className="mt-1 max-w-2xl text-[13.5px] leading-relaxed text-soft">
             Projects are provider-backed Mizaan items in the current browser/localStorage prototype.
-            Tasks are real linked task records. Kanban, timelines, recurring tasks, reminders, and
-            native notifications remain future phases.
+            Tasks are real linked task records. Task board, timeline, and recurrence metadata exist;
+            saved task views, generated repeats, reminders, and native notifications remain future.
           </p>
         </div>
         <button

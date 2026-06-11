@@ -14,16 +14,19 @@ import {
 } from "@/lib/projects/project-record";
 import {
   TASK_PRIORITY_VALUES,
+  TASK_RECURRENCE_VALUES,
   TASK_STATUS_VALUES,
   createTaskRecordInput,
   getTaskDisplayFields,
   getTaskPriorityLabel,
+  getTaskRecurrenceLabel,
   getTaskStateSummary,
   getTaskStatusLabel,
   isTaskRecordItem,
   normalizeTaskMetadataForItem,
   updateTaskMetadata,
   type TaskPriority,
+  type TaskRecurrence,
   type TaskStatus,
 } from "@/lib/tasks/task-record";
 import type { MizaanItem, VaultProvider } from "@/lib/vault/types";
@@ -199,8 +202,10 @@ export function ProjectMetadataPanel({
       <div className="mt-3 flex gap-2 rounded-sm border hairline bg-muted/35 px-2 py-2 text-[11.5px] leading-relaxed text-soft">
         <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-faint" />
         <span>
-          Kanban boards, timeline/Gantt, recurring tasks, reminders, calendar scheduling, native
-          notifications, dependencies, and AI planning are not implemented in this foundation.
+          The status board, bounded timeline, and recurrence metadata are implemented. Saved task
+          views, full Gantt scheduling, recurrence generation, reminders, calendar scheduling,
+          native notifications, dependencies, and AI planning are not implemented in this
+          foundation.
         </span>
       </div>
     </section>
@@ -285,6 +290,40 @@ export function TaskMetadataPanel({
           onChange={(value) => persist({ taskDueDate: value })}
           type="date"
         />
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+          <SelectField
+            label="Recurrence"
+            value={metadata.taskRecurrence}
+            options={TASK_RECURRENCE_VALUES.map((value) => ({
+              value,
+              label: getTaskRecurrenceLabel(value),
+            }))}
+            onChange={(value) => persist({ taskRecurrence: value as TaskRecurrence })}
+          />
+          <TextField
+            label="Repeat anchor"
+            value={metadata.taskRecurrenceAnchorDate}
+            onChange={(value) => persist({ taskRecurrenceAnchorDate: value })}
+            type="date"
+          />
+        </div>
+        <TextField
+          label="Repeat ends"
+          value={metadata.taskRecurrenceEndsOn}
+          onChange={(value) => persist({ taskRecurrenceEndsOn: value })}
+          type="date"
+        />
+        <label className="block">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-faint">
+            Recurrence note
+          </span>
+          <textarea
+            value={metadata.taskRecurrenceNote}
+            onChange={(event) => persist({ taskRecurrenceNote: event.target.value })}
+            placeholder="Explain the intended repeat rule. No instances are generated."
+            className="mt-1 min-h-[54px] w-full resize-y rounded-sm border hairline bg-surface px-2 py-1.5 text-[12.5px] outline-none placeholder:text-faint"
+          />
+        </label>
         <label className="block">
           <span className="text-[11px] font-medium uppercase tracking-wider text-faint">Notes</span>
           <textarea
@@ -301,8 +340,15 @@ export function TaskMetadataPanel({
         <StateRow label="Status" value={display.statusLabel} />
         <StateRow label="Priority" value={display.priorityLabel} />
         <StateRow label="Due" value={display.dueDate || "Not set"} />
+        <StateRow label="Repeats" value={display.recurrenceLabel} />
         <StateRow label="Overdue" value={summary.overdue ? "Yes" : "No"} />
       </div>
+      {summary.recurring && (
+        <div className="mt-3 rounded-sm border hairline bg-muted/25 px-2 py-2 text-[11.5px] leading-relaxed text-faint">
+          Recurrence is metadata only. Mizaan is not generating future tasks, reminders, native
+          notifications, or calendar events from this rule.
+        </div>
+      )}
     </section>
   );
 }
@@ -384,6 +430,11 @@ function TaskInlineEditor({
         <span className="rounded-full border hairline bg-background px-2 py-0.5">
           {display.priorityLabel}
         </span>
+        {metadata.taskRecurrence !== "none" && (
+          <span className="rounded-full border hairline bg-background px-2 py-0.5">
+            Repeats {display.recurrenceLabel}
+          </span>
+        )}
         {summary.overdue && (
           <span className="rounded-full border border-red-500/25 bg-red-500/10 px-2 py-0.5 text-red-700">
             Overdue

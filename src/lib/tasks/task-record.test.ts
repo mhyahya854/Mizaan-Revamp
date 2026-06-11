@@ -14,6 +14,7 @@ import {
   groupTaskRecordsByStatus,
   getTaskDisplayFields,
   getTaskGraphRelationTargets,
+  getTaskRecurrenceLabel,
   getTaskStateSummary,
   isTaskCompleted,
   isTaskOverdue,
@@ -21,6 +22,7 @@ import {
   normalizeTaskMetadata,
   normalizeTaskPriority,
   normalizeTaskProjectId,
+  normalizeTaskRecurrence,
   normalizeTaskRelationIds,
   normalizeTaskStatus,
   updateTaskMetadata,
@@ -38,6 +40,14 @@ describe("task metadata helpers", () => {
       taskDueDate: "",
       taskCompletedAt: "",
       taskProjectId: "",
+      taskRecurrence: "none",
+      taskRecurrenceAnchorDate: "",
+      taskRecurrenceEndsOn: "",
+      taskRecurrenceNote: "",
+      recurrenceEngine: false,
+      reminderEngine: false,
+      nativeNotificationEngine: false,
+      calendarSchedulingEngine: false,
       category: "tasks",
       notes: "",
     });
@@ -62,6 +72,43 @@ describe("task metadata helpers", () => {
     expect(normalizeTaskStatus("IN-PROGRESS")).toBe("in-progress");
     expect(normalizeTaskPriority("critical")).toBe("none");
     expect(normalizeTaskPriority("URGENT")).toBe("urgent");
+    expect(normalizeTaskRecurrence("biweekly")).toBe("none");
+    expect(normalizeTaskRecurrence("WEEKLY")).toBe("weekly");
+    expect(getTaskRecurrenceLabel("weekly")).toBe("Weekly");
+  });
+
+  it(`normalizes recurrence metadata without enabling a recurrence engine`, async () => {
+    const metadata = normalizeTaskMetadata({
+      taskTitle: "Pay rent",
+      taskRecurrence: " monthly ",
+      taskRecurrenceAnchorDate: "2026-06-01",
+      taskRecurrenceEndsOn: "bad-date",
+      taskRecurrenceNote: "  First day of each month.  ",
+      recurrenceEngine: true,
+      reminderEngine: true,
+      nativeNotificationEngine: true,
+      calendarSchedulingEngine: true,
+    });
+
+    expect(metadata).toMatchObject({
+      taskRecurrence: "monthly",
+      taskRecurrenceAnchorDate: "2026-06-01",
+      taskRecurrenceEndsOn: "",
+      taskRecurrenceNote: "First day of each month.",
+      recurrenceEngine: false,
+      reminderEngine: false,
+      nativeNotificationEngine: false,
+      calendarSchedulingEngine: false,
+    });
+    expect(getTaskDisplayFields(metadata)).toMatchObject({
+      recurrenceLabel: "Monthly",
+      recurrenceAnchorDate: "2026-06-01",
+      recurrenceEndsOn: "",
+    });
+    expect(getTaskStateSummary(metadata)).toMatchObject({
+      recurring: true,
+      recurrenceLabel: "Monthly",
+    });
   });
 
   it(``, async () => {
@@ -290,6 +337,7 @@ describe("task metadata helpers", () => {
           taskPriority: "urgent",
           taskDueDate: "2026-06-01",
           taskProjectId: "project-1",
+          taskRecurrence: "weekly",
         },
       }),
       item({
@@ -321,6 +369,7 @@ describe("task metadata helpers", () => {
       completedCount: 1,
       overdueCount: 1,
       highPriorityCount: 1,
+      recurringCount: 1,
       byStatus: {
         todo: 1,
         "in-progress": 1,

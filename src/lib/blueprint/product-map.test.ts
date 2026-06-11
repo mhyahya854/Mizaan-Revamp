@@ -132,7 +132,8 @@ describe("productModules", () => {
     expect(tasks?.currentTruth).toContain("dedicated Tasks route");
     expect(tasks?.currentTruth).toContain("board UI");
     expect(tasks?.currentTruth).toContain("timeline UI");
-    expect(tasks?.currentTruth).toContain("recurrence engine");
+    expect(tasks?.currentTruth).toContain("recurrence metadata");
+    expect(tasks?.currentTruth).toContain("recurrence generation");
     expect(tasks?.currentTruth).toContain("future");
   });
 

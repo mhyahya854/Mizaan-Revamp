@@ -22515,3 +22515,33 @@ Scope boundary:
 - This resolves only browser JSON export for the current graph model.
 - It does not implement manual canvas export, standalone manual graph nodes, directed manual arrows, saved graph layouts, clustering export, image/PDF export, native graph-readable mirror files, embeddings, semantic graph export, local AI graph, Tauri, SQLite, or native filesystem storage.
 - The historical Graph clustering/export [NOT IMPLEMENTED] queue item remains future for clustering, image/native export, and manual graph export; browser JSON export is now implemented as the safe dependency-free sub-slice.
+---
+
+## Autonomous Implementation Append - Task Recurrence Metadata Slice - 2026-06-11
+
+### Feature: Recurring tasks metadata [PARTIAL IMPLEMENTED]
+
+Status: Implemented as a bounded browser/localStorage-safe metadata foundation.
+
+What changed:
+
+- Added normalized task recurrence metadata fields for recurrence type, anchor date, end date, and note.
+- Added explicit false engine flags for recurrence generation, reminders, native notifications, and calendar scheduling.
+- Added recurrence labels, recurring-task counts, recurrence-aware task filtering, a Repeating stat, a Weekly metadata preset, task badges, and task-page recurrence controls.
+- Updated product-map truth, template copy, project/tasks route copy, PRD, blueprint, fallback work log, and phase report.
+
+Validation completed before this append:
+
+- Red-first task helper test failed before implementation because recurrence helpers and fields did not exist.
+- Targeted task helper tests passed after implementation: 18/18.
+- Targeted product-map tests passed after implementation: 13/13.
+- npm run typecheck: passed.
+- npm run lint: passed after formatting touched files.
+- npm run build: passed.
+- npm run mizaan:browser-qa: passed all configured routes and captured docs/screenshots/20260611-215939-browser-qa-tasks.png.
+
+Scope boundary:
+
+- This resolves only recurring task metadata and visible filtering/display/editing.
+- It does not implement recurrence generation, future task instance creation, reminders, native notifications, calendar scheduling automation, dependency scheduling, saved task views, full Gantt, SQLite, Tauri, native filesystem storage, or portable vault task storage.
+- The historical Recurring tasks [NOT IMPLEMENTED] queue item is now partially implemented for metadata only; recurrence generation remains future/blocked until scheduling and native/provider boundaries are designed.

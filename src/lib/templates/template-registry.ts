@@ -163,11 +163,12 @@ const EXTRA_IMPLEMENTED_TEMPLATES: TemplateDefinition[] = [
       { type: "paragraph", content: "" },
       {
         type: "callout",
-        content: "This is a task record. Recurrence, reminders, and notifications are future work.",
+        content:
+          "This is a task record. Recurrence metadata is available; generated repeats, reminders, and notifications are future work.",
       },
     ],
     limitations: [
-      "No recurrence, reminders, native notifications, or dedicated task route is implemented.",
+      "No recurrence generation, reminders, native notifications, or task scheduling engine is implemented.",
     ],
   },
   {
