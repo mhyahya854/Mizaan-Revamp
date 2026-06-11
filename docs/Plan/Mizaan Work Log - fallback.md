@@ -290,19 +290,24 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 - Added real unlinked task creation shortcuts using existing task metadata helpers.
 - Added inline status and priority edits that persist through the current provider.
 - Added `computeTaskTotals` for honest route statistics.
+- Added `groupTaskRecordsByStatus` and a default board view that groups visible tasks by normalized status.
+- Added drag/drop task status changes between board columns through the existing provider update path.
 - Updated product-map route truth, route breadcrumbs, task space links, stale task copy, generated route tree, and browser QA route coverage.
 
 ### Validation Evidence
 
 - Red-first product-map test failed before implementation because Tasks had no `/tasks` route.
 - Red-first task helper test failed before implementation because `computeTaskTotals` did not exist.
+- Red-first board helper test failed before implementation because `groupTaskRecordsByStatus` did not exist.
 - Targeted tests passed after implementation: task helpers 15/15 and product-map 12/12.
+- Targeted task helper tests passed after the board slice: task helpers 16/16.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed.
 - `npm run build`: passed and emitted the `/tasks` route bundle.
-- `npm run mizaan:browser-qa`: passed all configured routes including `/tasks` and captured `docs/screenshots/20260611-204334-browser-qa-tasks.png`.
-- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 245 tests, build, diff check, and full red scan.
+- `npm run mizaan:browser-qa`: passed all configured routes including `/tasks` and captured the corrected board screenshot at `docs/screenshots/20260611-210723-browser-qa-tasks.png`.
+- `npm run mizaan:verify:full`: passed, including typecheck, lint, 24 Vitest files / 268 tests, build, diff check, and full red scan.
+- In-app Browser automation was attempted first but the `iab` backend was unavailable, so rendered QA used the repo browser QA script fallback.
 
 ### Limitations
 
-Tasks remain browser/localStorage prototype records. Task database views, dependencies, recurrence, reminders, native notifications, calendar scheduling automation, mobile capture, SQLite, Tauri, and native filesystem storage remain future work.
+Tasks remain browser/localStorage prototype records. The board is a status grouping/status editor, not a saved task-view database. Task database views, dependencies, recurrence, reminders, native notifications, calendar scheduling automation, mobile capture, SQLite, Tauri, and native filesystem storage remain future work.

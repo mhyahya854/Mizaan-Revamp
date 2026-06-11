@@ -296,6 +296,25 @@ export function computeTaskTotals(
   };
 }
 
+export function groupTaskRecordsByStatus<
+  T extends Pick<MizaanItem, "title" | "status" | "tags" | "metadata" | "parentId">,
+>(items: T[]): Record<TaskStatus, T[]> {
+  const groups = TASK_STATUS_VALUES.reduce(
+    (result, status) => {
+      result[status] = [];
+      return result;
+    },
+    {} as Record<TaskStatus, T[]>,
+  );
+
+  for (const item of items) {
+    const metadata = normalizeTaskMetadataForItem(item);
+    groups[metadata.taskStatus].push(item);
+  }
+
+  return groups;
+}
+
 export function isTaskCompleted(metadataInput: unknown): boolean {
   const metadata = normalizeTaskMetadata(metadataInput);
   return metadata.taskStatus === "done" || Boolean(metadata.taskCompletedAt);

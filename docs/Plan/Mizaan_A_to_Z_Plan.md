@@ -22411,3 +22411,40 @@ The master queue recorded Tasks as partial and explicitly noted there was no ded
 ### Honest remaining gaps
 
 Tasks remain browser/localStorage prototype records. Task database views, saved task views, dependency modeling, recurrence, reminders, native notifications, calendar scheduling automation, mobile capture, SQLite, Tauri, native filesystem storage, and portable vault task storage remain future work.
+---
+
+## 2026-06-11 Autonomous Task Board Slice
+
+Status: [PARTIAL IMPLEMENTED] browser/provider-backed task board only.
+
+Queue driver: continued from the Markdown queue item covering Kanban boards and task views. The safe vertical slice was to build a local task status board over existing provider-backed task records without claiming a full task database, saved views, recurrence, reminders, notifications, calendar scheduling, SQLite, Tauri, or native filesystem support.
+
+Implemented:
+- Added `groupTaskRecordsByStatus` in `src/lib/tasks/task-record.ts`.
+- Added red-first unit coverage for status grouping in `src/lib/tasks/task-record.test.ts`.
+- Changed `/tasks` to default to Board mode while preserving List mode.
+- Rendered board columns for Todo, In progress, Waiting, Blocked, and Done even when the current provider snapshot has zero task records.
+- Added drag/drop status changes between board columns through the existing provider item update path.
+- Updated product-map truth and docs to say route/list and board UI exist while saved task views and scheduling remain future.
+
+Validation evidence:
+- Red-first board helper test failed before implementation because `groupTaskRecordsByStatus` did not exist.
+- Targeted tests passed after implementation: task helpers 16/16 and product-map 12/12.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed after formatting touched TypeScript files.
+- `npm run build`: passed; existing bundle-size and upstream package unused-import warnings remain non-blocking.
+- In-app Browser automation was attempted first but the `iab` backend was unavailable, so rendered QA used the repo browser QA script fallback.
+- `npm run mizaan:browser-qa`: passed all configured routes including `/tasks`; corrected board screenshot: `docs/screenshots/20260611-210723-browser-qa-tasks.png`.
+- `npm run mizaan:verify:full`: passed with typecheck, lint, 24 Vitest files / 268 tests, build, diff check, and full red scan.
+
+Remaining future/blocked scope:
+- Saved task views remain future.
+- Task database engine remains future.
+- Dependency engine remains future.
+- Recurrence engine remains future.
+- Reminder engine and native notifications remain future.
+- Calendar-linked scheduling automation remains future.
+- Mobile capture remains future.
+- SQLite, Tauri, native filesystem, and portable vault task storage remain future.
+
+Append-only note: this section was appended after the existing master Markdown content and did not rewrite earlier sections.

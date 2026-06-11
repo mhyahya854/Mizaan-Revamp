@@ -130,6 +130,7 @@ describe("productModules", () => {
     expect(tasks?.status).toBe("partial");
     expect(tasks?.route).toBe("/tasks");
     expect(tasks?.currentTruth).toContain("dedicated Tasks route");
+    expect(tasks?.currentTruth).toContain("board UI");
     expect(tasks?.currentTruth).toContain("recurrence engine");
     expect(tasks?.currentTruth).toContain("future");
   });

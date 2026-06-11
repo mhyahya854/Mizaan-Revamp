@@ -10,6 +10,7 @@ import {
   getTaskPriorityLabel,
   getTaskStateSummary,
   getTaskStatusLabel,
+  groupTaskRecordsByStatus,
   isTaskRecordItem,
   normalizeTaskMetadataForItem,
   TASK_PRIORITY_VALUES,
@@ -33,6 +34,7 @@ function TasksPage() {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "all">("all");
+  const [viewMode, setViewMode] = useState<"list" | "board">("board");
   const q = query.trim().toLowerCase();
   const tasksSpace = snapshot.items.find(
     (item) =>
@@ -68,6 +70,7 @@ function TasksPage() {
     [snapshot.items],
   );
   const totals = computeTaskTotals(allTaskRecords);
+  const groupedTaskRecords = useMemo(() => groupTaskRecordsByStatus(taskRecords), [taskRecords]);
 
   async function createTask(preset: {
     title: string;
@@ -230,14 +233,46 @@ function TasksPage() {
             </option>
           ))}
         </select>
-        <span className="-mb-[9px] rounded-sm border-b-2 border-foreground px-2 py-1 pb-[9px] text-foreground">
-          Task records
-        </span>
+        <button
+          onClick={() => setViewMode("list")}
+          aria-pressed={viewMode === "list"}
+          className={`-mb-[9px] rounded-sm border-b-2 px-2 py-1 pb-[9px] ${
+            viewMode === "list"
+              ? "border-foreground text-foreground"
+              : "border-transparent hover:text-foreground"
+          }`}
+        >
+          List
+        </button>
+        <button
+          onClick={() => setViewMode("board")}
+          aria-pressed={viewMode === "board"}
+          className={`-mb-[9px] rounded-sm border-b-2 px-2 py-1 pb-[9px] ${
+            viewMode === "board"
+              ? "border-foreground text-foreground"
+              : "border-transparent hover:text-foreground"
+          }`}
+        >
+          Board
+        </button>
+        <span className="text-faint">Task records</span>
         <span className="text-faint">{taskRecords.length} visible</span>
         <span className="text-faint">{totals.unlinkedCount} unlinked</span>
       </div>
 
-      {taskRecords.length > 0 ? (
+      {viewMode === "board" ? (
+        <div className="mt-5 flex gap-4 overflow-x-auto pb-4 scrollbar-thin">
+          {TASK_STATUS_VALUES.filter((status) => status !== "archived").map((status) => (
+            <TaskBoardColumn
+              key={status}
+              status={status}
+              items={groupedTaskRecords[status]}
+              projectsById={projectsById}
+              onStatusChange={updateTaskStatus}
+            />
+          ))}
+        </div>
+      ) : taskRecords.length > 0 ? (
         <div className="mt-5 grid gap-3 lg:grid-cols-2">
           {taskRecords.map((item) => (
             <TaskCard
@@ -266,6 +301,99 @@ function TasksPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function TaskBoardColumn({
+  status,
+  items,
+  projectsById,
+  onStatusChange,
+}: {
+  status: TaskStatus;
+  items: MizaanItem[];
+  projectsById: Map<string, MizaanItem>;
+  onStatusChange: (item: MizaanItem, status: TaskStatus) => void | Promise<void>;
+}) {
+  return (
+    <section
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={(event) => {
+        const itemId = event.dataTransfer.getData("mizaan-task-id");
+        const item = items.find((entry) => entry.id === itemId);
+        if (item) return;
+        const serialized = event.dataTransfer.getData("mizaan-task-record");
+        if (!serialized) return;
+        try {
+          const parsed = JSON.parse(serialized) as MizaanItem;
+          void onStatusChange(parsed, status);
+        } catch {
+          // Ignore malformed drag payloads from outside this board.
+        }
+      }}
+      className="flex min-h-[460px] w-72 shrink-0 flex-col rounded-md border hairline bg-muted/15 p-3"
+    >
+      <div className="mb-3 flex items-center justify-between border-b hairline pb-2">
+        <h3 className="text-[13px] font-semibold text-foreground">{getTaskStatusLabel(status)}</h3>
+        <span className="rounded-full border hairline bg-background px-2 py-0.5 text-[10.5px] font-medium text-faint">
+          {items.length}
+        </span>
+      </div>
+      <div className="flex-1 space-y-2.5 overflow-y-auto">
+        {items.map((item) => (
+          <TaskBoardCard
+            key={item.id}
+            item={item}
+            project={projectsById.get(normalizeTaskMetadataForItem(item).taskProjectId)}
+          />
+        ))}
+        {!items.length && (
+          <div className="rounded-md border border-dashed hairline py-8 text-center text-[12px] text-faint">
+            Drop tasks here
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function TaskBoardCard({ item, project }: { item: MizaanItem; project?: MizaanItem }) {
+  const metadata = normalizeTaskMetadataForItem(item);
+  const display = getTaskDisplayFields(metadata);
+
+  return (
+    <article
+      draggable
+      onDragStart={(event) => {
+        event.dataTransfer.setData("mizaan-task-id", item.id);
+        event.dataTransfer.setData("mizaan-task-record", JSON.stringify(item));
+      }}
+      className="cursor-grab rounded-md border hairline bg-surface p-3 active:cursor-grabbing"
+    >
+      <Link
+        to="/page/$id"
+        params={{ id: item.id }}
+        className="block truncate text-[13.5px] font-semibold hover:underline"
+      >
+        {display.title}
+      </Link>
+      <p className="mt-1 line-clamp-2 text-[11.5px] leading-relaxed text-soft">
+        {metadata.notes || item.summary || "No notes"}
+      </p>
+      <div className="mt-3 flex flex-wrap gap-1.5 text-[10.5px] text-faint">
+        <span className="rounded-full border hairline bg-background px-2 py-0.5">
+          {display.priorityLabel}
+        </span>
+        {display.dueDate && (
+          <span className="rounded-full border hairline bg-background px-2 py-0.5">
+            Due {display.dueDate}
+          </span>
+        )}
+        <span className="rounded-full border hairline bg-background px-2 py-0.5">
+          {project?.title || "Unlinked"}
+        </span>
+      </div>
+    </article>
   );
 }
 

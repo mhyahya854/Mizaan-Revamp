@@ -10,6 +10,7 @@ import {
   createDefaultTaskMetadata,
   createTaskRecordInput,
   computeTaskTotals,
+  groupTaskRecordsByStatus,
   getTaskDisplayFields,
   getTaskGraphRelationTargets,
   getTaskStateSummary,
@@ -25,7 +26,7 @@ import {
 } from "./task-record";
 
 describe("task metadata helpers", () => {
-  it(``, async () => {
+  it(`creates default task metadata`, async () => {
     const metadata = createDefaultTaskMetadata();
 
     expect(metadata).toMatchObject({
@@ -328,6 +329,24 @@ describe("task metadata helpers", () => {
         archived: 0,
       },
     });
+  });
+
+  it(`groups task records by normalized task status for board views`, async () => {
+    const records = [
+      item({ id: "task-1", title: "Todo", metadata: { taskStatus: "todo" } }),
+      item({ id: "task-2", title: "Blocked", metadata: { taskStatus: "blocked" } }),
+      item({ id: "task-3", title: "Done", metadata: { taskStatus: "done" } }),
+      item({ id: "task-4", title: "Legacy", status: "Waiting", metadata: {} }),
+    ];
+
+    const grouped = groupTaskRecordsByStatus(records);
+
+    expect(grouped.todo.map((entry) => entry.id)).toEqual(["task-1"]);
+    expect(grouped.blocked.map((entry) => entry.id)).toEqual(["task-2"]);
+    expect(grouped.done.map((entry) => entry.id)).toEqual(["task-3"]);
+    expect(grouped.waiting.map((entry) => entry.id)).toEqual(["task-4"]);
+    expect(grouped["in-progress"]).toEqual([]);
+    expect(grouped.archived).toEqual([]);
   });
 
   it(``, async () => {
