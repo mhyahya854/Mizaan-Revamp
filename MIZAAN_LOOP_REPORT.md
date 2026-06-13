@@ -120,3 +120,95 @@ No real user vault was destructively tested. Functional break testing used unit 
 ## Next Recommended Step
 
 Run a dedicated dependency/security hardening pass for the Vite/esbuild advisories, then proceed to the next dependency-safe native storage phase: SQLite provider design/tests or native filesystem path-safety helpers without live migration.
+
+---
+
+## Continuation - Native Vault Boundary Slice
+
+Date/time: 2026-06-13 19:57:20 +08:00
+Starting commit: `a92c4d44cdfa09050e22f30cf4ec7ed261c9cb88`
+
+### Scope
+
+Continued from the remaining native storage risk. This slice does not migrate runtime data out of the browser/localStorage provider. It adds the first tested native filesystem boundary for portable vault folders and a small TypeScript Tauri client for later UI wiring.
+
+### Files Changed
+
+- `package.json`
+- `package-lock.json`
+- `src-tauri/src/lib.rs`
+- `src/lib/vault/native-vault-client.ts`
+- `src/lib/vault/native-vault-client.test.ts`
+- `MIZAAN_LOOP_REPORT.md`
+
+### Issues Found
+
+1. No native create/open vault command surface existed in the Tauri shell.
+   - Risk: the desktop shell could launch but still had no tested portable vault folder boundary.
+   - Fix: added `mizaan_create_vault` and `mizaan_open_vault` commands with conservative folder and metadata validation.
+
+2. Native vault creation needed non-destructive folder handling.
+   - Risk: creating a vault in an unrelated non-empty folder could overwrite or mix with user files if implemented loosely.
+   - Fix: creation refuses non-empty folders unless they already contain valid Mizaan metadata.
+
+3. Native open needed to distinguish source-of-truth metadata from repairable folder structure.
+   - Risk: missing derived/expected folders could be silently recreated during open.
+   - Fix: open validates `mizaan.vault.json` and reports missing expected folders as warnings without recreating them.
+
+4. TypeScript client validation initially threw synchronously for blank paths.
+   - Risk: UI callers would need separate sync/async error paths.
+   - Fix: client methods are async and reject through promises consistently.
+
+5. `npm run tauri:build` now consistently fails at installer bundling with `Access is denied. (os error 5)`.
+   - Evidence: `npx tauri build --no-bundle` passes and produces `src-tauri/target/release/mizaan.exe`; native smoke launch passes.
+   - Evidence: `npx tauri build --verbose` fails at `tauri_bundler::bundle` while patching `mizaan.exe` with bundle type information.
+   - Attempted fixes: cleared generated bundle/WiX directories, checked no Tauri/Rust/bundler processes were running, verified the release exe was not read-only, verified exclusive read/write open of the exe, retried MSI/default and NSIS bundling.
+   - Status: external Windows/Tauri bundler blocker remains. App release executable build is verified; installer bundle generation is not.
+
+### Commands Run And Results
+
+- `npx vitest run src/lib/vault/native-vault-client.test.ts`: failed before client existed, then passed with 2 tests.
+- `cargo test --manifest-path .\src-tauri\Cargo.toml`: failed before helpers existed, then passed with 6 tests.
+- `cargo fmt --manifest-path .\src-tauri\Cargo.toml`: passed.
+- `npx prettier --write src/lib/vault/native-vault-client.ts src/lib/vault/native-vault-client.test.ts`: passed.
+- `npm run typecheck`: passed after fixing generic invoke mock typing.
+- `npm run lint`: passed.
+- `npm test`: passed, 26 test files / 284 tests.
+- `npm run mizaan:verify:full`: passed, including typecheck, lint, tests, build, `git diff --check`, and red scan.
+- `npm run mizaan:browser-qa`: passed 16 route checks and screenshots at `docs/screenshots/20260613-194553-browser-qa-*.png`.
+- `npx tauri build --no-bundle`: passed; produced `src-tauri/target/release/mizaan.exe`.
+- Native smoke: `mizaan.exe` stayed alive after 5 seconds and was stopped.
+- `npm run tauri:build`: failed at installer bundling with `Access is denied. (os error 5)`.
+- `npx tauri build --bundles nsis`: failed at the same patching/bundling boundary.
+
+### Native Vault Behavior Verified
+
+- Create vault in a new nested path with spaces.
+- Create expected portable structure: `mizaan.vault.json`, `items`, `files`, `backups`, `exports`, `.mizaan`.
+- Refuse unrelated non-empty folders without modifying existing files.
+- Open valid Mizaan metadata.
+- Reject folders missing `mizaan.vault.json`.
+- Reject wrong-app/wrong-schema metadata.
+- Report missing expected folders without recreating them during open.
+- Map TypeScript client calls to `mizaan_create_vault` and `mizaan_open_vault`.
+- Reject blank paths before native invocation.
+
+### Local-First And Data-Safety Confirmation
+
+- No cloud, auth, sync, external account, telemetry, or backend dependency was added.
+- No destructive delete or migration of real user vaults was added.
+- Native create/open commands only operate on an explicit caller-provided path.
+- Metadata is written with `create_new` semantics to avoid silent overwrite.
+- Existing unrelated files in non-empty folders are preserved and cause creation to fail.
+
+### Remaining Risks And Deferred Work
+
+- Browser/localStorage remains the active app provider; native commands are not yet wired into the `/vault` UI lifecycle.
+- No native folder picker is implemented.
+- No lock file, SQLite storage, backup restore, markdown mirrors, repair workflow, or migration path is implemented.
+- Installer bundle generation is blocked by Windows/Tauri `Access is denied` during bundle resource patching, although no-bundle release exe build and smoke launch pass.
+- The known Vite/esbuild `npm audit` high-severity advisory remains deferred because automatic remediation is a breaking upgrade.
+
+### Next Recommended Step
+
+Resolve the Tauri Windows bundler access-denied failure or temporarily split app executable build from installer packaging in CI. After that, wire the native vault client into a guarded `/vault` create/open flow with explicit user confirmation and no migration from browser/localStorage until import/export parity is proven.
