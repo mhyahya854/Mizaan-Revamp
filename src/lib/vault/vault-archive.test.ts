@@ -480,6 +480,43 @@ describe("vault archive helpers", () => {
   });
 
   it(``, async () => {
+    const archive = createVaultArchive(
+      snapshot({
+        items: [item("note-1")],
+        blocks: [block("block-1", "note-1"), block("block-1", "note-1")],
+        relations: [],
+      }),
+      { createdAt: now },
+    );
+    const validation = validateVaultArchive(archive);
+
+    expect(validation.valid).toBe(false);
+    expect(validation.errors.map((error) => error.code)).toContain("duplicate-block-id");
+  });
+
+  it(``, async () => {
+    const archive = createVaultArchive(
+      snapshot({
+        items: [item("note-1")],
+        blocks: [block("", "note-1"), block("block-orphan", "missing-item")],
+        relations: [
+          relation({ id: "rel-empty-target", sourceId: "note-1", targetId: "" }),
+          relation({ id: "rel-missing-source", sourceId: "missing-item", targetId: "note-1" }),
+        ],
+      }),
+      { createdAt: now },
+    );
+    const validation = validateVaultArchive(archive);
+    const codes = validation.errors.map((error) => error.code);
+
+    expect(validation.valid).toBe(false);
+    expect(codes).toContain("invalid-block-id");
+    expect(codes).toContain("orphan-block");
+    expect(codes).toContain("invalid-relation-target");
+    expect(codes).toContain("orphan-relation");
+  });
+
+  it(``, async () => {
     const current = snapshot({ items: [item("keep-1")] });
     const before = JSON.stringify(current);
     const corrupt = rejectCorruptArchive({ appName: "Mizaan", archiveVersion: 1 });
@@ -602,6 +639,8 @@ describe("vault archive helpers", () => {
           }),
         }),
       ],
+      blocks: [],
+      relations: [],
     });
 
     const archive = createVaultArchive(source, { createdAt: now });

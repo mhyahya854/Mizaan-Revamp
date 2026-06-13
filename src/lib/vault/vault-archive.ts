@@ -268,6 +268,17 @@ export function validateVaultArchive(
     warnings.push("Archive contains an empty item set.");
   }
 
+  const itemIds = new Set(normalized.items.map((item) => item.id));
+  const blockValidation = validateArchiveBlocks(
+    Array.isArray(value.blocks) ? value.blocks : [],
+    itemIds,
+  );
+  const relationValidation = validateArchiveRelations(
+    Array.isArray(value.relations) ? value.relations : [],
+    itemIds,
+  );
+  errors.push(...blockValidation.errors, ...relationValidation.errors);
+
   const archive: VaultArchive | undefined =
     errors.length === 0
       ? {
@@ -312,6 +323,123 @@ export function validateVaultArchive(
     errors,
     warnings,
   };
+}
+
+function validateArchiveBlocks(
+  value: unknown[],
+  itemIds: Set<string>,
+): { errors: ArchiveValidationError[] } {
+  const errors: ArchiveValidationError[] = [];
+  const ids = new Set<string>();
+
+  value.forEach((candidate, index) => {
+    if (!isRecord(candidate)) {
+      errors.push({
+        code: "corrupt-block",
+        message: "Archive block must be an object.",
+        path: `blocks.${index}`,
+      });
+      return;
+    }
+
+    const id = normalizeString(candidate.id);
+    const itemId = normalizeString(candidate.itemId);
+
+    if (!isValidArchiveId(id)) {
+      errors.push({
+        code: "invalid-block-id",
+        message: "Archive block id must be a non-empty stable id without whitespace.",
+        path: `blocks.${index}.id`,
+      });
+    } else if (ids.has(id)) {
+      errors.push({
+        code: "duplicate-block-id",
+        message: `Archive contains duplicate block id ${id}.`,
+        path: `blocks.${index}.id`,
+      });
+    } else {
+      ids.add(id);
+    }
+
+    if (!itemIds.has(itemId)) {
+      errors.push({
+        code: "orphan-block",
+        message: `Archive block ${id || index} references missing item ${itemId || "(empty)"}.`,
+        path: `blocks.${index}.itemId`,
+      });
+    }
+  });
+
+  return { errors };
+}
+
+function validateArchiveRelations(
+  value: unknown[],
+  itemIds: Set<string>,
+): { errors: ArchiveValidationError[] } {
+  const errors: ArchiveValidationError[] = [];
+  const ids = new Set<string>();
+
+  value.forEach((candidate, index) => {
+    if (!isRecord(candidate)) {
+      errors.push({
+        code: "corrupt-relation",
+        message: "Archive relation must be an object.",
+        path: `relations.${index}`,
+      });
+      return;
+    }
+
+    const id = normalizeString(candidate.id);
+    const sourceId = normalizeString(candidate.sourceId);
+    const targetId = normalizeString(candidate.targetId);
+
+    if (!isValidArchiveId(id)) {
+      errors.push({
+        code: "invalid-relation-id",
+        message: "Archive relation id must be a non-empty stable id without whitespace.",
+        path: `relations.${index}.id`,
+      });
+    } else if (ids.has(id)) {
+      errors.push({
+        code: "duplicate-relation-id",
+        message: `Archive contains duplicate relation id ${id}.`,
+        path: `relations.${index}.id`,
+      });
+    } else {
+      ids.add(id);
+    }
+
+    if (!sourceId) {
+      errors.push({
+        code: "invalid-relation-source",
+        message: "Archive relation sourceId must be non-empty.",
+        path: `relations.${index}.sourceId`,
+      });
+    } else if (!itemIds.has(sourceId)) {
+      errors.push({
+        code: "orphan-relation",
+        message: `Archive relation ${id || index} references missing source item ${sourceId}.`,
+        path: `relations.${index}.sourceId`,
+      });
+    }
+
+    if (!targetId) {
+      errors.push({
+        code: "invalid-relation-target",
+        message: "Archive relation targetId must be non-empty.",
+        path: `relations.${index}.targetId`,
+      });
+    } else if (!itemIds.has(targetId)) {
+      errors.push({
+        code: "orphan-relation",
+        message: `Archive relation ${id || index} references missing target item ${targetId}.`,
+        path: `relations.${index}.targetId`,
+      });
+    }
+  });
+
+  return { errors };
 }
 
 export function validateArchiveVersion(

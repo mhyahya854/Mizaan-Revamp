@@ -477,3 +477,29 @@ The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.doc
 ### Limitations
 
 Search remains partial. Mizaan does not maintain a native search index, search OCR/extracted binary document text, sync saved-search definitions to a filesystem folder, or run an advanced compound query builder.
+
+## Tauri Shell Foundation Slice - 2026-06-13
+
+The fallback Markdown is updated directly because `docs/Plan/Mizaan Work Log.docx` remains structurally risky for automated updates.
+
+### What Was Finished
+
+- Added the local Tauri CLI dev dependency `@tauri-apps/cli@2.11.2`.
+- Added `tauri:dev`, `tauri:build`, and `tauri:info` package scripts.
+- Created a minimal `src-tauri` Tauri 2 shell for product name `Mizaan`.
+- Replaced generated default identity with `com.mhyahya854.mizaan`, Cargo package `mizaan`, and Rust library `mizaan_lib`.
+- Configured development to use the Vite dev URL and production bundling to use `dist/client`.
+- Kept native storage, SQLite, native filesystem, app lock, encryption, and native notifications out of scope.
+
+### Validation Evidence
+
+- `npx tauri --version` failed before install because no local CLI executable existed.
+- `npm install -D @tauri-apps/cli@2.11.2`: succeeded.
+- `npm run tauri:info`: passed and detected WebView2, MSVC Build Tools 2022, Rust, Cargo, and local CLI 2.11.2.
+- `cargo fmt --manifest-path .\src-tauri\Cargo.toml --check`: passed after formatting generated Rust files.
+- `npm run tauri:build`: passed and produced `src-tauri/target/release/mizaan.exe`, `src-tauri/target/release/bundle/msi/Mizaan_0.1.0_x64_en-US.msi`, and `src-tauri/target/release/bundle/nsis/Mizaan_0.1.0_x64-setup.exe`.
+- Native smoke test launched `mizaan.exe`, confirmed it was still running after five seconds, and stopped it cleanly.
+
+### Limitations
+
+Tauri is now a partial shell foundation only. Mizaan still uses the browser/localStorage prototype provider at runtime. There is no SQLite provider, native filesystem vault, portable folder, markdown mirror, native backup, app lock, live vault encryption, native notification scheduler, or native document import.

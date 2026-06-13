@@ -10,9 +10,9 @@ Mizaan is a local-first, page-first personal life operating system for a single 
 
 Mizaan exists because the user should be able to organize life data without being forced into cloud accounts, Google services, hosted databases, remote sync, telemetry, or backend dependency. The product direction is Notion-like in familiarity but local-first in law.
 
-Current implementation truth: Mizaan is a React/TanStack/Vite browser prototype using `LocalStorageVaultProvider` and browser `localStorage` for provider-backed items, blocks, relations, provider/session/theme/right-panel state, and browser archive JSON. This is not lifetime storage.
+Current implementation truth: Mizaan is a React/TanStack/Vite app with a browser prototype provider and a minimal Tauri shell foundation. Runtime data still uses `LocalStorageVaultProvider` and browser `localStorage` for provider-backed items, blocks, relations, provider/session/theme/right-panel state, and browser archive JSON. This is not lifetime storage.
 
-Future direction: Mizaan should eventually become a Windows/native desktop app with a real native shell, SQLite runtime provider, native filesystem access, human-readable portable vault folders, backup/restore, and native document handling. Those are future phases only until implemented and verified.
+Future direction: Mizaan should eventually become a Windows/native desktop app with SQLite runtime provider, native filesystem access, human-readable portable vault folders, backup/restore, and native document handling. The Tauri shell foundation now exists, but those storage/native capabilities remain future phases only until implemented and verified.
 
 There is no cloud/account dependency in the current product law or implementation target.
 
@@ -25,7 +25,7 @@ There is no cloud/account dependency in the current product law or implementatio
 - Do not add fake UI, fake data, fake analytics, fake import/export, fake privacy, or dead controls.
 - Do not overclaim. A module can be visible and still be partial.
 - Tests, validation, and browser QA evidence must exist before implementation claims.
-- Native/Tauri/SQLite/filesystem/mobile/encryption/app-lock work remains future until real code, tests, and QA prove it.
+- Native SQLite/filesystem/mobile/encryption/app-lock work remains future until real code, tests, and QA prove it. Tauri shell work is partial and must not be treated as native storage.
 - Archive export/import in the browser is useful but is not a final native backup.
 - Destructive restore or replace behavior must require preview and explicit confirmation.
 
@@ -55,7 +55,7 @@ There is no cloud/account dependency in the current product law or implementatio
 | Product Blueprint                    | Active architecture map            | `docs/Plan/Mizaan_Product_Blueprint.md` remains architecture/phase map and must reference this PRD.                                                                                                                                                                                                                                                                               |
 | Old master Markdown                  | Append-only historical/source plan | `docs/Plan/Mizaan_A_to_Z_Plan.md` remains append-only. Do not rewrite old text.                                                                                                                                                                                                                                                                                                   |
 | Browser/localStorage provider        | Implemented prototype              | `LocalStorageVaultProvider` stores provider data in browser localStorage. Not final lifetime storage.                                                                                                                                                                                                                                                                             |
-| Tauri                                | Not started                        | No Tauri shell or commands.                                                                                                                                                                                                                                                                                                                                                       |
+| Tauri                                | Partial shell foundation           | `src-tauri` exists with a Tauri 2 shell, local CLI dependency, `tauri:info`, `tauri:dev`, and `tauri:build` scripts. Windows build and smoke launch pass. No native filesystem, SQLite, native notifications, app lock, encryption, or migration path.                                                                                                                           |
 | SQLite                               | Not started                        | No SQLite provider, schema, migrations, or backup.                                                                                                                                                                                                                                                                                                                                |
 | Native filesystem                    | Not started                        | No native file picker, folder picker, vault folders, or document file import.                                                                                                                                                                                                                                                                                                     |
 | Mobile                               | Not started                        | No Android/iOS companion app.                                                                                                                                                                                                                                                                                                                                                     |
@@ -96,7 +96,7 @@ Deliberately not implemented:
 
 Future native-only work:
 
-- Tauri, native filesystem, SQLite, portable vault folders, markdown mirrors, native backup/restore, native document import, native notifications.
+- Native filesystem, SQLite, portable vault folders, markdown mirrors, native backup/restore, native document import, and native notifications. Tauri shell exists as a partial foundation only.
 
 Future mobile work:
 

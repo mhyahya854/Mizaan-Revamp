@@ -39,9 +39,11 @@ Mizaan is a local-first, page-first personal life operating system for notes,
 documents, projects, people, finance, calendar, trackers, databases, graph,
 templates, vault health, and recovery tools. The current implementation is a
 browser prototype using `LocalStorageVaultProvider` and provider-backed item,
-block, relation, and metadata records. It is not the final Windows desktop app.
-It does not have Tauri, SQLite, native filesystem access, portable vault folders,
-mobile apps, encryption, OCR, real document import, or real document preview.
+block, relation, and metadata records, plus a minimal Tauri shell foundation.
+It is not the final Windows desktop app because runtime storage still uses the
+browser prototype provider. It does not have SQLite, native filesystem access,
+portable vault folders, mobile apps, encryption, OCR, real document import, or
+real document preview.
 
 Product law:
 
@@ -50,7 +52,7 @@ Product law:
 - Mizaan must not require an account.
 - Mizaan must not use Google, OAuth, Firebase, Supabase, Clerk, auth providers, telemetry, backend sync, or hidden remote state.
 - The current browser prototype is useful for shaping behavior, but browser localStorage is not lifetime storage.
-- The future Windows/native version must use a native shell, SQLite runtime storage, and a human-readable portable vault folder only after those phases are built and verified.
+- The Windows/native shell foundation may exist before native storage, but SQLite runtime storage and a human-readable portable vault folder must not be claimed until those phases are built and verified.
 - Mobile remains future planning only.
 - A visible UI module is not proof that the module is complete; every UI status must say whether it is implemented, partial, blueprint-only, or future-only.
 
@@ -69,10 +71,10 @@ Current repo truth as of this blueprint pass:
 - Branch: `main`
 - Remote: `https://github.com/mhyahya854/Mizaan-Revamp.git`
 - Latest known pre-blueprint commit: `148a8b3120bc0401c96a343aa573d4972e675daf`
-- Current app type: React/TanStack/Vite browser prototype.
+- Current app type: React/TanStack/Vite browser prototype plus partial Tauri shell foundation.
 - Current storage: `LocalStorageVaultProvider` through `VaultProvider` interfaces.
 - Current persistence: browser localStorage prototype for items, blocks, relations, provider/session/theme/right-panel state.
-- Current truth warning: browser localStorage is not portable vault storage.
+- Current truth warning: browser localStorage is not portable vault storage; the Tauri shell does not change the active provider.
 
 Current module truth:
 
@@ -92,7 +94,7 @@ Current module truth:
 - Vault: [PARTIAL] - provider and health UI state prototype truth plus tested browser-prototype JSON archive export, validation, restore preview, safe merge apply, and guarded replace semantics. Portable folders, SQLite, Tauri filesystem, lock file, markdown mirrors, native backups, encrypted backups, and repair center do not exist.
 - Trash: [PARTIAL] - soft trash/restore provider paths exist; retention policy, permanent deletion flow, audit history, and native recovery do not.
 - Settings: [HARDENED] - explicit prototype facts, safety warnings, and theme controls; broad settings system does not.
-- Tauri: [NOT STARTED]
+- Tauri: [PARTIAL] - local CLI, `src-tauri`, Windows build, MSI/NSIS bundle generation, and native process smoke test exist; no native storage/API integration.
 - SQLite: [NOT STARTED]
 - Portable vault folders: [NOT STARTED]
 - Native filesystem: [NOT STARTED]
@@ -196,7 +198,7 @@ show future modules, but it must label them honestly and avoid fake controls.
 | Core          | Graph                            | [IMPLEMENTED FOUNDATION]           | Interactive selection, filters/search, local focus view, draggable layout, JSON export                          | Provider items, relations, wiki links, module metadata arrays, parentId hierarchy | localStorage prototype (no layout persistence)                      | Graph helper tests and browser QA                                                   | No persistent layout/manual canvas/custom nodes/image export/native mirror/AI                                                | Manual graph data model later                                       |
 | Core          | Calendar                         | [PARTIAL / IMPLEMENTED FOUNDATION] | Route exists with provider-backed events                                                                        | Typed calendar event helper                                                      | localStorage prototype                                              | Helper, graph, and search tests added; browser QA attempted                         | No recurrence/reminders/ICS/native notifications/sync                                                                        | Template expansion or version history                               |
 | System        | Templates                        | [PARTIAL]                          | Template picker plus searchable/filterable `/templates` registry route exist                                    | Static template definitions with status/category/preview metadata                | provider-backed creations                                           | Page template tests, template registry tests, full validation, and browser QA exist | No template editor, custom templates, version history, import/export, AI generation, marketplace, or sync                    | Version history or template management only after scoped data model |
-| System        | Vault                            | [PARTIAL]                          | Route exists with provider truth and browser archive controls                                                   | Provider info/health plus archive helper model                                   | localStorage prototype                                              | Provider and archive tests exist                                                    | No portable folder/SQLite/native/encrypted backup                                                                            | Native readiness after archive hardening                            |
+| System        | Vault                            | [PARTIAL]                          | Route exists with provider truth and browser archive controls                                                   | Provider info/health plus archive helper model                                   | localStorage prototype                                              | Provider and archive tests exist                                                    | Tauri shell exists, but no portable folder/SQLite/native/encrypted backup                                                   | SQLite/native filesystem foundation after Tauri shell                |
 | System        | Trash                            | [PARTIAL]                          | Route exists                                                                                                    | deletedAt records                                                                | localStorage prototype                                              | Limited                                                                             | No retention/permanent deletion policy                                                                                       | Repair/recovery center                                              |
 | System        | Settings                         | [HARDENED]                          | Route exists                                                                                                    | Theme/session/provider facts                                                     | localStorage prototype                                              | Theme tests exist                                                                   | Mostly read-only                                                                                                             | Native/privacy options                              |
 | Pages         | Notes                            | [PARTIAL]                          | Route/space exists                                                                                              | Item/block model                                                                 | localStorage prototype                                              | Page workspace tests                                                                | Rich text incomplete                                                                                                         | Editor hardening                                                    |

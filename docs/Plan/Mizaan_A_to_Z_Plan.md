@@ -22650,3 +22650,62 @@ Master Markdown append proof seed:
 
 - BeforeHash: 685B41142B835EBFCC3D9E8A63982B62BE9A856DEA4AA391BDD9ECDAA8B773AB
 - BeforeLength: 838550
+---
+
+## Append-Only Implementation Status - Tauri Shell Foundation - 2026-06-13
+
+Status: [partially implemented]
+
+### Selected Markdown feature
+
+Windows app/Tauri desktop foundation.
+
+### What Codex understood
+
+The master Markdown still contains historical [not implemented] markers for Windows app/Tauri, SQLite, native filesystem vaults, portable vault folders, lock files, and mirrors. The dependency-safe item for this run was the Tauri shell prerequisite only. The existing browser/localStorage provider must remain active, and no native storage, SQLite migration, filesystem vault, app lock, encryption, notification engine, or document import can be claimed from a shell scaffold.
+
+### What was implemented
+
+- Added local dev dependency `@tauri-apps/cli@2.11.2`.
+- Added package scripts `tauri:dev`, `tauri:build`, and `tauri:info`.
+- Created a minimal Tauri 2 `src-tauri` shell for Mizaan.
+- Set Tauri identifier to `com.mhyahya854.mizaan`.
+- Set Cargo package name to `mizaan` and Rust library name to `mizaan_lib`.
+- Configured Tauri dev mode to use the Vite dev server and production bundling to use `dist/client`.
+- Added `docs/current-codebase-baseline-audit.md` with live codebase truth.
+- Updated PRD, Product Blueprint, fallback work log, and active phase report.
+
+### Validation run
+
+- `git fetch origin --prune`: passed.
+- `npm run mizaan:preflight`: passed with in-progress untracked doc/screenshot warning.
+- `npm run mizaan:red-scan`: passed blocking checks.
+- `npm run mizaan:verify:full`: passed before implementation with typecheck, lint, 25 Vitest files / 280 tests, build, diff check, and red scan.
+- `npm run mizaan:browser-qa`: passed 16 routes and captured `docs/screenshots/20260613-074159-browser-qa-*.png`.
+- `npx tauri --version`: failed before install because no local CLI executable existed.
+- `npm view @tauri-apps/cli version`: returned `2.11.2`.
+- `npm install -D @tauri-apps/cli@2.11.2`: succeeded.
+- `npx tauri --version`: returned `tauri-cli 2.11.2`.
+- `npm run tauri:info`: passed and detected WebView2, MSVC Build Tools 2022, Rust, Cargo, and local CLI.
+- `cargo fmt --manifest-path .\src-tauri\Cargo.toml --check`: passed after formatting generated Rust files.
+- `npm run tauri:build`: passed.
+- Native smoke test launched `src-tauri/target/release/mizaan.exe`, confirmed it stayed alive after 5 seconds, and stopped it cleanly.
+
+### Artifacts
+
+- `src-tauri/target/release/mizaan.exe`
+- `src-tauri/target/release/bundle/msi/Mizaan_0.1.0_x64_en-US.msi`
+- `src-tauri/target/release/bundle/nsis/Mizaan_0.1.0_x64-setup.exe`
+
+### Screenshots
+
+- Browser QA screenshots: `docs/screenshots/20260613-074159-browser-qa-*.png`.
+- Native screenshot not captured in this slice; native validation used build artifacts plus a process smoke test.
+
+### Honest current status
+
+Tauri is now a partial shell foundation. The Windows executable and installers build in this environment, but Mizaan still uses the browser/localStorage prototype provider at runtime. SQLite provider, native filesystem vault, portable folder structure, lock file, markdown/JSON mirrors, native backup, encrypted backup, app lock, native notifications, OCR, native document import, and live migration remain [not implemented]. Mac support is configuration-level only and was not built on macOS in this Windows run.
+
+### Next dependency-safe item
+
+Implement a SQLite provider foundation or native filesystem planning helpers without live migration. Do not replace localStorage or write user vault folders until backup/restore, health checks, rollback, and path-safety tests exist.
